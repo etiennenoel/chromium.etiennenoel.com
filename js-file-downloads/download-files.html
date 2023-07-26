@@ -32,8 +32,9 @@
                         const url = "https://chromium.etiennenoel.com/js-file-downloads/files/" + filename;
             
                         fetch(url, {method: 'get', mode: "no-cors", referrerPolicy: "no-referrer"}).then(response => {
-                            console.log("Response:" + response);
-                            document.getElementById("responseOutput").value = response;
+                            console.log(response);
+                            
+                            document.getElementById("responseOutput").value = JSON.stringify(response);
                         });
             
                     }
