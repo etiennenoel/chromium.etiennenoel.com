@@ -9,32 +9,39 @@
   </head>
   <body>
 
-    <h1>Download files using JavaScript</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1>Download files using JavaScript</h1>
 
-    <button id="1gb_file_download_btn" class="btn btn-outline-primary">Download 1GB File</button>
-    <button id="2gb_file_download_btn" class="btn btn-outline-primary">Download 2GB File</button>
-    <button id="5gb_file_download_btn" class="btn btn-outline-primary">Download 5GB File</button>
+                <button id="1gb_file_download_btn" class="btn btn-outline-primary">Download 1GB File</button>
+                <button id="2gb_file_download_btn" class="btn btn-outline-primary">Download 2GB File</button>
+                <button id="5gb_file_download_btn" class="btn btn-outline-primary">Download 5GB File</button>
+            
+                Response output
+                <div class="form-floating">
+                    <textarea class="form-control" placeholder="Leave a comment here" id="responseOutput"></textarea>
+                    <label for="floatingTextarea">Response will appear here</label>
+                </div>
+            
+                <script>
+                    const downloadFile = (filename) => {
+                        const url = "https://raw.githubusercontent.com/etiennenoel/chromium.etiennenoel.com/master/js-file-downloads/files/" + filename;
+            
+                        fetch(url, {method: 'get', mode: "no-cors", referrerPolicy: "no-referrer"}).then(response => {
+                            console.log("Response:" + response);
+                            document.getElementById("responseOutput").value = response;
+                        });
+            
+                    }
+            
+                    document.getElementById("1gb_file_download_btn").onclick = () => downloadFile("file_1gb.bin");
+                    document.getElementById("2gb_file_download_btn").onclick = () => downloadFile("file_2gb.bin");
+                    document.getElementById("5gb_file_download_btn").onclick = () => downloadFile("file_5gb.bin");
+                </script>
+            </div>
+        </div>
+    </div>
 
-    Response output
-    <div class="form-floating">
-        <textarea class="form-control" placeholder="Leave a comment here" id="responseOutput"></textarea>
-        <label for="floatingTextarea">Response will appear here</label>
-      </div>
-
-	<script>
-        const downloadFile = (filename) => {
-            const url = "https://raw.githubusercontent.com/etiennenoel/chromium.etiennenoel.com/master/js-file-downloads/files/" + filename;
-
-            fetch(url, {method: 'get', mode: "no-cors", referrerPolicy: "no-referrer"}).then(response => {
-                console.log("Response:" + response);
-                document.getElementById("responseOutput").value = response;
-            });
-
-        }
-
-        document.getElementById("1gb_file_download_btn").onclick = () => downloadFile("file_1gb.bin");
-        document.getElementById("2gb_file_download_btn").onclick = () => downloadFile("file_2gb.bin");
-        document.getElementById("5gb_file_download_btn").onclick = () => downloadFile("file_5gb.bin");
-    </script>
   </body>
 </html>
