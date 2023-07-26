@@ -37,6 +37,7 @@
                 <script>
                     let currentResponse;
                     const downloadFile = (filename) => {
+                        document.getElementById("blob-management").classList.remove("d-none");
 
                         const url = "https://chromium.etiennenoel.com/js-file-downloads/files/" + filename;
             
@@ -49,7 +50,6 @@
                     }
 
                     const loadBlob = () => {
-                        document.getElementById("blob-management").classList.remove("d-none");
 
                         document.getElementById("responseOutput").value = "Loading the blob...";
 
