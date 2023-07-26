@@ -21,15 +21,15 @@
             
                 <hr>
 
-                <h3>Response output</h3>
+                <h3>Response</h3>
                 <div class="form-floating">
                     <textarea class="form-control" placeholder="Leave a comment here" id="responseOutput"></textarea>
-                    <label for="floatingTextarea">Response will appear here</label>
+                    <label for="floatingTextarea">Response output:</label>
                 </div>
             
                 <script>
                     const downloadFile = (filename) => {
-                        const url = "https://raw.githubusercontent.com/etiennenoel/chromium.etiennenoel.com/master/js-file-downloads/files/" + filename;
+                        const url = "https://chromium.etiennenoel.com/js-file-downloads/files/" + filename;
             
                         fetch(url, {method: 'get', mode: "no-cors", referrerPolicy: "no-referrer"}).then(response => {
                             console.log("Response:" + response);
