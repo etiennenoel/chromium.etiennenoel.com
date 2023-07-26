@@ -14,7 +14,7 @@
             <div class="col-12">
                 <h1 class="mt-2 mb-5">Download files using JavaScript</h1>
 
-                
+                <h2>Step 1 - Start the download</h2>
                 <button id="1gb_file_download_btn" class="btn btn-outline-primary me-2">Download 1GB File</button>
                 <button id="2gb_file_download_btn" class="btn btn-outline-primary me-2">Download 2GB File</button>
                 <button id="5gb_file_download_btn" class="btn btn-outline-primary">Download 5GB File</button>
@@ -22,7 +22,7 @@
                 <hr>
 
                 <div class="d-none" id="blob-management">
-                    <h2>Blob management</h2>
+                    <h2>Step 2 - Load the blob in JS</h2>
                     <span class="badge text-bg-primary">Download requested</span>
 
                     <button id="load_blob" class="btn btn-outline-primary">Load Blob</button>
@@ -51,10 +51,12 @@
                     }
 
                     const loadBlob = () => {
-
+                        console.log(currentResponse)
+                        
                         document.getElementById("responseOutput").value = "Loading the blob...";
 
                         currentResponse.blob.then(blob => {
+
                             console.log(blob)
                         })
                     }
