@@ -21,27 +21,48 @@
             
                 <hr>
 
+                <div class="d-none" id="blob-management">
+                    <span class="badge badge-primary">Download requested</span>
+
+                    <button id="load_blob" class="btn btn-outline-primary">Load Blob</button>
+                </div>
                 <h3>Response</h3>
                 <div class="form-floating">
                     <textarea class="form-control" placeholder="Leave a comment here" id="responseOutput"></textarea>
-                    <label for="floatingTextarea">Response output:</label>
+                    <label for="responseOutput">Response output:</label>
                 </div>
-            
+
+
+
                 <script>
+                    let currentResponse;
                     const downloadFile = (filename) => {
+
                         const url = "https://chromium.etiennenoel.com/js-file-downloads/files/" + filename;
             
                         fetch(url, {method: 'get', mode: "no-cors", referrerPolicy: "no-referrer"}).then(response => {
                             console.log(response);
-                            
-                            document.getElementById("responseOutput").value = JSON.stringify(response);
+
+                            currentResponse = response;
                         });
             
+                    }
+
+                    const loadBlob = () => {
+                        document.getElementById("blob-management").classList.remove("d-none");
+
+                        document.getElementById("responseOutput").value = "Loading the blob...";
+
+                        currentResponse.blob.then(blob => {
+
+                        })
                     }
             
                     document.getElementById("1gb_file_download_btn").onclick = () => downloadFile("file_1gb.bin");
                     document.getElementById("2gb_file_download_btn").onclick = () => downloadFile("file_2gb.bin");
                     document.getElementById("5gb_file_download_btn").onclick = () => downloadFile("file_5gb.bin");
+
+                    document.getElementById("load_blob").onclick = loadBlob;
                 </script>
             </div>
         </div>
