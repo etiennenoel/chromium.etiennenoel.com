@@ -29,48 +29,11 @@
                 </div>
                 <h3>Response</h3>
                 <div class="form-floating">
-                    <textarea class="form-control" placeholder="Leave a comment here" id="responseOutput"></textarea>
+                    <textarea class="form-control" placeholder="Leave a comment here" id="responseOutput" style="height: 200px;"></textarea>
                     <label for="responseOutput">Response output:</label>
                 </div>
 
-
-
-                <script>
-                    let currentResponse;
-                    const downloadFile = (filename) => {
-                        document.getElementById("blob-management").classList.remove("d-none");
-
-                        const url = "https://chromium.etiennenoel.com/js-file-downloads/files/" + filename;
-            
-                        fetch(url, {method: 'get', mode: "no-cors", referrerPolicy: "no-referrer"}).then(response => {
-                            console.log(response);
-
-                            response.blob().then((blob) => {
-                                console.log(blob);
-                            })
-
-                            currentResponse = response;
-                        });
-            
-                    }
-
-                    const loadBlob = () => {
-                        console.log(currentResponse)
-
-                        document.getElementById("responseOutput").value = "Loading the blob...";
-
-                        currentResponse.blob.then(blob => {
-
-                            console.log(blob)
-                        })
-                    }
-            
-                    document.getElementById("1gb_file_download_btn").onclick = () => downloadFile("file_1gb.bin");
-                    document.getElementById("2gb_file_download_btn").onclick = () => downloadFile("file_2gb.bin");
-                    document.getElementById("5gb_file_download_btn").onclick = () => downloadFile("file_5gb.bin");
-
-                    document.getElementById("load_blob").onclick = loadBlob;
-                </script>
+                <script src="download-files.js"></script>
             </div>
         </div>
     </div>
