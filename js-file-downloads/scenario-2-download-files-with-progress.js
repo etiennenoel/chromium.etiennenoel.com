@@ -13,7 +13,9 @@ const downloadFile = async (filename) => {
 
         document.getElementById("file-download-progress").classList.remove("d-none");
 
-        const reader = response.body.getReader();
+        const blob = await response.blob();
+
+        const reader =  blob.stream().getReader();
 
         // Step 2: get total length
         const contentLength = +response.headers.get('Content-Length');
@@ -40,18 +42,6 @@ const downloadFile = async (filename) => {
 
         await measureMemoryUsage(filename + " downloaded successfully");
         document.getElementById("responseOutput").value += "\nFile downloaded!";
-        document.getElementById("responseOutput").value += "\nConcatenating chunks into a Uint8Array";
-
-// Step 4: concatenate chunks into single Uint8Array
-        let chunksAll = new Uint8Array(receivedLength); // (4.1)
-        let position = 0;
-        for(let chunk of chunks) {
-            chunksAll.set(chunk, position); // (4.2)
-            position += chunk.length;
-        }
-
-        await measureMemoryUsage("Chunks concatenated into a Uint8Array");
-        document.getElementById("responseOutput").value += "\nProcess completed"
     });
 
 }
