@@ -13,8 +13,6 @@ const downloadFile = async (filename) => {
 
         document.getElementById("file-download-progress").classList.remove("d-none");
 
-        //const blob = await response.blob();
-
         const reader =  response.body.getReader();
 
         // Step 2: get total length
