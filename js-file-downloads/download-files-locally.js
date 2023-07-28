@@ -1,15 +1,26 @@
-const downloadFile = (filename) => {
-    document.getElementById("responseOutput").value = "File download started: '" + filename + "'";
-
+const downloadFile = async (filename) => {
     const url = "https://chromium.etiennenoel.com/js-file-downloads/files/" + filename;
 
-    fetch(url, {method: 'get', mode: "no-cors", referrerPolicy: "no-referrer"}).then(response => {
+    await measureMemoryUsage("Initial (Before download)");
+
+    document.getElementById("responseOutput").value += "File download started: '" + filename + "'";
+
+    fetch(url, {method: 'get', mode: "no-cors", referrerPolicy: "no-referrer"}).then(async response => {
         console.log(response);
 
-        response.blob().then(blob => {
+        await measureMemoryUsage("After receiving response from fetch");
+
+        response.blob().then(async blob => {
+            await measureMemoryUsage("Download completed");
+
             document.getElementById("responseOutput").value += "\nFile downloaded.";
             document.getElementById("responseOutput").value += "\nOpening prompt.";
             console.log(blob)
+
+
+
+            const result = await performance.measureUserAgentSpecificMemory();
+            console.log(result);
 
             const href = URL.createObjectURL(blob);
             const aElement = document.createElement('a');

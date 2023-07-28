@@ -13,12 +13,12 @@
     <div class="row">
         <div class="col-12">
             <a href="index.html"><- Home</a>
-            
-            <h1 class="mt-2 mb-5">Download files with Progress</h1>
+
+            <h1 class="mt-2 mb-5">Scenario 2 - Fetch files in JavaScript with Progress</h1>
 
             <p>This page downloads the file using the fetch() method and updates the progress</p>
 
-            <h2>Step 1 - Start the download</h2>
+            <h2>Start the download</h2>
             <button id="10mb_file_download_btn" class="btn btn-outline-primary me-2">Download 10MB File</button>
             <button id="100mb_file_download_btn" class="btn btn-outline-primary me-2">Download 100MB File</button>
             <button id="1gb_file_download_btn" class="btn btn-outline-primary me-2">Download 1GB File</button>
@@ -33,18 +33,28 @@
                 </div>
             </div>
 
-            <div class="mt-3 d-none" id="blob-management">
-
-
-                <h2>Step 2 - Load the blob in JS</h2>
-                <button id="load_blob" class="btn btn-outline-primary">Load Blob</button>
-            </div>
-            <h3>Response</h3>
+            <h3 class="mt-3">Output</h3>
             <div class="form-floating">
-                <textarea class="form-control" placeholder="Leave a comment here" id="responseOutput" style="height: 200px;"></textarea>
+                <textarea class="form-control" placeholder="Leave a comment here" id="responseOutput" style="height: 350px;"></textarea>
                 <label for="responseOutput">Response output:</label>
             </div>
 
+            <h3 class="mt-3">Memory usage</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Step</th>
+                    <th>Shared Memory Usage</th>
+                    <th>JavaScript Memory Usage</th>
+                    <th>DOM Memory Usage</th>
+                    <th>Total Memory Usage</th>
+                </tr>
+                </thead>
+                <tbody id="memory_usage_table_tbody">
+                </tbody>
+            </table>
+
+            <script src="memory-consumption.js"></script>
             <script src="download-files-with-progress.js"></script>
         </div>
     </div>

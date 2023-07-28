@@ -1,12 +1,15 @@
 let currentResponse;
-const downloadFile = (filename) => {
-    document.getElementById("responseOutput").value = "Start file download: '" + filename + "'";
-    document.getElementById("blob-management").classList.remove("d-none");
+const downloadFile = async (filename) => {
+    await measureMemoryUsage("Initial (Before download)");
+
+    document.getElementById("responseOutput").value += "Requesting to download file: '" + filename + "'";
 
     const url = "https://chromium.etiennenoel.com/js-file-downloads/files/" + filename;
 
     fetch(url, {method: 'get', mode: "no-cors", referrerPolicy: "no-referrer"}).then(async (response) => {
         console.log(response);
+
+        await measureMemoryUsage("After receiving response from fetch");
 
         document.getElementById("file-download-progress").classList.remove("d-none");
 
@@ -35,7 +38,9 @@ const downloadFile = (filename) => {
             document.getElementById("progressbar").innerText = progress + "%"
         }
 
+        await measureMemoryUsage(filename + " downloaded successfully");
         document.getElementById("responseOutput").value += "\nFile downloaded!";
+        document.getElementById("responseOutput").value += "\nConcatenating chunks into a Uint8Array";
 
 // Step 4: concatenate chunks into single Uint8Array
         let chunksAll = new Uint8Array(receivedLength); // (4.1)
@@ -44,6 +49,9 @@ const downloadFile = (filename) => {
             chunksAll.set(chunk, position); // (4.2)
             position += chunk.length;
         }
+
+        await measureMemoryUsage("Chunks concatenated into a Uint8Array");
+        document.getElementById("responseOutput").value += "\nProcess completed"
     });
 
 }
