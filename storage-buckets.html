@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Storage Buckets</title>
+
+  </head>
+  <body>
+    <main>
+        <h1>Storage Buckets</h1>
+
+      <button id="create-storage-buckets">Create buckets</button>
+      <button id="refresh-storage-buckets">Refresh</button>
+      <button id="delete-storage-buckets">Delete buckets</button>
+
+
+      <h2>Available buckets</h2>
+      <div id="available_buckets">
+        Loading...
+      </div>
+
+    </main>
+
+    <script>
+      const loadBuckets = async () => {
+        const storageBuckets = await navigator.storageBuckets.keys();
+
+
+        if(storageBuckets.length === 0) {
+          document.getElementById("available_buckets").innerHTML = "<p>No buckets</p>";
+          return;
+        }
+
+        let innerHtml = "<ul>";
+
+        for (let i in storageBuckets) {
+          innerHtml += "<li>" + storageBuckets[i] + "</li>";
+        }
+
+        innerHtml += "</ul>"
+
+        document.getElementById("available_buckets").innerHTML = innerHtml;
+      }
+
+      const deleteBuckets = async () =>{
+        const storageBuckets = await navigator.storageBuckets.keys();
+
+        for (let i in storageBuckets) {
+          await navigator.storageBuckets.delete(storageBuckets[i]);
+        }
+
+        loadBuckets();
+      }
+
+      const createBuckets = () => {
+        let promises = [];
+
+        promises.push(navigator.storageBuckets.open("drafts"));
+        promises.push(navigator.storageBuckets.open("inbox"));
+        promises.push(navigator.storageBuckets.open("attachments"));
+
+        Promise.all(promises).then(() => {
+          loadBuckets();
+        })
+      }
+
+      document.getElementById("refresh-storage-buckets").onclick = () => {
+        loadBuckets();
+      }
+
+      document.getElementById("create-storage-buckets").onclick = () => {
+        createBuckets();
+      }
+
+      document.getElementById("delete-storage-buckets").onclick = () => {
+        deleteBuckets();
+      }
+
+      loadBuckets();
+    </script>
+  </body>
+</html>
