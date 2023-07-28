@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>OPFS Playground</title>
+  </head>
+  <body>
+    <h1>OPFS Playground</h1>
+
+    <h2>Filesystem</h2>
+    <div id="filesystem">
+    </div>
+
+    <script type="module" src="opfs.js">
+    </script>
+
+      <script type="module">
+
+
+      // todo:
+      
+      // - Check what the types of handles are ("directory" and "file")
+      // - Example of how to retrieve a path when having a handle
+      //    - From the looks of it, it seems like we can't and we have to keep track of the folder name or file name and rebuild the path
+      // - Example of how to retrieve a handle using a path.
+      // - What's the code to save as a file
+      // - What's the code to remove a file
+
+        // const root = await navigator.storage.getDirectory();
+        //
+        // // Create a new file handle.
+        // const fileHandle = await root.getFileHandle('MyFirstFile.txt', { create: true });
+        //
+        // const dirHandle = await root.getDirectoryHandle('New Folder', { create: true });
+        //
+        // dirHandle.getFileHandle("NestedFile.txt", { create: true });
+        //
+        // // What are the information accessible on a file
+        // const file = await fileHandle.getFile();
+        //
+        //
+        // document.getElementById("files-body").innerHTML = "<tr>\
+        //    <td>" + file.name + "</td>\
+        //    <td>" + file.lastModified + "</td>\
+        //    <td>" + file.size + "</td>\
+        //    <td>" + file.type + "</td>\
+        //    </tr>";
+        //
+        //    // Directories
+        // //const dirFileHandle = await dirHandle.getFileHandle();
+        // //const dirFile = await (await dirHandle.getFileHandle()).getFile();
+        // document.getElementById("directories-body").innerHTML = "<tr>\
+        //    <td>" + dirHandle.name + "</td>\
+        //    <td>" + dirHandle.lastModified + "</td>\
+        //    <td>" + dirHandle.size + "</td>\
+        //    <td>" + dirHandle.type + "</td>\
+        //    </tr>";
+
+    </script>
+  </body>
+</html>

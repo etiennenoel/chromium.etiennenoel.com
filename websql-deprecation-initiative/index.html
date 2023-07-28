@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>WebSQL Deprecation initiative</title>
+
+  </head>
+  <body>
+    <main>
+        <h1>WebSQL Deprecation initiative</h1>
+    </main>
+
+<script>
+window.localStorage.setItem("test", "test")
+window.sessionStorage.setItem("test", "test")
+
+      // Initialize error callback
+      var errCallback = function(){
+        alert("Oops! Error in sprintdb.");
+      }
+
+      // Initialize success callback
+      var successCallback = function(){
+      console.log("Success callback activated.");
+      }
+          
+
+      var db = openDatabase('sprintdb', '1.0', 'Best Team #1 Winner Exploration Sprint DB', 4 * 1024 * 1024);
+
+      // Open
+      db.transaction((tx) => {
+        tx.executeSql("CREATE TABLE IF NOT EXISTS sprintdb (" +
+                      "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                      "origin TEXT NOT NULL, data TEXT NOT NULL);");
+                    })
+
+      // Save
+      var saveSprintdb = (origin, data, successCallback) => {
+        db.transaction((tx) => {
+          tx.executeSql(("INSERT INTO sprintdb (origin, data) VALUES (?, ?);"), 
+                        [origin, data], (tx, res) => {successCallback(res);}, errCallback);
+          });
+        };
+
+      // Pull data for a given origin
+      var loadData = (origin, successCallback) => {
+        db.transaction((tx) => {
+          tx.executeSql(("SELECT * FROM sprintdb WHERE origin=?"), [origin],
+                        (tx, res) => {successCallback(res);}, errCallback);
+          });
+        };
+        
+    
+        saveSprintdb("Origin", "great data", successCallback)
+        saveSprintdb("Origin2", "great data2", successCallback)
+        saveSprintdb("Origin3", "great data3", successCallback)
+
+</script>
+  </body>
+</html

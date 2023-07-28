@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="576daaa0-e7a6-4674-a93d-78a6f9596c1c" name="chromium.etiennenoel.com" url="https://chromium.etiennenoel.com">
+        <fileTransfer rootFolder="/home/chromium.etiennenoel.com/www" accessType="SFTP" host="ec2-52-45-138-14.compute-1.amazonaws.com" port="22" sshConfigId="a6b161aa-7cfe-4847-ae4e-9b3d94b9fe6e" sshConfig="chromium.etiennenoel.com" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SshConfigs">
+    <configs>
+      <sshConfig connectionConfig="{&quot;serverAliveInterval&quot;:300}" host="ec2-52-45-138-14.compute-1.amazonaws.com" id="a6b161aa-7cfe-4847-ae4e-9b3d94b9fe6e" keyPath="$USER_HOME$/.ssh/enoel.pem" port="22" customName="chromium.etiennenoel.com" nameFormat="CUSTOM" username="ubuntu" useOpenSSHConfig="true">
+        <option name="customName" value="chromium.etiennenoel.com" />
+      </sshConfig>
+    </configs>
+  </component>
+</project>
