@@ -2,7 +2,13 @@ const convertBytesToMB = (bytes) => {
     return bytes / 1000/1000;
 }
 
+let activateMemoryUsageTracker = true;
+
 const measureMemoryUsage = async (stepName) => {
+
+    if(activateMemoryUsageTracker === false) {
+        return;
+    }
 
     const responseOutputElement = document.getElementById("responseOutput");
 
@@ -29,4 +35,8 @@ const measureMemoryUsage = async (stepName) => {
         "<td>" + convertBytesToMB(domMemoryUsage).toFixed(2) + " MB</td>" +
         "<td>" + convertBytesToMB(totalBytes).toFixed(2) + " MB</td>" +
         "</tr>"
+}
+
+document.getElementById("memory_usage_tracker").onclick = () => {
+    activateMemoryUsageTracker = document.getElementById("memory_usage_tracker").checked;
 }

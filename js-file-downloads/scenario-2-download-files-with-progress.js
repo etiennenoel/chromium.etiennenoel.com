@@ -13,9 +13,9 @@ const downloadFile = async (filename) => {
 
         document.getElementById("file-download-progress").classList.remove("d-none");
 
-        const blob = await response.blob();
+        //const blob = await response.blob();
 
-        const reader =  blob.stream().getReader();
+        const reader =  response.body.getReader();
 
         // Step 2: get total length
         const contentLength = +response.headers.get('Content-Length');
@@ -24,7 +24,6 @@ const downloadFile = async (filename) => {
 
         // Step 3: read the data
         let receivedLength = 0; // received that many bytes at the moment
-        let chunks = []; // array of received binary chunks (comprises the body)
         while(true) {
             const {done, value} = await reader.read();
 
@@ -32,7 +31,6 @@ const downloadFile = async (filename) => {
                 break;
             }
 
-            chunks.push(value);
             receivedLength += value.length;
 
             const progress =  Math.floor((receivedLength/contentLength) * 100);
