@@ -17,14 +17,7 @@
 
                 <p>The goal of this example, is to demonstrate that it's possible to download a file in JavaScript and move it to Cache Storage.</p>
 
-                <h2>Download the file</h2>
-                <p>Once the file is downloaded, a save as file prompt will be shown automatically.</p>
-                <button id="10mb_file_download_btn" class="btn btn-outline-primary me-2">Download 10MB File</button>
-                <button id="100mb_file_download_btn" class="btn btn-outline-primary me-2">Download 100MB File</button>
-                <button id="1gb_file_download_btn" class="btn btn-outline-primary me-2">Download 1GB File</button>
-                <button id="2gb_file_download_btn" class="btn btn-outline-primary me-2">Download 2GB File</button>
-                <button id="5gb_file_download_btn" class="btn btn-outline-primary">Download 5GB File</button>
-                <div class="mt-3 mb-3">
+                <div class="mt-4 mb-4">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="memory_usage_tracker" checked>
                         <label class="form-check-label" for="memory_usage_tracker">
@@ -32,6 +25,21 @@
                         </label>
                     </div>
                 </div>
+
+                <h2>Start the download</h2>
+                <button id="10mb_file_download_btn" class="btn btn-outline-primary me-2">Download 10MB File</button>
+                <button id="100mb_file_download_btn" class="btn btn-outline-primary me-2">Download 100MB File</button>
+                <button id="1gb_file_download_btn" class="btn btn-outline-primary me-2">Download 1GB File</button>
+                <button id="2gb_file_download_btn" class="btn btn-outline-primary me-2">Download 2GB File</button>
+                <button id="5gb_file_download_btn" class="btn btn-outline-primary">Download 5GB File</button>
+
+                <h2 class="mt-3">Load from Cache Storage</h2>
+                <button id="10mb_file_load_from_cache_storage_btn" class="btn btn-outline-primary me-2">Load 10MB File</button>
+                <button id="100mb_file_load_from_cache_storage_btn" class="btn btn-outline-primary me-2">Load 100MB File</button>
+                <button id="1gb_file_load_from_cache_storage_btn" class="btn btn-outline-primary me-2">Load 1GB File</button>
+                <button id="2gb_file_load_from_cache_storage_btn" class="btn btn-outline-primary me-2">Load 2GB File</button>
+                <button id="5gb_file_load_from_cache_storage_btn" class="btn btn-outline-primary">Load 5GB File</button>
+
                 <hr>
                 <h3 class="mt-3">Output</h3>
                 <div class="form-floating">
@@ -55,7 +63,7 @@
                 </table>
 
                 <script src="memory-consumption.js"></script>
-                <script src="scenario-3-download-files-move-to-opfs.js"></script>
+                <script src="scenario-4-download-files-move-to-cache-storage.js"></script>
             </div>
         </div>
     </div>

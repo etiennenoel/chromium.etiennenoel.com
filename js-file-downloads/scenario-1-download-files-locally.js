@@ -15,12 +15,6 @@ const downloadFile = async (filename) => {
 
             document.getElementById("responseOutput").value += "\nFile downloaded.";
             document.getElementById("responseOutput").value += "\nOpening prompt.";
-            console.log(blob)
-
-
-
-            const result = await performance.measureUserAgentSpecificMemory();
-            console.log(result);
 
             const href = URL.createObjectURL(blob);
             const aElement = document.createElement('a');
@@ -29,6 +23,8 @@ const downloadFile = async (filename) => {
             aElement.setAttribute('target', '_blank');
             aElement.click();
             URL.revokeObjectURL(href);
+
+            await measureMemoryUsage("File saved to disk");
         })
     });
 
