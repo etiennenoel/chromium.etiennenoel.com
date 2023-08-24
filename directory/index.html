@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Files and Directories </title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12 col-lg-6">
+            <h1 class="mt-2 mb-5">File System Access Handles</h1>
+            <h2>Files</h2>
+            <p>Link: <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/showOpenFilePicker" target="_blank">MDN</a></p>
+            <p><button class="btn btn-primary" id="showFilePickerButton"><i class="bi bi-file-earmark"></i> Open file (showFilePicker)</button></p>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="fsahMultipleFiles">
+                <label class="form-check-label" for="fsahMultipleFiles">
+                    Allow selection of multiple files
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="fsahDownloadFile">
+                <label class="form-check-label" for="fsahDownloadFile">
+                    Download file after selection
+                </label>
+            </div>
+            <h2>Directories</h2>
+            <p>Link: <a href="https://mdn1.moz.one/en-US/docs/Web/API/Window/showDirectoryPicker" target="_blank">MDN</a></p>
+            <p><button class="btn btn-secondary" id="showDirectoryPickerButton"><i class="bi bi-folder"></i> Open directory (showDirectoryPicker)</button></p>
+
+            <hr>
+
+            <h1 class="mt-4 mb-5">Webkit File API</h1>
+            <h2>Files</h2>
+            <p>Link: <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file" target="_blank">MDN</a></p>
+
+            <h3 class="h5">One file</h3>
+            <p> <input type="file" class="form-control" id="webkitFile"> </button></p>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="downloadWebkitFile">
+                <label class="form-check-label" for="downloadWebkitFile">
+                    Download file after selection
+                </label>
+            </div>
+
+            <h3 class="h5">Multiple files</h3>
+            <p> <input type="file" class="form-control" multiple id="webkitMultipleFiles"> </button></p>
+
+            <h2>Directories</h2>
+            <p>Link: <a href="" target="_blank">MDN</a></p>
+            <p><input type="file" webkitdirectory class="form-control" id="webkitdirectory"></p>
+
+        </div>
+        <div class="col-12 col-lg-6">
+            <h3 class="mt-2 mb-3">Output</h3>
+
+            <textarea id="output" class="form-control" style="height: 800px;"></textarea>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    const output = document.getElementById("output");
+
+    const showFilePickerButton = document.getElementById("showFilePickerButton");
+    showFilePickerButton.onclick = async () => {
+        output.value += "[window.showOpenFilePicker()] - Opening File Picker.\n"
+
+        const value = document.getElementById("fsahMultipleFiles").checked;
+
+        const fileHandles = await window.showOpenFilePicker({
+            multiple: value ,
+        })
+
+        output.value += "Files selected: \n";
+
+        for (const fileHandle of fileHandles) {
+            output.value += "     - " + fileHandle.name + " \n";
+        }
+
+        if(document.getElementById("fsahDownloadFile").checked) {
+            const file = await fileHandles[0].getFile();
+
+            const href = URL.createObjectURL(file);
+            const aElement = document.createElement('a');
+            aElement.setAttribute('download', file.name);
+            aElement.href = href;
+            aElement.setAttribute('target', '_blank');
+            aElement.click();
+            URL.revokeObjectURL(href);
+        }
+    }
+
+    const recursive = async (folderHandle, output, level = 1) => {
+        const numberOfSpacesPerLevel = 4;
+
+        let spacesPrefix = "";
+
+        for(let i = 0; i < numberOfSpacesPerLevel * level; i++) {
+            spacesPrefix += " ";
+        }
+
+        const values = await folderHandle.values();
+
+        console.log("Typeof values: " + typeof values);
+
+        if(values === undefined) {
+            console.log("Values is undefined.");
+        }
+
+        if(Array.isArray(values) && values.length === 0) {
+            console.log("Values is an array and is empty.")
+        }
+
+        for await (const value of values) {
+            output.value += spacesPrefix + "- " + value.name + " \n";
+
+            if(value.kind === "directory") {
+                await recursive(value, output, level + 1);
+            }
+        }
+    }
+
+    const showDirectoryPickerButton = document.getElementById("showDirectoryPickerButton");
+    showDirectoryPickerButton.onclick = async () => {
+        output.value += "[window.showDirectoryPicker()] - Opening Directory Picker.\n"
+
+        const folderHandle = await window.showDirectoryPicker()
+
+        output.value += "Folder selected: \n";
+
+        output.value += "    - " + folderHandle.name + " \n";
+
+        await recursive(folderHandle, output, 2);
+    }
+
+    const handleWebkitFilePicker = (event) =>{
+        for (const file of event.target.files) {
+            output.value += "    - " + file.name + " (" + file.size + ")\n";
+        }
+
+        if(document.getElementById("downloadWebkitFile").checked) {
+            const href = URL.createObjectURL(event.target.files[0]);
+            const aElement = document.createElement('a');
+            aElement.setAttribute('download', event.target.files[0].name);
+            aElement.href = href;
+            aElement.setAttribute('target', '_blank');
+            aElement.click();
+            URL.revokeObjectURL(href);
+        }
+    }
+
+    document.getElementById("webkitdirectory").addEventListener(
+        "change",
+        (event) => {
+            for (const file of event.target.files) {
+                output.value += "    - " + file.webkitRelativePath + "\n";
+            }
+        },
+        false,
+    );
+
+    document.getElementById("webkitFile").addEventListener(
+        "change",
+        handleWebkitFilePicker,
+        false,
+    );
+
+    document.getElementById("webkitMultipleFiles").addEventListener(
+        "change",
+        handleWebkitFilePicker,
+        false,
+    );
+</script>
+
+</body>
+</html>
