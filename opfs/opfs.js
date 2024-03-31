@@ -13,7 +13,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -42,11 +42,14 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
     function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
 };
 var _this = this;
+// @ts-ignore
 var buildFileSystem = function (paths) { return __awaiter(_this, void 0, void 0, function () {
-    var root, _i, paths_1, path, splitPath, parent_1, index, _a, splitPath_1, fileOrFolder;
+    var root, _i, paths_1, path, splitPath, parent_1, index, _a, splitPath_1, fileOrFolder, e_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
-            case 0: return [4 /*yield*/, navigator.storage.getDirectory()];
+            case 0:
+                _b.trys.push([0, 11, , 12]);
+                return [4 /*yield*/, navigator.storage.getDirectory()];
             case 1:
                 root = _b.sent();
                 _i = 0, paths_1 = paths;
@@ -80,54 +83,63 @@ var buildFileSystem = function (paths) { return __awaiter(_this, void 0, void 0,
             case 9:
                 _i++;
                 return [3 /*break*/, 2];
-            case 10: return [2 /*return*/];
+            case 10: return [3 /*break*/, 12];
+            case 11:
+                e_1 = _b.sent();
+                console.log(e_1);
+                return [3 /*break*/, 12];
+            case 12: return [2 /*return*/];
         }
     });
 }); };
 var buildTree = function (directory) { return __awaiter(_this, void 0, void 0, function () {
-    var html, _a, _b, handle, _c, _d, e_1_1;
-    var e_1, _e;
-    return __generator(this, function (_f) {
-        switch (_f.label) {
+    var html, _a, _b, _c, handle, _d, _e, e_2_1;
+    var _f, e_2, _g, _h;
+    return __generator(this, function (_j) {
+        switch (_j.label) {
             case 0:
                 html = "<ul>";
-                _f.label = 1;
+                _j.label = 1;
             case 1:
-                _f.trys.push([1, 8, 9, 14]);
-                _a = __asyncValues(directory.values());
-                _f.label = 2;
-            case 2: return [4 /*yield*/, _a.next()];
+                _j.trys.push([1, 8, 9, 14]);
+                _a = true, _b = __asyncValues(directory.values());
+                _j.label = 2;
+            case 2: return [4 /*yield*/, _b.next()];
             case 3:
-                if (!(_b = _f.sent(), !_b.done)) return [3 /*break*/, 7];
-                handle = _b.value;
+                if (!(_c = _j.sent(), _f = _c.done, !_f)) return [3 /*break*/, 7];
+                _h = _c.value;
+                _a = false;
+                handle = _h;
                 if (!(handle.kind === "directory")) return [3 /*break*/, 5];
-                _c = html;
-                _d = "<li>" + handle.name + " ";
+                _d = html;
+                _e = "<li>" + handle.name + " ";
                 return [4 /*yield*/, buildTree(handle)];
             case 4:
-                html = _c + (_d + (_f.sent()) + "</li>");
+                html = _d + (_e + (_j.sent()) + "</li>");
                 return [3 /*break*/, 6];
             case 5:
                 if (handle.kind === "file") {
                     html += "<li>" + handle.name + "</li>";
                 }
-                _f.label = 6;
-            case 6: return [3 /*break*/, 2];
+                _j.label = 6;
+            case 6:
+                _a = true;
+                return [3 /*break*/, 2];
             case 7: return [3 /*break*/, 14];
             case 8:
-                e_1_1 = _f.sent();
-                e_1 = { error: e_1_1 };
+                e_2_1 = _j.sent();
+                e_2 = { error: e_2_1 };
                 return [3 /*break*/, 14];
             case 9:
-                _f.trys.push([9, , 12, 13]);
-                if (!(_b && !_b.done && (_e = _a["return"]))) return [3 /*break*/, 11];
-                return [4 /*yield*/, _e.call(_a)];
+                _j.trys.push([9, , 12, 13]);
+                if (!(!_a && !_f && (_g = _b.return))) return [3 /*break*/, 11];
+                return [4 /*yield*/, _g.call(_b)];
             case 10:
-                _f.sent();
-                _f.label = 11;
+                _j.sent();
+                _j.label = 11;
             case 11: return [3 /*break*/, 13];
             case 12:
-                if (e_1) throw e_1.error;
+                if (e_2) throw e_2.error;
                 return [7 /*endfinally*/];
             case 13: return [7 /*endfinally*/];
             case 14:
@@ -137,11 +149,16 @@ var buildTree = function (directory) { return __awaiter(_this, void 0, void 0, f
     });
 }); };
 buildFileSystem([
+    "test.sqlite",
+    "root.txt",
     "a/b/c/d.txt",
+    "databases/animals.sqlite3",
     "animals/dogs/peach.txt",
     "animals/dogs/melchior.txt",
     "animals/cats/sir-winston-churchill.txt",
-]).then(function () { return __awaiter(_this, void 0, void 0, function () {
+]).then(
+// @ts-ignore
+function () { return __awaiter(_this, void 0, void 0, function () {
     var root, _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -156,4 +173,3 @@ buildFileSystem([
         }
     });
 }); });
-//# sourceMappingURL=opfs.js.map

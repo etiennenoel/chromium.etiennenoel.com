@@ -34,3 +34,6 @@
     </Files>
 
 </IfModule>
+<IfModule mod_mime.c>
+  AddType text/javascript mjs
+</IfModule>
