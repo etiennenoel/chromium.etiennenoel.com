@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>chromium.etiennenoel.com</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        #dropzone {
+            border: 2px dashed #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: border 0.3s ease;
+        }
+
+        #dropzone.dragEntered {
+            border-color: #007bff;
+        }
+
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1>Drag and Drop File System Handle</h1>
+
+            <h2>Drop Zone</h2>
+
+            <div class="w-100 h-100" id="dropzone">
+
+            </div>
+
+            <h3>Files dropped</h3>
+            <ul id="files"></ul>
+        </div>
+    </div>
+
+</div>
+<script>
+
+    document.getElementById("dropzone").addEventListener("dragenter", (e) => {
+        e = e || event;
+        e.preventDefault();
+
+        document.getElementById("dropzone").classList.add("dragEntered");
+    }, false);
+
+    document.getElementById("dropzone").addEventListener("dragover", (e) => {
+        e = e || event;
+        e.preventDefault();
+    }, false);
+
+    document.getElementById("dropzone").addEventListener("drop", async (e) => {
+        e = e || event;
+        e.preventDefault();
+
+        let fileSystemHandles = [];
+
+        const items = e.dataTransfer.items;
+
+        for (const item of e.dataTransfer.items) {
+            if(item === undefined) {
+                continue;
+            }
+
+            if (item.kind === "file") {
+                let file = await item.getAsFileSystemHandle();
+                fileSystemHandles.push(file);
+            }
+        }
+
+        let list = "";
+        for (const fileSystemHandle of fileSystemHandles) {
+            list += `<li>${fileSystemHandle.name} (${fileSystemHandle.kind})</li>`;
+        }
+
+        document.getElementById("files").innerHTML = list;
+    }, false);
+</script>
+</body>
+</html>

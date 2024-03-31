@@ -29,9 +29,32 @@
                     Download file after selection
                 </label>
             </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="saveToIDB">
+                <label class="form-check-label" for="saveToIDB">
+                    Save to IndexedDB
+                </label>
+            </div>
             <h2>Directories</h2>
             <p>Link: <a href="https://mdn1.moz.one/en-US/docs/Web/API/Window/showDirectoryPicker" target="_blank">MDN</a></p>
             <p><button class="btn btn-secondary" id="showDirectoryPickerButton"><i class="bi bi-folder"></i> Open directory (showDirectoryPicker)</button></p>
+
+            <h2>Saved to IndexedDB</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Filename</th>
+                        <th>Actions</th>
+
+                    </tr>
+                </thead>
+
+                <tbody id="indexedDBHandles">
+                    <tr>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
 
             <hr>
 
@@ -69,10 +92,88 @@
     const output = document.getElementById("output");
 
     const showFilePickerButton = document.getElementById("showFilePickerButton");
+
+    const getDB = async () => {
+        let db;
+
+        return new Promise(resolve => {
+            if(db) {
+                return resolve(db);
+            }
+
+            const request = window.indexedDB.open('file-system-access-handles', 1);
+
+            request.onupgradeneeded = (event) => {
+                if (!event.target.result.objectStoreNames.contains('handles')) {
+                    event.target.result.createObjectStore('handles', { keyPath: 'filename' });
+                }
+
+                db = event.target.result;
+                return resolve(db);
+            }
+
+            request.onsuccess = (event) => {
+                db = event.target.result;
+                return resolve(db);
+            }
+
+            request.onerror = (event) => {
+                console.error(event);
+            };
+        })
+
+    }
+
+    const loadFileSystemHandle = async (filename) => {
+        const db = await getDB();
+        const tx = db.transaction('handles', 'readonly');
+        const store = tx.objectStore('handles');
+
+        const item = await store.get(filename);
+
+        item.onsuccess = async () => {
+            console.log(`Loaded: "${item.result.filename}"`);
+
+            output.value += `Loading content of: ${item.result.filename}\n`;
+
+            const fileHandle = item.result.handle;
+
+            const options = {};
+
+            // Request permission. If the user grants permission, return true.
+            if ((await fileHandle.requestPermission(options)) === 'granted') {
+                const file = await fileHandle.getFile();
+                const contents = await file.text();
+
+                output.value += contents;
+            }
+        }
+    }
+
+   const updateDBResults = async () => {
+       const db = await getDB();
+       const tx = db.transaction('handles', 'readonly');
+       const store = tx.objectStore('handles');
+
+       const items = await store.getAll();
+
+       items.onsuccess = () => {
+           const table = document.getElementById("indexedDBHandles");
+
+           let html = "";
+           for (const item of items.result) {
+               html += `<tr><td>${item.filename}</td><td><button class="btn btn-link" onclick="loadFileSystemHandle('${item.filename}');">Read</button></td></tr>`;
+           }
+
+           table.innerHTML = html;
+       }
+   }
+
     showFilePickerButton.onclick = async () => {
         output.value += "[window.showOpenFilePicker()] - Opening File Picker.\n"
 
         const value = document.getElementById("fsahMultipleFiles").checked;
+        const saveToIDB = document.getElementById("saveToIDB").checked;
 
         const fileHandles = await window.showOpenFilePicker({
             multiple: value ,
@@ -82,6 +183,19 @@
 
         for (const fileHandle of fileHandles) {
             output.value += "     - " + fileHandle.name + " \n";
+
+            if(saveToIDB) {
+                const db = await getDB();
+
+                const tx = db.transaction('handles', 'readwrite');
+                const store = tx.objectStore('handles');
+
+                store.add({
+                    filename: fileHandle.name,
+                    handle: fileHandle,
+                })
+
+            }
         }
 
         if(document.getElementById("fsahDownloadFile").checked) {
@@ -95,6 +209,8 @@
             aElement.click();
             URL.revokeObjectURL(href);
         }
+
+        updateDBResults();
     }
 
     const recursive = async (folderHandle, output, level = 1) => {
@@ -177,6 +293,8 @@
         handleWebkitFilePicker,
         false,
     );
+
+    updateDBResults();
 </script>
 
 </body>

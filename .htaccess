@@ -6,7 +6,7 @@
     Header set Cross-Origin-Embedder-Policy "credentialless"
 
     <Files clear-site-data.html>
-        Header set Clear-Site-Data \"*\"
+        Header set Clear-Site-Data *
     </Files>
 
     <Files clear-site-data-cache.html>
