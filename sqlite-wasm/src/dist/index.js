@@ -14572,16 +14572,15 @@ const bootstrap = () => __awaiter(void 0, void 0, void 0, function* () {
         console.log("In page, received:", evt);
         const detail = evt.detail;
         if (detail.type === "EXECUTE_SQL_QUERY") {
-            const client = new window["magieno"]["sqlite"]["client"]({
+            const client = window["magieno"]["sqlite"]["client"]({
                 type: "OPFS_WORKER",
                 filename: detail.filename,
                 flags: "c",
                 sqliteWorkerPath: window["magieno"]["sqlite"]["workerPath"],
             });
-            yield client.init();
             const response = yield client.executeSql(detail.query, [], "resultRows", "object");
             window.dispatchEvent(new CustomEvent("MAGIENO_SQLITE_CLIENT_TO_EXTENSION", {
-                detail: { "type": "EXECUTE_SQL_QUERY_RESULT", "uniqueId": detail.uniqueId, "filename": detail.filename, "response": response }
+                detail: { "type": "EXECUTE_SQL_QUERY_RESULT", "filename": detail.filename, "query": detail.query, "response": response }
             }));
         }
     }));

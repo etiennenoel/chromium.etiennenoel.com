@@ -19,10 +19,31 @@
                 <div class="col-3">
 
                     <div class="form-group">
-                        <input type="text" class="form-control" placeholder="SQLite filename">
+                        <label>SQL filename:</label>
+                        <input type="text" class="form-control" placeholder="SQLite filename" value="test.sqlite3" id="sqlite-filename">
 
-                        <button class="btn btn-primary mt-2">Create Database</button>
                     </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+
+                    <div class="form-group mt-3">
+                        <label>SQL Query:</label>
+                        <textarea class="form-control w-100" style="height: 300px;" id="query">SELECT * FROM test;</textarea>
+                    </div>
+
+                    <button class="btn btn-primary mt-2" id="run-query">Run Query</button>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="row">
+                <div class="col-12">
+                    <label>Results</label>
+                    <textarea class="form-control w-100" style="height: 300px;" id="query-results"></textarea>
                 </div>
             </div>
         </div>
