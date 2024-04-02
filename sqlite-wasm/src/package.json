@@ -9,7 +9,7 @@
     "start:server": "serve public_html -c ../serve.json "
   },
   "dependencies": {
-    "@magieno/sqlite-client": "^3.45.1-build1"
+    "@magieno/sqlite-client": "^3.45.1-build3-with-extension-support"
   },
   "devDependencies": {
     "typescript": "^5.0.4",

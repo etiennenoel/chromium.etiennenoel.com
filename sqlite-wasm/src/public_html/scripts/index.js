@@ -14368,7 +14368,7 @@ globalThis.sqlite3Worker1Promiser.defaultConfig = {
     RowModeEnum["Statement"] = "stmt";
     RowModeEnum["Number"] = "number";
     RowModeEnum["String"] = "string";
-})(RowModeEnum || (RowModeEnum = {}));var __awaiter$2 = function (thisArg, _arguments, P, generator) {
+})(RowModeEnum || (RowModeEnum = {}));var __awaiter$3 = function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -14385,7 +14385,7 @@ class InMainThreadSqliteAdapter {
         return this.db;
     }
     init() {
-        return __awaiter$2(this, void 0, void 0, function* () {
+        return __awaiter$3(this, void 0, void 0, function* () {
             this.sqlite3 = yield sqlite3InitModule$1({
                 print: console.log,
                 printErr: console.error,
@@ -14393,8 +14393,8 @@ class InMainThreadSqliteAdapter {
             this.db = new this.sqlite3.oo1.DB(this.filename, this.flags);
         });
     }
-    executeSql(sqlStatement, bindParameters = [], returnValue = ReturnValueEnum.ResultRows, rowMode = RowModeEnum.Array) {
-        return __awaiter$2(this, void 0, void 0, function* () {
+    executeSql(sqlStatement_1) {
+        return __awaiter$3(this, arguments, void 0, function* (sqlStatement, bindParameters = [], returnValue = ReturnValueEnum.ResultRows, rowMode = RowModeEnum.Array) {
             return this.db.exec({
                 sql: sqlStatement,
                 bind: bindParameters,
@@ -14479,7 +14479,7 @@ class InMainThreadSqliteAdapter {
         this.worker.postMessage(executeSqlMessage);
         return promise;
     }
-}var __awaiter$1 = function (thisArg, _arguments, P, generator) {
+}var __awaiter$2 = function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -14494,16 +14494,68 @@ class InWorkerSqliteAdapter {
         this.proxy = new SqliteClientWorkerProxy(options);
     }
     init() {
-        return __awaiter$1(this, void 0, void 0, function* () {
+        return __awaiter$2(this, void 0, void 0, function* () {
             return this.proxy.init();
         });
     }
-    executeSql(sqlStatement, bindParameters = [], returnValue = ReturnValueEnum.ResultRows, rowMode = RowModeEnum.Array) {
-        return __awaiter$1(this, void 0, void 0, function* () {
+    executeSql(sqlStatement_1) {
+        return __awaiter$2(this, arguments, void 0, function* (sqlStatement, bindParameters = [], returnValue = ReturnValueEnum.ResultRows, rowMode = RowModeEnum.Array) {
             return this.proxy.executeSql(sqlStatement, bindParameters, returnValue, rowMode);
         });
     }
-}var __awaiter$3 = function (thisArg, _arguments, P, generator) {
+}var __awaiter$1 = function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+class SqliteClientExtension {
+    static dispatchEvent(event) {
+        window.dispatchEvent(new CustomEvent("MAGIENO_SQLITE_CLIENT_TO_EXTENSION", {
+            detail: event,
+        }));
+    }
+    static registerWorkerPath(sqliteWorkerPath) {
+        SqliteClientExtension.workerPath = sqliteWorkerPath;
+        caches.open("magieno").then(cache => {
+            cache.put("sqlite-worker", new Response(sqliteWorkerPath));
+        });
+    }
+    static register(workerPath) {
+        SqliteClientExtension.registerWorkerPath(workerPath);
+        window.addEventListener('MAGIENO_SQLITE_CLIENT_FROM_EXTENSION', (event) => __awaiter$1(this, void 0, void 0, function* () {
+            yield SqliteClientExtension.receiveEvent(event);
+        }));
+    }
+    static receiveEvent(event) {
+        return __awaiter$1(this, void 0, void 0, function* () {
+            const detail = event.detail;
+            switch (detail.type) {
+                case "INIT":
+                    if (SqliteClientExtension.workerPath === undefined) {
+                        SqliteClientExtension.dispatchEvent({ "type": "INIT_RESULT", "uniqueId": detail.uniqueId, "error": "Cannot find the SqliteWorkerPath. For security reasons, you must manually register it in your page: `SqliteClientExtension.registerWorkerPath('/path/to/sqlite-worker.mjs')`" });
+                        return;
+                    }
+                    SqliteClientExtension.dispatchEvent({ "type": "INIT_RESULT", "uniqueId": detail.uniqueId });
+                    return;
+                case "EXECUTE_SQL_QUERY":
+                    const client = new SqliteClient({
+                        type: SqliteClientTypeEnum.OpfsWorker,
+                        filename: detail.filename,
+                        flags: "c",
+                        sqliteWorkerPath: SqliteClientExtension.workerPath,
+                    });
+                    yield client.init();
+                    const response = yield client.executeSql(detail.query, [], ReturnValueEnum.ResultRows, RowModeEnum.Object);
+                    SqliteClientExtension.dispatchEvent({ "type": "EXECUTE_SQL_QUERY_RESULT", "uniqueId": detail.uniqueId, "filename": detail.filename, "response": response });
+                    return;
+            }
+        });
+    }
+}var __awaiter$4 = function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -14519,8 +14571,11 @@ class SqliteClient {
             case SqliteClientTypeEnum.MemoryMainThread:
                 this.adapter = new InMainThreadSqliteAdapter(this.options);
                 break;
-            case SqliteClientTypeEnum.MemoryWorker:
             case SqliteClientTypeEnum.OpfsWorker:
+                if (this.options.emitEventsToMagienoSqliteChromeExtension === true) {
+                    SqliteClientExtension.register(this.options.sqliteWorkerPath);
+                }
+            case SqliteClientTypeEnum.MemoryWorker:
             case SqliteClientTypeEnum.OpfsSahWorker:
                 this.adapter = new InWorkerSqliteAdapter(this.options);
                 break;
@@ -14529,12 +14584,12 @@ class SqliteClient {
         }
     }
     init() {
-        return __awaiter$3(this, void 0, void 0, function* () {
+        return __awaiter$4(this, void 0, void 0, function* () {
             return this.adapter.init();
         });
     }
-    executeSql(sqlStatement, bindParameters = [], returnValue = ReturnValueEnum.ResultRows, rowMode = RowModeEnum.Array) {
-        return __awaiter$3(this, void 0, void 0, function* () {
+    executeSql(sqlStatement_1) {
+        return __awaiter$4(this, arguments, void 0, function* (sqlStatement, bindParameters = [], returnValue = ReturnValueEnum.ResultRows, rowMode = RowModeEnum.Array) {
             if (this.adapter === undefined) {
                 throw new Error("You need to call `init` before calling `executeSql`.");
             }
@@ -14554,41 +14609,21 @@ const bootstrap = () => __awaiter(void 0, void 0, void 0, function* () {
     const sqliteWorkerPath = "scripts/sqlite-worker.mjs";
     const filename = "/test.sqlite3";
     const sqliteClient = new SqliteClient({
-        type: "OPFS_WORKER",
+        type: SqliteClientTypeEnum.OpfsWorker,
         filename,
         flags: "c",
         sqliteWorkerPath,
+        emitEventsToMagienoSqliteChromeExtension: true,
     });
     yield sqliteClient.init();
     yield sqliteClient.executeSql("CREATE TABLE IF NOT EXISTS test(a,b)");
     yield sqliteClient.executeSql("INSERT INTO test VALUES(?, ?)", [6, 7]);
     const results = yield sqliteClient.executeSql("SELECT * FROM test");
     console.log("Results:", results);
-    window["magieno"] = window["magieno"] || {};
-    window["magieno"]["sqlite"] = window["magieno"]["sqlite"] || {};
-    window["magieno"]["sqlite"]["workerPath"] = sqliteWorkerPath;
-    window["magieno"]["sqlite"]["client"] = SqliteClient;
-    window.addEventListener('MAGIENO_SQLITE_CLIENT_FROM_EXTENSION', (evt) => __awaiter(void 0, void 0, void 0, function* () {
-        console.log("In page, received:", evt);
-        const detail = evt.detail;
-        if (detail.type === "EXECUTE_SQL_QUERY") {
-            const client = new window["magieno"]["sqlite"]["client"]({
-                type: "OPFS_WORKER",
-                filename: detail.filename,
-                flags: "c",
-                sqliteWorkerPath: window["magieno"]["sqlite"]["workerPath"],
-            });
-            yield client.init();
-            const response = yield client.executeSql(detail.query, [], "resultRows", "object");
-            window.dispatchEvent(new CustomEvent("MAGIENO_SQLITE_CLIENT_TO_EXTENSION", {
-                detail: { "type": "EXECUTE_SQL_QUERY_RESULT", "uniqueId": detail.uniqueId, "filename": detail.filename, "response": response }
-            }));
-        }
-    }));
     document.getElementById("run-query").addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         const filename = document.getElementById("sqlite-filename").value;
         const sqliteClient = new SqliteClient({
-            type: "OPFS_WORKER",
+            type: SqliteClientTypeEnum.OpfsWorker,
             filename,
             flags: "c",
             sqliteWorkerPath,

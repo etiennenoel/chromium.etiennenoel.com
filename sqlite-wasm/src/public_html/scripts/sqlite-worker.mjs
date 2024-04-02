@@ -14385,7 +14385,6 @@ globalThis.sqlite3Worker1Promiser.defaultConfig = {
     });
 };
 const log = (...args) => console.log(...args);
-const error = (...args) => console.error(...args);
 class SqliteClientWorker {
     constructor() {
     }
@@ -14408,10 +14407,15 @@ class SqliteClientWorker {
     createDatabase(createDatabaseMessage) {
         return __awaiter(this, void 0, void 0, function* () {
             const uniqueId = createDatabaseMessage.uniqueId;
+            const errorHandler = (error) => {
+                console.error(error);
+                this.postBackMessageToMainThread(new CreateDatabaseResultMessage(uniqueId, error));
+                return;
+            };
             try {
                 const sqlite3 = yield sqlite3InitModule$1({
                     print: log,
-                    printErr: error,
+                    printErr: errorHandler,
                 });
                 switch (createDatabaseMessage.options.type) {
                     case SqliteClientTypeEnum.MemoryMainThread:
@@ -14424,8 +14428,7 @@ class SqliteClientWorker {
                             this.postBackMessageToMainThread(new CreateDatabaseResultMessage(uniqueId));
                         }
                         catch (err) {
-                            error(err.name, err.message);
-                            this.postBackMessageToMainThread(new CreateDatabaseResultMessage(uniqueId, err));
+                            errorHandler(err);
                         }
                         break;
                     case SqliteClientTypeEnum.OpfsWorker:
@@ -14435,8 +14438,7 @@ class SqliteClientWorker {
                             this.postBackMessageToMainThread(new CreateDatabaseResultMessage(uniqueId));
                         }
                         catch (err) {
-                            error(err.name, err.message);
-                            this.postBackMessageToMainThread(new CreateDatabaseResultMessage(uniqueId, err));
+                            errorHandler(err);
                         }
                         break;
                     case SqliteClientTypeEnum.OpfsSahWorker:
@@ -14451,15 +14453,13 @@ class SqliteClientWorker {
                             this.postBackMessageToMainThread(new CreateDatabaseResultMessage(uniqueId));
                         }
                         catch (err) {
-                            error(err.name, err.message);
-                            this.postBackMessageToMainThread(new CreateDatabaseResultMessage(uniqueId, err));
+                            errorHandler(err);
                         }
                         break;
                 }
             }
             catch (err) {
-                error(err.name, err.message);
-                this.postBackMessageToMainThread(new CreateDatabaseResultMessage(uniqueId, err));
+                errorHandler(err);
             }
         });
     }

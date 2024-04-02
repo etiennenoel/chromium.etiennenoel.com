@@ -17,5 +17,20 @@ export default [
                 preferBuiltins: true,
             }),
         ]
+    },
+    {
+        input: 'dist/esm/page_without_sqlite.js',
+        output: {
+            dir: 'public_html/scripts',
+            format: 'esm',
+            exports: "auto",
+            compact: true,
+        },
+        plugins: [
+            json(),
+            nodeResolve({
+                preferBuiltins: true,
+            }),
+        ]
     }
 ]
