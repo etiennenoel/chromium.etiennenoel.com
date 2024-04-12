@@ -5,58 +5,91 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>WebSQL Deprecation initiative</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
   </head>
   <body>
-    <main>
-        <h1>WebSQL Deprecation initiative</h1>
+    <main class="container">
+      <div class="row">
+        <div class="col-12">
+          <h1>WebSQL Deprecation initiative</h1>
+
+          <div id="status">
+
+          </div>
+
+          <h2>Logs:</h2>
+          <textarea class="form-control" id="logs" style="width: 100%; height: 300px;"></textarea>
+        </div>
+      </div>
     </main>
 
 <script>
-window.localStorage.setItem("test", "test")
-window.sessionStorage.setItem("test", "test")
+  const bootstrap = () => {
+    try {
+      if(window.hasOwnProperty("openDatabase") === false) {
+        console.log("Open Database not available.")
+        document.getElementById("status").innerHTML = "<div class='alert alert-danger'>WebSQL is not supported in this browser.</div>";
+        return;
+      } else {
+        document.getElementById("status").innerHTML = "<div class='alert alert-success'>WebSQL is supported in this browser.</div>";
+      }
+
+     // window.localStorage.setItem("test", "test")
+      //window.sessionStorage.setItem("test", "test")
 
       // Initialize error callback
       var errCallback = function(){
         alert("Oops! Error in sprintdb.");
+        document.getElementById("logs").value += "Error.\n";
       }
 
       // Initialize success callback
       var successCallback = function(){
-      console.log("Success callback activated.");
+        console.log("Success callback activated.");
+
+        document.getElementById("logs").value += "Success.\n";
       }
-          
+
 
       var db = openDatabase('sprintdb', '1.0', 'Best Team #1 Winner Exploration Sprint DB', 4 * 1024 * 1024);
 
       // Open
       db.transaction((tx) => {
         tx.executeSql("CREATE TABLE IF NOT EXISTS sprintdb (" +
-                      "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
-                      "origin TEXT NOT NULL, data TEXT NOT NULL);");
-                    })
+                "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
+                "origin TEXT NOT NULL, data TEXT NOT NULL);");
+      })
 
       // Save
       var saveSprintdb = (origin, data, successCallback) => {
         db.transaction((tx) => {
-          tx.executeSql(("INSERT INTO sprintdb (origin, data) VALUES (?, ?);"), 
-                        [origin, data], (tx, res) => {successCallback(res);}, errCallback);
-          });
-        };
+          tx.executeSql(("INSERT INTO sprintdb (origin, data) VALUES (?, ?);"),
+                  [origin, data], (tx, res) => {successCallback(res);}, errCallback);
+        });
+      };
 
       // Pull data for a given origin
       var loadData = (origin, successCallback) => {
         db.transaction((tx) => {
           tx.executeSql(("SELECT * FROM sprintdb WHERE origin=?"), [origin],
-                        (tx, res) => {successCallback(res);}, errCallback);
-          });
-        };
-        
-    
-        saveSprintdb("Origin", "great data", successCallback)
-        saveSprintdb("Origin2", "great data2", successCallback)
-        saveSprintdb("Origin3", "great data3", successCallback)
+                  (tx, res) => {successCallback(res);}, errCallback);
+        });
+      };
+
+
+      saveSprintdb("Origin", "great data", successCallback)
+      saveSprintdb("Origin2", "great data2", successCallback)
+      saveSprintdb("Origin3", "great data3", successCallback)
+    } catch(e) {
+      document.getElementById("logs").value += "Error.\n" + e;
+    }
+  }
+
+  bootstrap();
 
 </script>
   </body>
-</html
+</html>
