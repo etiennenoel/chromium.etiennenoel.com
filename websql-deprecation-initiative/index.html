@@ -20,6 +20,12 @@
 
           </div>
 
+          <div id="sqliteStatus">
+
+          </div>
+
+          <button class="btn btn-primary" onclick="window.location.reload()">Refresh</button>
+
           <h2>Logs:</h2>
           <textarea class="form-control" id="logs" style="width: 100%; height: 300px;"></textarea>
         </div>
@@ -32,9 +38,28 @@
       if(window.hasOwnProperty("openDatabase") === false) {
         console.log("Open Database not available.")
         document.getElementById("status").innerHTML = "<div class='alert alert-danger'>WebSQL is not supported in this browser.</div>";
-        return;
+
       } else {
         document.getElementById("status").innerHTML = "<div class='alert alert-success'>WebSQL is supported in this browser.</div>";
+      }
+
+
+      if(window.hasOwnProperty("sqlite") === false) {
+        console.log("'sqlite' not available.")
+        document.getElementById("sqliteStatus").innerHTML = "<div class='alert alert-danger'>'sqlite' is not supported in this browser.</div>";
+        return;
+      } else {
+        document.getElementById("sqliteStatus").innerHTML = "<div class='alert alert-success'>'sqlite' is supported in this browser.</div>";
+
+        /*const response = sqlite.openDatabase('sprintdb', '1.0', 'Best Team #1 Winner Exploration Sprint DB', 4 * 1024 * 1024, (resp) =>{
+          document.getElementById("logs").value += `Response from 'sqlite.openDatabase' callback: ${resp}\n\n`;
+        });
+        document.getElementById("logs").value += `Response from 'sqlite.openDatabase': ${response}\n\n`;*/
+
+        const response2 = sqlite.openDatabase('sprintdb', '1.0', 'Best Team #1 Winner Exploration Sprint DB', 4 * 1024 * 1024, `(resp) =>{
+          document.getElementById("logs").value += "Response2 from 'sqlite.openDatabase' callback: " + resp + "}\n\n;
+        }`);
+        document.getElementById("logs").value += `Response2 from 'sqlite.openDatabase': ${response2}\n\n`;
       }
 
      // window.localStorage.setItem("test", "test")
