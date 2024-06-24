@@ -68,7 +68,7 @@
                     </tr>
                 </thead>
 
-                <tbody>
+                <tbody id="changes-list">
 
                 </tbody>
             </table>
@@ -77,7 +77,16 @@
             </div>
 
             <script type="module">
-                const observer = () => {};
+                const observerCallback = async (records, observer) => {
+                    for(let record of records) {
+                        let list = "";
+                        for(let entry of record) {
+                            list += `<tr><td>${new Date(entry.time).toLocaleString()}</td><td>${entry.path}</td><td>${entry.type}</td></tr>`;
+                        }
+
+                        document.getElementById("changes-list").innerHTML += list;
+                    }
+                };
 
                 document.getElementById("dropzone").addEventListener("dragenter", (e) => {
                     e = e || event;
@@ -125,6 +134,9 @@
                     // Add the file system handles to the list of observed paths
                     let list = "";
                     for await (const fileSystemHandle of fileSystemHandles) {
+                        const observer = new FileSystemObserver(observerCallback);
+                        await observer.observe(fileSystemHandle);
+
                         list += `<tr><td>${fileSystemHandle.name}</td><td>${fileSystemHandle.kind}</td><td></td></tr>`;
                     }
 
