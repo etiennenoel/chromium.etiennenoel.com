@@ -63,8 +63,9 @@
                 <thead>
                     <tr>
                         <th>Date</th>
-                        <th>Path</th>
+                        <th>Name</th>
                         <th>Change Type</th>
+                        <th>Metadata</th>
                     </tr>
                 </thead>
 
@@ -80,10 +81,19 @@
                 const observerCallback = async (records, observer) => {
                     for(let record of records) {
                         let list = "";
-                        for(let entry of record) {
-                            list += `<tr><td>${new Date(entry.time).toLocaleString()}</td><td>${entry.path}</td><td>${entry.type}</td></tr>`;
+                        const handle = record.changedHandle;
+                        const object = {
+                            relativePathComponents: record.relativePathComponents,
+                            relativePathMovedFrom: record.relativePathMovedFrom,
+                            type: record.type,
                         }
 
+                            list += `<tr>
+                                        <td>${new Date().toLocaleString()}</td>
+                                        <td>${handle.name}</td>
+                                        <td>${record.type}</td>
+                                        <td><pre>${JSON.stringify(object, null, 2)}</pre></td>
+                                        </tr>`;
                         document.getElementById("changes-list").innerHTML += list;
                     }
                 };
