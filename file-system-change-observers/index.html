@@ -62,6 +62,7 @@
             <table class="table table-responsive">
                 <thead>
                     <tr>
+                        <th>#</th>
                         <th>Date</th>
                         <th>Name</th>
                         <th>Change Type</th>
@@ -78,6 +79,8 @@
             </div>
 
             <script type="module">
+                let eventsIndex = 0;
+
                 const observerCallback = async (records, observer) => {
                     for(let record of records) {
                         let list = "";
@@ -89,12 +92,15 @@
                         }
 
                             list += `<tr>
+                                        <td>${eventsIndex}</td>
                                         <td>${new Date().toLocaleString()}</td>
                                         <td>${handle.name}</td>
                                         <td>${record.type}</td>
                                         <td><pre>${JSON.stringify(object, null, 2)}</pre></td>
                                         </tr>`;
                         document.getElementById("changes-list").innerHTML += list;
+
+                        eventsIndex++;
                     }
                 };
 
@@ -144,10 +150,11 @@
                     // Add the file system handles to the list of observed paths
                     let list = "";
                     for await (const fileSystemHandle of fileSystemHandles) {
-                        const observer = new FileSystemObserver(observerCallback);
+                        const observer = new FileSystemObserver(observerCallback, {recursive: true});
                         await observer.observe(fileSystemHandle);
 
                         list += `<tr><td>${fileSystemHandle.name}</td><td>${fileSystemHandle.kind}</td><td></td></tr>`;
+
                     }
 
                     document.getElementById("paths-list").innerHTML += list;
