@@ -81,6 +81,8 @@
             <script type="module">
                 let eventsIndex = 0;
 
+                window.fileSystemChangeObservers = [];
+
                 const observerCallback = async (records, observer) => {
                     for(let record of records) {
                         let list = "";
@@ -99,8 +101,10 @@
                                         <td><pre>${JSON.stringify(object, null, 2)}</pre></td>
                                         </tr>`;
                         document.getElementById("changes-list").innerHTML += list;
+                        window.scrollTo(0, document.body.scrollHeight);
 
                         eventsIndex++;
+
                     }
                 };
 
@@ -150,11 +154,12 @@
                     // Add the file system handles to the list of observed paths
                     let list = "";
                     for await (const fileSystemHandle of fileSystemHandles) {
-                        const observer = new FileSystemObserver(observerCallback, {recursive: true});
-                        await observer.observe(fileSystemHandle);
+                        const observer = new FileSystemObserver(observerCallback);
+                        await observer.observe(fileSystemHandle, {recursive: true});
 
                         list += `<tr><td>${fileSystemHandle.name}</td><td>${fileSystemHandle.kind}</td><td></td></tr>`;
 
+                        window.fileSystemChangeObservers.push(observer);
                     }
 
                     document.getElementById("paths-list").innerHTML += list;
