@@ -10,6 +10,7 @@ import {RequirementInterface} from "./interfaces/requirement.interface";
 import {ApiExecutorInterface} from "./interfaces/api-executor.interface";
 import {Step1} from "./interfaces/step-1.interface";
 import {Step0} from "./interfaces/step-0.interface";
+import {ActivatedRoute, Params, Router} from '@angular/router';
 
 @Component({
   selector: 'app-translator-api',
@@ -43,6 +44,8 @@ export class TranslatorApiComponent implements OnInit {
   constructor(
       private readonly currentApiExecutor: CurrentApiExecutor,
       private readonly explainerApiExecutor: ExplainerApiExecutor,
+      private readonly router: Router,
+      private route: ActivatedRoute,
       ) {
 
     this.apiExecutor = currentApiExecutor;
@@ -51,7 +54,15 @@ export class TranslatorApiComponent implements OnInit {
 
 
   ngOnInit() {
+    this.route.queryParams.subscribe((params) => {
+      if(params['apiVersion']) {
+        this.apiVersion.setValue(params['apiVersion']);
+      }
+    })
+
     this.apiVersion.valueChanges.subscribe((value) => {
+      this.router.navigate(['.'], { relativeTo: this.route, queryParams: { apiVersion: value}});
+
         switch (value) {
           case TranslatorApiVersionEnum.Current:
             this.apiExecutor = this.currentApiExecutor;

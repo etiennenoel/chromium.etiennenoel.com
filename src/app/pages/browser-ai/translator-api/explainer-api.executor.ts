@@ -16,10 +16,16 @@ export class ExplainerApiExecutor implements ApiExecutorInterface{
     let translationApiMessage: string;
 
     // Check if the translation API flag is enabled
-    if(isPlatformBrowser(this.platformId) && !window.hasOwnProperty('ai')) {
+    if(isPlatformBrowser(this.platformId) && ! ("ai" in window)) {
       translationApiStatus = RequirementStatus.Fail;
       translationApiMessage = "'window.ai' is not defined. Activate the flag.";
-    } else {
+    }
+    // @ts-ignore
+    else if(isPlatformBrowser(this.platformId) && ! ("translator" in window.ai)) {
+      translationApiStatus = RequirementStatus.Fail;
+      translationApiMessage = "'window.ai.translator' is not defined. Activate the flag.";
+    }
+    else {
       translationApiStatus = RequirementStatus.Pass;
       translationApiMessage = "Passed";
     }
@@ -33,16 +39,32 @@ export class ExplainerApiExecutor implements ApiExecutorInterface{
   }
 
   async executeStep0(sourceLanguage: string, targetLanguage: string): Promise<Step0> {
-    return {
-      log: "",
-      status: StepStatus.Completed,
-      available: "false",
-      outputCollapsed: false,
+    try {
+      // @ts-ignore
+      const translatorCapabilities = await window.ai.translator.capabilities();
+
+      const availability = translatorCapabilities.languagePairAvailable(sourceLanguage, targetLanguage);
+
+      return {
+        log: `Result of availability: '${availability}'.`,
+        status: StepStatus.Completed,
+        available: availability,
+        outputCollapsed: false,
+      }
+    } catch (e: any) {
+      return {
+        log: `Error: ${e.message}`,
+        status: StepStatus.Error,
+        available: "error",
+        outputCollapsed: false,
+      }
     }
   }
 
   getStep0Code(sourceLanguage: string | null, targetLanguage?: string | null): string {
-    return "";
+    return "const translatorCapabilities = await window.ai.translator.capabilities();\n" +
+      "const availability = translatorCapabilities.languagePairAvailable(sourceLanguage, targetLanguage);\n" +
+      "console.log(Result of availability: '${availability}'.);";
   }
 
   executeStep1(sourceLanguage: string, targetLanguage: string, callback?: (progress: {bytesDownloaded: number, totalBytes: number}) => void):  Promise<{log: string; status: StepStatus}> {
@@ -61,9 +83,14 @@ export class ExplainerApiExecutor implements ApiExecutorInterface{
             });
           },
         });
+
+        return resolve({
+          log: "Translator created.",
+          status: StepStatus.Completed,
+        })
       } catch (e: any) {
         return resolve({
-          log: `There was an error executing the command. Error: ${e.message}`,
+          log: `Error: ${e.message}`,
           status: StepStatus.Error,
         })
       }

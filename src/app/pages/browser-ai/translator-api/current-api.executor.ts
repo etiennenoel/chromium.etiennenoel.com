@@ -18,7 +18,7 @@ export class CurrentApiExecutor implements ApiExecutorInterface {
 
     // Check if the translation API flag is enabled
     // @ts-ignore
-    if(isPlatformBrowser(this.platformId) && (!window.hasOwnProperty('translation') || window.translation.hasOwnProperty('createTranslator'))) {
+    if (isPlatformBrowser(this.platformId) && (!window.hasOwnProperty('translation') || window.translation.hasOwnProperty('createTranslator'))) {
       translationApiStatus = RequirementStatus.Fail;
       translationApiMessage = "'window.translation' is not defined. Activate the flag.";
     } else {
@@ -57,25 +57,36 @@ export class CurrentApiExecutor implements ApiExecutorInterface {
       "console.log(\`Result of canTranslate: '${canTranslate}'.`);";
   }
 
-  executeStep1(sourceLanguage: string, targetLanguage: string, callback?: (progress: {bytesDownloaded: number, totalBytes: number}) => void):  Promise<{log: string; status: StepStatus}> {
-    return new Promise<{log: string, status: StepStatus}>(async (resolve, reject) => {
-      // @ts-ignore
-      const translator = await window.translation.createTranslator({
-        sourceLanguage,
-        targetLanguage,
-      });
-
-      translator.ondownloadprogress = (progressEvent: any) => {
-        callback?.({
-          bytesDownloaded: progressEvent.loaded,
-          totalBytes: progressEvent.total,
+  executeStep1(sourceLanguage: string, targetLanguage: string, callback?: (progress: {
+    bytesDownloaded: number,
+    totalBytes: number
+  }) => void): Promise<{ log: string; status: StepStatus }> {
+    return new Promise<{ log: string, status: StepStatus }>(async (resolve, reject) => {
+      try {
+        // @ts-ignore
+        const translator = await window.translation.createTranslator({
+          sourceLanguage,
+          targetLanguage,
         });
-      };
 
-      return resolve({
-        log: "Translator created.",
-        status: StepStatus.Completed,
-      });
+        translator.ondownloadprogress = (progressEvent: any) => {
+          callback?.({
+            bytesDownloaded: progressEvent.loaded,
+            totalBytes: progressEvent.total,
+          });
+        };
+
+        return resolve({
+          log: "Translator created.",
+          status: StepStatus.Completed,
+        });
+
+      } catch (e: any) {
+        return resolve({
+          log: `Error: ${e.message}`,
+          status: StepStatus.Error,
+        })
+      }
     });
   }
 
