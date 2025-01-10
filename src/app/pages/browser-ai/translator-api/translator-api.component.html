@@ -7,6 +7,16 @@
             <a href="https://github.com/webmachinelearning/translation-api" target="_blank">Explainer</a>
             <div>To manually install and uninstall language packs: <span class="code">chrome://on-device-translation-internals/</span>
             </div>
+
+            <div class="row">
+                <div class="col-3">
+                    <strong>API Version:</strong>
+                    <select class="form-control" [formControl]="apiVersion">
+                        <option [value]="TranslatorApiVersionEnum.Current">Current</option>
+                        <option [value]="TranslatorApiVersionEnum.Explainer">Explainer</option>
+                    </select>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -87,15 +97,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                        <pre><code>const translator = await ai.translator.create(&#123;
-    sourceLanguage: "{{ sourceLanguage.value }}",
-    targetLanguage: "{{ targetLanguage.value }}",
-    monitor(m) &#123;
-        m.addEventListener("downloadprogress", e => &#123;
-            console.log(`Downloaded $&#123;e.loaded&#125; of $&#123;e.total&#125; bytes.`);
-        &#125;);
-    &#125;,
-&#125;);</code></pre>
+                        <pre><code>{{ this.apiExecutor.getStep1Code(this.sourceLanguage.value, this.targetLanguage.value) }}</code></pre>
                         </div>
                     </div>
                 </div>

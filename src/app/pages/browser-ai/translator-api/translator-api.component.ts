@@ -1,27 +1,14 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl} from "@angular/forms";
-
-enum StepStatus {
-    Idle = 'IDLE',
-    Executing = 'EXECUTING',
-    Completed = 'COMPLETED',
-    Error = 'ERROR',
-}
-
-enum RequirementStatus {
-  Checking = 'CHECKING',
-  Fail = 'FAIL',
-  Pass = 'PASS',
-}
-
-interface Step1 {
-  status: StepStatus,
-  totalBytes: number;
-  bytesDownloaded: number;
-  outputCollapsed: boolean
-  log: string;
-}
-
+import {StepStatus} from "../../../enums/step-status.enum";
+import {RequirementStatus} from "../../../enums/requirement-status.enum";
+import {languages} from "../../../constants/languages.constants";
+import {TranslatorApiVersionEnum} from "../../../enums/translator-api-version.enum";
+import {CurrentApiExecutor} from "./current-api.executor";
+import {ExplainerApiExecutor} from "./explainer-api.executor";
+import {RequirementInterface} from "./interfaces/requirement.interface";
+import {ApiExecutorInterface} from "./interfaces/api-executor.interface";
+import {Step1} from "./interfaces/step-1.interface";
 
 @Component({
   selector: 'app-translator-api',
@@ -30,84 +17,89 @@ interface Step1 {
   styleUrl: './translator-api.component.scss'
 })
 export class TranslatorApiComponent implements OnInit {
-  languages: {locale: string, title: string}[] = [
-    {locale:"en", title: "English"},
-      {locale:"fr", title: "French"},
-      {locale: "de", title: "German"},
-      {locale: "it", title: "Italian"},
-      {locale: "es", title: "Spanish"},
-      {locale: "pt", title: "Portuguese"},
-      {locale: "nl", title: "Dutch"},
-      {locale: "ru", title: "Russian"},
-      {locale: "ja", title: "Japanese"},
-  ]
+  apiVersion = new FormControl<TranslatorApiVersionEnum>(TranslatorApiVersionEnum.Current);
 
+  languages = languages;
   sourceLanguage= new FormControl("en");
-
   targetLanguage = new FormControl('fr');
 
-  requirements: {
-    translationApiFlag: {
-      status: RequirementStatus,
-      message: string;
-    }
-  } = {
+  apiExecutor!: ApiExecutorInterface;
+
+  requirements: RequirementInterface = {
     translationApiFlag: {
         status: RequirementStatus.Checking,
       message: "Checking",
     }
   }
 
-  steps: {
+  steps!: {
     step1: Step1,
-  } = {
-    step1: {
+  };
+  protected readonly StepStatus = StepStatus;
+
+  constructor(
+      private readonly currentApiExecutor: CurrentApiExecutor,
+      private readonly explainerApiExecutor: ExplainerApiExecutor,
+      ) {
+
+    this.apiExecutor = currentApiExecutor;
+    this.apiVersion.setValue(TranslatorApiVersionEnum.Current);
+  }
+
+
+  ngOnInit() {
+    this.apiVersion.valueChanges.subscribe((value) => {
+        switch (value) {
+          case TranslatorApiVersionEnum.Current:
+            this.apiExecutor = this.currentApiExecutor;
+            break;
+
+          case TranslatorApiVersionEnum.Explainer:
+            this.apiExecutor = this.explainerApiExecutor;
+            break;
+        }
+
+      this.reset();
+    })
+
+    this.reset();
+  }
+
+  reset() {
+    this.steps = {
+      step1: {
         status: StepStatus.Idle,
         totalBytes: 0,
         bytesDownloaded: 0,
         outputCollapsed: true,
         log: "",
+      }
     }
-  };
-  protected readonly StepStatus = StepStatus;
 
-  ngOnInit() {
-    this.checkRequirements();
+    this.checkRequirements()
   }
 
-  async checkRequirements() {
-    // Check if the translation API flag is enabled
-    if(!window.hasOwnProperty('ai')) {
-        this.requirements.translationApiFlag.status = RequirementStatus.Fail;
-        this.requirements.translationApiFlag.message = "'window.ai' is not defined. Activate the flag.";
-    } else {
-        this.requirements.translationApiFlag.status = RequirementStatus.Pass;
-        this.requirements.translationApiFlag.message = "Passed";
-    }
+  checkRequirements() {
+    this.requirements = this.apiExecutor.checkRequirements();
   }
 
   async executeStep1() {
     this.steps.step1.status = StepStatus.Executing;
     this.steps.step1.outputCollapsed = false;
 
-    try {
-      // @ts-ignore
-      const translator = await ai.translator.create({
-        sourceLanguage: this.sourceLanguage,
-        targetLanguage: this.targetLanguage,
-        monitor(m: any) {
-          m.addEventListener("downloadprogress", (e: any) => {
-            this.steps.step1.bytesDownloaded = e.loaded;
-            this.steps.step1.totalBytes = e.total;
-          });
-        },
-      });
-    } catch (e: any) {
-        this.steps.step1.log = `There was an error executing the command. Error: ${e.message}`;
-        this.steps.step1.status = StepStatus.Error;
+    if(this.sourceLanguage.value === null || this.targetLanguage.value === null) {
+      return;
     }
 
+    const response = await this.apiExecutor.executeStep1(this.sourceLanguage.value, this.targetLanguage.value, (progress) => {
+      this.steps.step1.bytesDownloaded = progress.bytesDownloaded;
+      this.steps.step1.totalBytes = progress.totalBytes;
+    });
+
+    this.steps.step1.log = response.log;
+    this.steps.step1.status = response.status
   }
 
   protected readonly RequirementStatus = RequirementStatus;
+  protected readonly TranslatorApiVersionEnum = TranslatorApiVersionEnum;
 }
