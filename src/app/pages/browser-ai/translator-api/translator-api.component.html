@@ -94,8 +94,8 @@
     </div>
 
     <div class="row mt-5">
-        <div class="col-12">
-            <h2>Step 0: Language Pack available</h2>
+        <div class="col-12" stepVisualStatus [status]="steps.step0.status">
+            <app-step-title [status]="steps.step0.status" title="Step 0: Language Pack available"></app-step-title>
 
             <div class="row">
                 <div class="col-12">
@@ -130,8 +130,27 @@
                             {{ steps.step0.log }}
                         </div>
 
-                        <div *ngIf="steps.step0.status !== StepStatus.Error">
-
+                        <div class="mt-3" *ngIf="steps.step0.status !== StepStatus.Error">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Variable</th>
+                                        <th>Value</th>
+                                        <th>Interpretation</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="align-middle">canTranslate</td>
+                                        <td class="align-middle"><span class="code">{{ steps.step0.available }}</span></td>
+                                        <td class="align-middle"><ul>
+                                            <li class="mt-1"><span class="code code-yellow">after-download</span>: Available after creating the translator</li>
+                                            <li class="mt-1"><span class="code code-yellow">no</span>: Not available</li>
+                                            <li class="mt-1"><span class="code code-yellow">readily</span>: Readily available without downloading</li>
+                                        </ul></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
 
@@ -143,8 +162,8 @@
     </div>
 
     <div class="row mt-5">
-        <div class="col-12">
-            <h2>Step 1: Create the translator with the desired languages</h2>
+        <div class="col-12" stepVisualStatus [status]="steps.step1.status">
+            <app-step-title [status]="steps.step1.status" title="Step 1: Create the translator with the desired languages"></app-step-title>
 
             <div class="row">
                 <div class="col-12">

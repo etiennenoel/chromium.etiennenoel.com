@@ -8,14 +8,24 @@ import {TranslatorApiComponent} from './pages/browser-ai/translator-api/translat
 import {ReactiveFormsModule} from '@angular/forms';
 import {ExplainerApiExecutor} from "./pages/browser-ai/translator-api/explainer-api.executor";
 import {CurrentApiExecutor} from "./pages/browser-ai/translator-api/current-api.executor";
+import {StepStatusIconComponent} from "./components/step-status-icon/step-status-icon.component";
+import {StepTitleComponent} from "./components/step-title/step-title.component";
+import {StepContainerVisualStatusDirective} from "./directives/step-container-visual-status.directive";
 
 @NgModule({
     declarations: [
         RootComponent,
         IndexComponent,
 
+        // Directives
+        StepContainerVisualStatusDirective,
+
+        StepStatusIconComponent,
+        StepTitleComponent,
+
         // Browser AI APIs
         TranslatorApiComponent,
+        StepContainerVisualStatusDirective,
     ],
     imports: [
         BrowserModule,

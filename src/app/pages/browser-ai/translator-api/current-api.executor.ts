@@ -42,7 +42,7 @@ export class CurrentApiExecutor implements ApiExecutorInterface {
     });
 
     return {
-      log: "",
+      log: `Result of canTranslate: '${canTranslate}'.`,
       status: StepStatus.Completed,
       available: canTranslate,
       outputCollapsed: false,
@@ -53,7 +53,8 @@ export class CurrentApiExecutor implements ApiExecutorInterface {
     return "const canTranslate = await translation.canTranslate({\n" +
       "  sourceLanguage: '" + sourceLanguage + "',\n" +
       "  targetLanguage: '" + targetLanguage + "',\n" +
-      "});";
+      "});\n" +
+      "console.log(\`Result of canTranslate: '${canTranslate}'.`);";
   }
 
   executeStep1(sourceLanguage: string, targetLanguage: string, callback?: (progress: {bytesDownloaded: number, totalBytes: number}) => void):  Promise<{log: string; status: StepStatus}> {

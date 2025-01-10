@@ -8,4 +8,9 @@
   border: 1px solid $primary-border-subtle;
   padding: 3px;
   border-radius: 6px;
+
+  &.code-yellow {
+    background-color: $warning-bg-subtle;
+    border: 1px solid $warning-border-subtle;
+  }
 }

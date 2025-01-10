@@ -104,6 +104,7 @@ export class TranslatorApiComponent implements OnInit {
 
     this.steps.step0.log = response.log;
     this.steps.step0.status = response.status
+    this.steps.step0.available = response.available;
   }
 
 
