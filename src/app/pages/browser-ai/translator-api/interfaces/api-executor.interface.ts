@@ -12,4 +12,8 @@ export interface ApiExecutorInterface {
   executeStep1(sourceLanguage: string, targetLanguage: string, callback?: (progress: {bytesDownloaded: number, totalBytes: number}) => void): Promise<{log: string; status: StepStatus}>;
 
   getStep1Code(sourceLanguage: string | null, targetLanguage?: string | null): string;
+
+  executeStep2(sourceLanguage: string, targetLanguage: string, content:string | null): Promise<{log: string; translatedContent: string, status: StepStatus}>;
+
+  getStep2Code(sourceLanguage: string | null, targetLanguage: string | null, content:string | null): string;
 }

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormControl} from "@angular/forms";
 import {StepStatus} from "../../../enums/step-status.enum";
 import {RequirementStatus} from "../../../enums/requirement-status.enum";
@@ -11,6 +11,8 @@ import {ApiExecutorInterface} from "./interfaces/api-executor.interface";
 import {Step1} from "./interfaces/step-1.interface";
 import {Step0} from "./interfaces/step-0.interface";
 import {ActivatedRoute, Params, Router} from '@angular/router';
+import {Subscription} from 'rxjs';
+import {Step2} from './interfaces/step-2.interface';
 
 @Component({
   selector: 'app-translator-api',
@@ -18,12 +20,13 @@ import {ActivatedRoute, Params, Router} from '@angular/router';
   standalone: false,
   styleUrl: './translator-api.component.scss'
 })
-export class TranslatorApiComponent implements OnInit {
+export class TranslatorApiComponent implements OnInit, OnDestroy {
   apiVersion = new FormControl<TranslatorApiVersionEnum>(TranslatorApiVersionEnum.Current);
 
   languages = languages;
   sourceLanguage= new FormControl("en");
   targetLanguage = new FormControl('fr');
+  content = new FormControl('');
 
   apiExecutor!: ApiExecutorInterface;
 
@@ -37,7 +40,10 @@ export class TranslatorApiComponent implements OnInit {
   steps!: {
     step0: Step0,
     step1: Step1,
+    step2: Step2,
   };
+
+  public subscriptions: Subscription[] = [];
 
   protected readonly StepStatus = StepStatus;
 
@@ -54,29 +60,57 @@ export class TranslatorApiComponent implements OnInit {
 
 
   ngOnInit() {
-    this.route.queryParams.subscribe((params) => {
+    this.subscriptions.push(this.apiVersion.valueChanges.subscribe((value) => {
+      this.router.navigate(['.'], { relativeTo: this.route, queryParams: { apiVersion: value}, queryParamsHandling: 'merge' });
+
+      switch (value) {
+        case TranslatorApiVersionEnum.Current:
+          this.apiExecutor = this.currentApiExecutor;
+          break;
+
+        case TranslatorApiVersionEnum.Explainer:
+          this.apiExecutor = this.explainerApiExecutor;
+          break;
+      }
+
+      this.reset();
+    }));
+
+    this.subscriptions.push(this.route.queryParams.subscribe((params) => {
       if(params['apiVersion']) {
         this.apiVersion.setValue(params['apiVersion']);
       }
-    })
 
-    this.apiVersion.valueChanges.subscribe((value) => {
-      this.router.navigate(['.'], { relativeTo: this.route, queryParams: { apiVersion: value}});
+      if(params['sourceLanguage']) {
+        this.sourceLanguage.setValue(params['sourceLanguage']);
+      }
+      if(params['targetLanguage']) {
+        this.targetLanguage.setValue(params['targetLanguage']);
+      }
+      if(params['content']) {
+        this.content.setValue(params['content']);
+      }
+    }));
 
-        switch (value) {
-          case TranslatorApiVersionEnum.Current:
-            this.apiExecutor = this.currentApiExecutor;
-            break;
+    this.subscriptions.push(this.sourceLanguage.valueChanges.subscribe((value) => {
+      this.router.navigate(['.'], { relativeTo: this.route, queryParams: { sourceLanguage: value}, queryParamsHandling: 'merge' });
+    }));
 
-          case TranslatorApiVersionEnum.Explainer:
-            this.apiExecutor = this.explainerApiExecutor;
-            break;
-        }
+    this.subscriptions.push(this.targetLanguage.valueChanges.subscribe((value) => {
+      this.router.navigate(['.'], { relativeTo: this.route, queryParams: { targetLanguage: value}, queryParamsHandling: 'merge' });
+    }));
 
-      this.reset();
-    })
+    this.subscriptions.push(this.content.valueChanges.subscribe((value) => {
+      this.router.navigate(['.'], { relativeTo: this.route, queryParams: { content: value}, queryParamsHandling: 'merge' });
+    }));
 
     this.reset();
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach((subscription) => {
+      subscription.unsubscribe();
+    });
   }
 
   reset() {
@@ -93,6 +127,15 @@ export class TranslatorApiComponent implements OnInit {
         bytesDownloaded: 0,
         outputCollapsed: true,
         log: "",
+      },
+      step2: {
+        status: StepStatus.Idle,
+        translatedContent: "",
+        outputCollapsed: true,
+        log: "",
+        sourceLanguage: "",
+        targetLanguage: "",
+        content: "",
       }
     }
 
@@ -134,6 +177,24 @@ export class TranslatorApiComponent implements OnInit {
 
     this.steps.step1.log = response.log;
     this.steps.step1.status = response.status
+  }
+
+  async executeStep2() {
+    this.steps.step2.status = StepStatus.Executing;
+    this.steps.step2.outputCollapsed = false;
+    this.steps.step2.content = this.content.value ?? "";
+    this.steps.step2.targetLanguage = this.targetLanguage.value ?? "";
+    this.steps.step2.sourceLanguage = this.sourceLanguage.value ?? "";
+
+    if(this.sourceLanguage.value === null || this.targetLanguage.value === null) {
+      return;
+    }
+
+    const response = await this.apiExecutor.executeStep2(this.sourceLanguage.value, this.targetLanguage.value, this.content.value);
+
+    this.steps.step2.translatedContent = response.translatedContent;
+    this.steps.step2.log = response.log;
+    this.steps.step2.status = response.status
   }
 
   protected readonly RequirementStatus = RequirementStatus;

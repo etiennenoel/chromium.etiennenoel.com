@@ -7,7 +7,7 @@ import {StepStatus} from '../../../enums/step-status.enum';
 import {Step0} from './interfaces/step-0.interface';
 
 @Injectable()
-export class ExplainerApiExecutor implements ApiExecutorInterface{
+export class ExplainerApiExecutor implements ApiExecutorInterface {
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {
   }
 
@@ -16,16 +16,15 @@ export class ExplainerApiExecutor implements ApiExecutorInterface{
     let translationApiMessage: string;
 
     // Check if the translation API flag is enabled
-    if(isPlatformBrowser(this.platformId) && ! ("ai" in window)) {
+    if (isPlatformBrowser(this.platformId) && !("ai" in window)) {
       translationApiStatus = RequirementStatus.Fail;
       translationApiMessage = "'window.ai' is not defined. Activate the flag.";
     }
     // @ts-ignore
-    else if(isPlatformBrowser(this.platformId) && ! ("translator" in window.ai)) {
+    else if (isPlatformBrowser(this.platformId) && !("translator" in window.ai)) {
       translationApiStatus = RequirementStatus.Fail;
       translationApiMessage = "'window.ai.translator' is not defined. Activate the flag.";
-    }
-    else {
+    } else {
       translationApiStatus = RequirementStatus.Pass;
       translationApiMessage = "Passed";
     }
@@ -67,8 +66,11 @@ export class ExplainerApiExecutor implements ApiExecutorInterface{
       "console.log(Result of availability: '${availability}'.);";
   }
 
-  executeStep1(sourceLanguage: string, targetLanguage: string, callback?: (progress: {bytesDownloaded: number, totalBytes: number}) => void):  Promise<{log: string; status: StepStatus}> {
-    return new Promise<{log: string; status: StepStatus}>(async (resolve) => {
+  executeStep1(sourceLanguage: string, targetLanguage: string, callback?: (progress: {
+    bytesDownloaded: number,
+    totalBytes: number
+  }) => void): Promise<{ log: string; status: StepStatus }> {
+    return new Promise<{ log: string; status: StepStatus }>(async (resolve) => {
       try {
         // @ts-ignore
         const translator = await ai.translator.create({
@@ -108,5 +110,38 @@ export class ExplainerApiExecutor implements ApiExecutorInterface{
       "        });\n" +
       "    },\n" +
       "});";
+  }
+
+  async executeStep2(sourceLanguage: string, targetLanguage: string, content: string): Promise<{
+    log: string;
+    translatedContent: string,
+    status: StepStatus
+  }> {
+    try {
+      // @ts-ignore
+      const translator = await ai.translator.create({
+        sourceLanguage: sourceLanguage,
+        targetLanguage: targetLanguage,
+      });
+
+      const translatedContent = await translator.translate(content);
+
+      return {
+        log: `Translated content: ${translatedContent}`,
+        translatedContent: translatedContent,
+        status: StepStatus.Completed,
+      };
+    } catch (e: any) {
+      return {
+        log: `Error: ${e.message}`,
+        translatedContent: "",
+        status: StepStatus.Error,
+      }
+    }
+  }
+
+  getStep2Code(sourceLanguage: string | null, targetLanguage: string | null, content: string | null): string {
+    return "const translatedContent = await translator.translate('" + content + "');\n" +
+      "console.log(`Translated content: '${translatedContent}'.`);";
   }
 }

@@ -104,4 +104,36 @@ export class CurrentApiExecutor implements ApiExecutorInterface {
       "};";
   }
 
+  async executeStep2(sourceLanguage: string, targetLanguage: string, content: string): Promise<{
+    log: string;
+    translatedContent: string,
+    status: StepStatus
+  }> {
+    try {
+      // @ts-ignore
+      const translator = await window.translation.createTranslator({
+        sourceLanguage,
+        targetLanguage,
+      });
+      const translatedContent = await translator.translate(content);
+
+      return {
+        log: `Translated content: ${content}`,
+        translatedContent: translatedContent,
+        status: StepStatus.Completed,
+      };
+    } catch (e: any) {
+      return {
+        log: `Error: ${e.message}`,
+        translatedContent: "",
+        status: StepStatus.Error,
+      };
+    }
+  }
+
+  getStep2Code(sourceLanguage: string | null, targetLanguage: string | null, content: string | null): string {
+    return "const translatedContent = await translator.translate('" + content + "');\n" +
+      "console.log(`Translated content: '${translatedContent}'.`);";
+  }
+
 }
