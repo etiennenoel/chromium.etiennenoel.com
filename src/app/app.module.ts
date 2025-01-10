@@ -5,6 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import {IndexComponent} from './pages/index/index.component';
 import {RootComponent} from './components/root/root.component';
 import {TranslatorApiComponent} from './pages/browser-ai/translator-api/translator-api.component';
+import {ReactiveFormsModule} from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import {TranslatorApiComponent} from './pages/browser-ai/translator-api/translat
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    ReactiveFormsModule
   ],
   providers: [
     provideClientHydration(withEventReplay())
