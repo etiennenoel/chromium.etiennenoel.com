@@ -53,21 +53,44 @@ export class CurrentApiExecutor implements ApiExecutorInterface {
     return "const canTranslate = await translation.canTranslate({\n" +
       "  sourceLanguage: '" + sourceLanguage + "',\n" +
       "  targetLanguage: '" + targetLanguage + "',\n" +
-      "});\n" +
+      "});\n\n" +
       "console.log(\`Result of canTranslate: '${canTranslate}'.`);";
   }
 
   executeStep1(sourceLanguage: string, targetLanguage: string, callback?: (progress: {bytesDownloaded: number, totalBytes: number}) => void):  Promise<{log: string; status: StepStatus}> {
-    return new Promise<{log: string, status: StepStatus}>((resolve, reject) => {
+    return new Promise<{log: string, status: StepStatus}>(async (resolve, reject) => {
+      // @ts-ignore
+      const translator = await window.translation.createTranslator({
+        sourceLanguage,
+        targetLanguage,
+      });
 
+      translator.ondownloadprogress = (progressEvent: any) => {
+        callback?.({
+          bytesDownloaded: progressEvent.loaded,
+          totalBytes: progressEvent.total,
+        });
+      };
+
+      return resolve({
+        log: "Translator created.",
+        status: StepStatus.Completed,
+      });
     });
   }
 
   getStep1Code(sourceLanguage: string | null, targetLanguage: string | null): string {
-    return "await translation.canTranslate({\n" +
+    return "const translator = await window.translation.createTranslator({\n" +
       "  sourceLanguage: '" + sourceLanguage + "',\n" +
       "  targetLanguage: '" + targetLanguage + "',\n" +
-      "});";
+      "});\n" +
+      "\n" +
+      "translator.ondownloadprogress = (progressEvent: any) => {\n" +
+      "  callback?.({\n" +
+      "    bytesDownloaded: progressEvent.loaded,\n" +
+      "    totalBytes: progressEvent.total,\n" +
+      "  });\n" +
+      "};";
   }
 
 }

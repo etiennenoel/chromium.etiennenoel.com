@@ -6,6 +6,8 @@
 
             <a href="https://github.com/webmachinelearning/translation-api" target="_blank">Explainer</a>
             <div>To manually install and uninstall language packs: <span class="code">chrome://on-device-translation-internals/</span>
+              <p>Models are located in: (MacOS) <span class="code">/Users/$&#123;username&#125;/Library/Application Support/Google/Chrome/TranslateKit/models/</span> </p>
+              <p>Models are cached in: (MacOS) <span>/Users/$&#123;username&#125;/Library/Caches/Google/Chrome/Default/Cache/Cache_Data/</span></p>
             </div>
 
             <div class="row">
@@ -142,11 +144,15 @@
                                 <tbody>
                                     <tr>
                                         <td class="align-middle">canTranslate</td>
-                                        <td class="align-middle"><span class="code">{{ steps.step0.available }}</span></td>
+                                        <td class="align-middle"><span class="code"
+                                                                       [class.code-warning]="steps.step0.available === 'after-download'"
+                                                                       [class.code-danger]="steps.step0.available === 'no'"
+                                                                       [class.code-success]="steps.step0.available === 'readily'"
+                                        >{{ steps.step0.available }}</span></td>
                                         <td class="align-middle"><ul>
-                                            <li class="mt-1"><span class="code code-yellow">after-download</span>: Available after creating the translator</li>
-                                            <li class="mt-1"><span class="code code-yellow">no</span>: Not available</li>
-                                            <li class="mt-1"><span class="code code-yellow">readily</span>: Readily available without downloading</li>
+                                            <li class="mt-1"><span class="code code-warning">after-download</span>: Available after creating the translator</li>
+                                            <li class="mt-1"><span class="code code-danger">no</span>: Not available</li>
+                                            <li class="mt-1"><span class="code code-success">readily</span>: Readily available without downloading</li>
                                         </ul></td>
                                     </tr>
                                 </tbody>
