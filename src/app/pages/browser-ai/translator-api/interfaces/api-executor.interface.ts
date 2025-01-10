@@ -1,8 +1,13 @@
 import {RequirementInterface} from './requirement.interface';
 import {StepStatus} from '../../../../enums/step-status.enum';
+import {Step0} from './step-0.interface';
 
 export interface ApiExecutorInterface {
   checkRequirements(): RequirementInterface;
+
+  executeStep0(sourceLanguage: string, targetLanguage: string): Promise<Step0>;
+
+  getStep0Code(sourceLanguage: string | null, targetLanguage?: string | null): string;
 
   executeStep1(sourceLanguage: string, targetLanguage: string, callback?: (progress: {bytesDownloaded: number, totalBytes: number}) => void): Promise<{log: string; status: StepStatus}>;
 

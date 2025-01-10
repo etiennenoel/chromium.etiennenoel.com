@@ -4,6 +4,7 @@ import {RequirementStatus} from '../../../enums/requirement-status.enum';
 import {isPlatformBrowser} from '@angular/common';
 import {Inject, Injectable, PLATFORM_ID} from '@angular/core';
 import {StepStatus} from '../../../enums/step-status.enum';
+import {Step0} from './interfaces/step-0.interface';
 
 @Injectable()
 export class ExplainerApiExecutor implements ApiExecutorInterface{
@@ -29,6 +30,19 @@ export class ExplainerApiExecutor implements ApiExecutorInterface{
         message: translationApiMessage
       }
     }
+  }
+
+  async executeStep0(sourceLanguage: string, targetLanguage: string): Promise<Step0> {
+    return {
+      log: "",
+      status: StepStatus.Completed,
+      available: "false",
+      outputCollapsed: false,
+    }
+  }
+
+  getStep0Code(sourceLanguage: string | null, targetLanguage?: string | null): string {
+    return "";
   }
 
   executeStep1(sourceLanguage: string, targetLanguage: string, callback?: (progress: {bytesDownloaded: number, totalBytes: number}) => void):  Promise<{log: string; status: StepStatus}> {

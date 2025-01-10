@@ -9,6 +9,7 @@ import {ExplainerApiExecutor} from "./explainer-api.executor";
 import {RequirementInterface} from "./interfaces/requirement.interface";
 import {ApiExecutorInterface} from "./interfaces/api-executor.interface";
 import {Step1} from "./interfaces/step-1.interface";
+import {Step0} from "./interfaces/step-0.interface";
 
 @Component({
   selector: 'app-translator-api',
@@ -33,8 +34,10 @@ export class TranslatorApiComponent implements OnInit {
   }
 
   steps!: {
+    step0: Step0,
     step1: Step1,
   };
+
   protected readonly StepStatus = StepStatus;
 
   constructor(
@@ -67,6 +70,12 @@ export class TranslatorApiComponent implements OnInit {
 
   reset() {
     this.steps = {
+      step0: {
+        status: StepStatus.Idle,
+        available: "",
+        outputCollapsed: true,
+        log: "",
+      },
       step1: {
         status: StepStatus.Idle,
         totalBytes: 0,
@@ -82,6 +91,21 @@ export class TranslatorApiComponent implements OnInit {
   checkRequirements() {
     this.requirements = this.apiExecutor.checkRequirements();
   }
+
+  async executeStep0() {
+    this.steps.step0.status = StepStatus.Executing;
+    this.steps.step0.outputCollapsed = false;
+
+    if(this.sourceLanguage.value === null || this.targetLanguage.value === null) {
+      return;
+    }
+
+    const response = await this.apiExecutor.executeStep0(this.sourceLanguage.value, this.targetLanguage.value);
+
+    this.steps.step0.log = response.log;
+    this.steps.step0.status = response.status
+  }
+
 
   async executeStep1() {
     this.steps.step1.status = StepStatus.Executing;

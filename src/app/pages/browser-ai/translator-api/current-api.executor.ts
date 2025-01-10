@@ -4,6 +4,7 @@ import {RequirementStatus} from '../../../enums/requirement-status.enum';
 import {isPlatformBrowser} from '@angular/common';
 import {Inject, Injectable, PLATFORM_ID} from '@angular/core';
 import {StepStatus} from '../../../enums/step-status.enum';
+import {Step0} from './interfaces/step-0.interface';
 
 @Injectable()
 export class CurrentApiExecutor implements ApiExecutorInterface {
@@ -16,9 +17,10 @@ export class CurrentApiExecutor implements ApiExecutorInterface {
     let translationApiMessage: string;
 
     // Check if the translation API flag is enabled
-    if(isPlatformBrowser(this.platformId) && !window.hasOwnProperty('translator')) {
+    // @ts-ignore
+    if(isPlatformBrowser(this.platformId) && (!window.hasOwnProperty('translation') || window.translation.hasOwnProperty('createTranslator'))) {
       translationApiStatus = RequirementStatus.Fail;
-      translationApiMessage = "'window.translator' is not defined. Activate the flag.";
+      translationApiMessage = "'window.translation' is not defined. Activate the flag.";
     } else {
       translationApiStatus = RequirementStatus.Pass;
       translationApiMessage = "Passed";
@@ -32,6 +34,28 @@ export class CurrentApiExecutor implements ApiExecutorInterface {
     }
   }
 
+  async executeStep0(sourceLanguage: string, targetLanguage: string): Promise<Step0> {
+    // @ts-ignore
+    const canTranslate = await window.translation.canTranslate({
+      sourceLanguage,
+      targetLanguage,
+    });
+
+    return {
+      log: "",
+      status: StepStatus.Completed,
+      available: canTranslate,
+      outputCollapsed: false,
+    }
+  }
+
+  getStep0Code(sourceLanguage: string | null, targetLanguage?: string | null): string {
+    return "const canTranslate = await translation.canTranslate({\n" +
+      "  sourceLanguage: '" + sourceLanguage + "',\n" +
+      "  targetLanguage: '" + targetLanguage + "',\n" +
+      "});";
+  }
+
   executeStep1(sourceLanguage: string, targetLanguage: string, callback?: (progress: {bytesDownloaded: number, totalBytes: number}) => void):  Promise<{log: string; status: StepStatus}> {
     return new Promise<{log: string, status: StepStatus}>((resolve, reject) => {
 
@@ -39,7 +63,10 @@ export class CurrentApiExecutor implements ApiExecutorInterface {
   }
 
   getStep1Code(sourceLanguage: string | null, targetLanguage: string | null): string {
-    return "";
+    return "await translation.canTranslate({\n" +
+      "  sourceLanguage: '" + sourceLanguage + "',\n" +
+      "  targetLanguage: '" + targetLanguage + "',\n" +
+      "});";
   }
 
 }
