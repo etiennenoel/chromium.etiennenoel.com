@@ -11,11 +11,14 @@ import {CurrentApiExecutor} from "./pages/browser-ai/translator-api/current-api.
 import {StepStatusIconComponent} from "./components/step-status-icon/step-status-icon.component";
 import {StepTitleComponent} from "./components/step-title/step-title.component";
 import {StepContainerVisualStatusDirective} from "./directives/step-container-visual-status.directive";
+import {SearchSelectDropdownComponent} from './components/search-select-dropdown/search-select-dropdown.component';
 
 @NgModule({
     declarations: [
         RootComponent,
         IndexComponent,
+
+        SearchSelectDropdownComponent,
 
         // Directives
         StepContainerVisualStatusDirective,

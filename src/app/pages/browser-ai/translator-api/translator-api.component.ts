@@ -13,6 +13,9 @@ import {Step0} from "./interfaces/step-0.interface";
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {Subscription} from 'rxjs';
 import {Step2} from './interfaces/step-2.interface';
+import {
+  SearchSelectDropdownOptionsInterface
+} from '../../../components/search-select-dropdown/search-select-dropdown-options.interface';
 
 @Component({
   selector: 'app-translator-api',
@@ -24,6 +27,10 @@ export class TranslatorApiComponent implements OnInit, OnDestroy {
   apiVersion = new FormControl<TranslatorApiVersionEnum>(TranslatorApiVersionEnum.Current);
 
   languages = languages;
+  languageOptions: SearchSelectDropdownOptionsInterface[] = this.languages.map((language) => {
+    return {text: language.title, value: language.locale}
+  })
+
   sourceLanguage= new FormControl("en");
   targetLanguage = new FormControl('fr');
   content = new FormControl('');

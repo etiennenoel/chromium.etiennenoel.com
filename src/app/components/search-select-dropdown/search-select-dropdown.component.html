@@ -1,0 +1,17 @@
+
+<div class="dropdown">
+<input type="text" class="form-control dropdown-toggle" role="button" data-bs-toggle="dropdown" [formControl]="formControl" (keyup)="keyUp($event)">
+
+<ul class="dropdown-menu" #dropdownMenu>
+  @for (option of filteredOptions; track $index) {
+    <li><button class="dropdown-item"
+                [class.active]="$index === cursorPosition"
+                [class.text-primary]="option.value === this.formControl.value"
+                (click)="selectOption(option)" href="#">{{ option.text }}</button></li>
+  }
+
+  @if(filteredOptions.length === 0) {
+    <li><button class="dropdown-item">No results found.</button></li>
+  }
+</ul>
+</div>
