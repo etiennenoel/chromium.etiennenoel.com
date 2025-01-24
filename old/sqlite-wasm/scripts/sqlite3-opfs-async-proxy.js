@@ -286,7 +286,7 @@ const installAsyncProxy = function (self) {
       return e instanceof GetSyncHandleError &&
         (e.cause.name === 'NoModificationAllowedError' ||
           /* Inconsistent exception.name from Chrome/ium with the
-                 same exception.message text: */
+                 same exception.message label: */
           (e.cause.name === 'DOMException' &&
             0 === e.cause.message.indexOf('Access Handles cannot')))
         ? /*console.warn("SQLITE_BUSY",e),*/

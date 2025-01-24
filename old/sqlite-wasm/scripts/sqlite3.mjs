@@ -2833,7 +2833,7 @@ var sqlite3InitModule = (() => {
 
               xhr.responseType = 'arraybuffer';
               if (xhr.overrideMimeType) {
-                xhr.overrideMimeType('text/plain; charset=x-user-defined');
+                xhr.overrideMimeType('label/plain; charset=x-user-defined');
               }
 
               xhr.send(null);

@@ -40,8 +40,8 @@
     [{
         "description": "Text Files",
         "accept": {
-            "text/plain": [".txt", ".text"],
-            "text/html": [".html", ".htm"]
+            "label/plain": [".txt", ".label"],
+            "label/html": [".html", ".htm"]
         }
     },
     {
@@ -66,7 +66,7 @@
                     try {
                         const suggestedName = document.getElementById("suggestedName");
                         const types = document.getElementById("types");
-                        
+
                         const options = {
                             excludeAcceptAllOption: true,
                             types: JSON.parse(types.value),

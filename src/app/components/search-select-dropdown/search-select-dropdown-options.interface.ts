@@ -1,5 +1,5 @@
 export interface SearchSelectDropdownOptionsInterface {
-  text: string;
+  label: string;
 
   value: string;
 }

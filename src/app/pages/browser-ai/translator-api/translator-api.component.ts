@@ -28,7 +28,7 @@ export class TranslatorApiComponent implements OnInit, OnDestroy {
 
   languages = languages;
   languageOptions: SearchSelectDropdownOptionsInterface[] = this.languages.map((language) => {
-    return {text: language.title, value: language.locale}
+    return {label: language.title, value: language.locale}
   })
 
   sourceLanguage= new FormControl("en");

@@ -85,11 +85,11 @@
         const permission = Notification.permission;
 
         if(permission == "granted") {
-            document.getElementById("notification_permission_status").innerHTML = '<span class="badge rounded-pill text-bg-success">' + permission + '</span>';
+            document.getElementById("notification_permission_status").innerHTML = '<span class="badge rounded-pill label-bg-success">' + permission + '</span>';
         } else if(permission == "default") {
-            document.getElementById("notification_permission_status").innerHTML = '<span class="badge rounded-pill text-bg-secondary">' + permission + '</span>';
+            document.getElementById("notification_permission_status").innerHTML = '<span class="badge rounded-pill label-bg-secondary">' + permission + '</span>';
         } else if(permission == "denied") {
-            document.getElementById("notification_permission_status").innerHTML = '<span class="badge rounded-pill text-bg-danger">' + permission + '</span>';
+            document.getElementById("notification_permission_status").innerHTML = '<span class="badge rounded-pill label-bg-danger">' + permission + '</span>';
         }
 
     }
@@ -99,9 +99,9 @@
         const isPersisted = await navigator.storage.persisted();
 
         if(isPersisted) {
-            document.getElementById("persistent_storage_status").innerHTML = '<span class="badge rounded-pill text-bg-success">Persisted</span>';
+            document.getElementById("persistent_storage_status").innerHTML = '<span class="badge rounded-pill label-bg-success">Persisted</span>';
         } else {
-            document.getElementById("persistent_storage_status").innerHTML = '<span class="badge rounded-pill text-bg-secondary">Not persisted</span>';
+            document.getElementById("persistent_storage_status").innerHTML = '<span class="badge rounded-pill label-bg-secondary">Not persisted</span>';
         }
     }
 

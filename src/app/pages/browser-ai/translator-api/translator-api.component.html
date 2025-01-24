@@ -74,14 +74,14 @@
                 <div class="col-3">
                     <div class="mb-3">
                         <label for="source_language" class="form-label">Source Language</label>
-                        <app-search-select-dropdown id="source_language" [options]="languageOptions" [formControl]="sourceLanguage"></app-search-select-dropdown>
+                        <app-search-select-dropdown id="source_language" [options]="languageOptions" [control]="sourceLanguage"></app-search-select-dropdown>
                     </div>
 
                 </div>
                 <div class="col-3">
                     <div class="mb-3">
                         <label for="target_language" class="form-label">Target Language</label>
-                        <app-search-select-dropdown id="target_language" [options]="languageOptions" [formControl]="targetLanguage"></app-search-select-dropdown>
+                        <app-search-select-dropdown id="target_language" [options]="languageOptions" [control]="targetLanguage"></app-search-select-dropdown>
                     </div>
 
                 </div>
@@ -257,6 +257,7 @@
                 >
                   {{ steps.step2.log }}
                 </div>
+
 
                 <div class="mt-3">
                   <h6>Original ({{ this.steps.step2.sourceLanguage }}):</h6>

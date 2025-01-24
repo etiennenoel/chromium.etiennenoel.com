@@ -3,6 +3,9 @@ import { RouterModule, Routes } from '@angular/router';
 import {IndexComponent} from './pages/index/index.component';
 import {RootComponent} from './components/root/root.component';
 import {TranslatorApiComponent} from './pages/browser-ai/translator-api/translator-api.component';
+import {
+  WritingAssistanceApisComponent
+} from './pages/browser-ai/writing-assistance-apis/writing-assistance-apis.component';
 
 const routes: Routes = [
   {
@@ -19,6 +22,10 @@ const routes: Routes = [
           {
             path: "translator-api",
             component: TranslatorApiComponent
+          },
+          {
+            path: "writing-assistance-apis",
+            component: WritingAssistanceApisComponent
           }
         ]
       }

@@ -13,10 +13,13 @@ import {Subscription} from 'rxjs';
 })
 export class SearchSelectDropdownComponent implements OnInit, AfterViewInit {
   @Input()
-  formControl = new FormControl();
+  control = new FormControl();
 
   @Input()
   options: SearchSelectDropdownOptionsInterface[] = [];
+
+  @Input()
+  name: string = ""
 
   @ViewChild("dropdownMenu")
   dropdownMenuElement!: ElementRef;
@@ -41,7 +44,7 @@ export class SearchSelectDropdownComponent implements OnInit, AfterViewInit {
   ngOnInit() {
 
 
-    this.subscriptions.push(this.formControl.valueChanges.subscribe((value) => {
+    this.subscriptions.push(this.control.valueChanges.subscribe((value) => {
       this.cursorPosition = -1;
 
       this.filterOptions();
@@ -85,13 +88,17 @@ export class SearchSelectDropdownComponent implements OnInit, AfterViewInit {
   }
 
   selectOption(option: SearchSelectDropdownOptionsInterface) {
-    this.formControl.setValue(option.value);
+    this.control.setValue(option.value);
   }
 
   filterOptions() {
     this.filteredOptions = this.options.filter(option => {
-      return !this.formControl.value || (option.text.toLowerCase().includes(this.formControl.value) || option.value.toLowerCase().includes(this.formControl.value));
+      return !this.control.value || (option.label.toLowerCase().includes(this.control.value) || option.value.toLowerCase().includes(this.control.value));
     })
+  }
+
+  dropdownClicked() {
+    this.filteredOptions = this.options;
   }
 
 }

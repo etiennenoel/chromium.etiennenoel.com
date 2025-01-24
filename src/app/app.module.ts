@@ -12,37 +12,46 @@ import {StepStatusIconComponent} from "./components/step-status-icon/step-status
 import {StepTitleComponent} from "./components/step-title/step-title.component";
 import {StepContainerVisualStatusDirective} from "./directives/step-container-visual-status.directive";
 import {SearchSelectDropdownComponent} from './components/search-select-dropdown/search-select-dropdown.component';
+import {EnumToSearchSelectDropdownOptionsPipe} from './pipes/enum-to-search-select-dropdown-options.pipe';
+import {
+  WritingAssistanceApisComponent
+} from './pages/browser-ai/writing-assistance-apis/writing-assistance-apis.component';
 
 @NgModule({
-    declarations: [
-        RootComponent,
-        IndexComponent,
+  declarations: [
+    RootComponent,
+    IndexComponent,
 
-        SearchSelectDropdownComponent,
+    WritingAssistanceApisComponent,
 
-        // Directives
-        StepContainerVisualStatusDirective,
+    // Pipes
+    EnumToSearchSelectDropdownOptionsPipe,
 
-        StepStatusIconComponent,
-        StepTitleComponent,
+    SearchSelectDropdownComponent,
 
-        // Browser AI APIs
-        TranslatorApiComponent,
-        StepContainerVisualStatusDirective,
-    ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        ReactiveFormsModule
-    ],
-    providers: [
-        provideClientHydration(withEventReplay()),
+    // Directives
+    StepContainerVisualStatusDirective,
 
-        // Translator API
-        ExplainerApiExecutor,
-        CurrentApiExecutor,
-    ],
-    bootstrap: [RootComponent]
+    StepStatusIconComponent,
+    StepTitleComponent,
+
+    // Browser AI APIs
+    TranslatorApiComponent,
+    StepContainerVisualStatusDirective,
+  ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    ReactiveFormsModule
+  ],
+  providers: [
+    provideClientHydration(withEventReplay()),
+
+    // Translator API
+    ExplainerApiExecutor,
+    CurrentApiExecutor,
+  ],
+  bootstrap: [RootComponent]
 })
 export class AppModule {
 }

@@ -112,12 +112,12 @@
         navigator.serviceWorker.getRegistrations().then(function (registrations) {
             if (registrations.length > 0) {
                 swStatus.textContent = "Registered";
-                swStatus.classList.remove("text-danger");
-                swStatus.classList.add("text-success");
+                swStatus.classList.remove("label-danger");
+                swStatus.classList.add("label-success");
             } else {
                 swStatus.textContent = "Not Registered";
-                swStatus.classList.add("text-danger");
-                swStatus.classList.remove("text-success");
+                swStatus.classList.add("label-danger");
+                swStatus.classList.remove("label-success");
             }
         });
 

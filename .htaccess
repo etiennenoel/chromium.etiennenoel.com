@@ -35,6 +35,6 @@
 
 </IfModule>
 <IfModule mod_mime.c>
-  AddType text/javascript mjs
+  AddType label/javascript mjs
   AddType application/wasm wasm
 </IfModule>
