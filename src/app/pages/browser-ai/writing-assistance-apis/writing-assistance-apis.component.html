@@ -5,10 +5,10 @@
       <h1>Writing Assistance APIs</h1>
 
       <h3 class="mt-3">Input:</h3>
-      <textarea class="form-control" rows="3"></textarea>
+      <textarea class="form-control" rows="3" [formControl]="inputFormControl"></textarea>
 
       <h3 class="mt-3">Shared Context:</h3>
-      <textarea class="form-control" rows="3"></textarea>
+      <textarea class="form-control" rows="3" [formControl]="sharedContextFormControl"></textarea>
 
     </div>
   </div>
@@ -87,7 +87,8 @@
         <div class="col-4">
           <div class="mb-3">
             <label for="writer-length" class="form-label">Length</label>
-            <app-search-select-dropdown id="writer-length" [options]="WriterLengthEnum | enumToSearchSelectDropdownOptions"
+            <app-search-select-dropdown id="writer-length"
+                                        [options]="WriterLengthEnum | enumToSearchSelectDropdownOptions"
                                         [control]="writerLengthFormControl"
                                         [name]="'writerLength'"></app-search-select-dropdown>
           </div>
@@ -95,41 +96,80 @@
 
         <div class="col-6">
           <div class="mb-3">
-            <label for="writer-expected-input-languages" class="form-label">Expected Input Languages</label>
+            <label for="writer-expected-input-languages" class="form-label">Expected Input Languages (TODO)</label>
             <app-search-select-dropdown id="writer-expected-input-languages" [options]="[]"
                                         [name]="''"></app-search-select-dropdown>
           </div>
         </div>
         <div class="col-6">
           <div class="mb-3">
-            <label for="writer-expected-context-languages" class="form-label">Expected Context Languages</label>
+            <label for="writer-expected-context-languages" class="form-label">Expected Context Languages (TODO)</label>
             <app-search-select-dropdown id="writer-expected-context-languages" [options]="[]"
                                         [name]="''"></app-search-select-dropdown>
           </div>
         </div>
         <div class="col-6">
           <div class="mb-3">
-            <label for="writer-output-language" class="form-label">Output Language</label>
-            <app-search-select-dropdown id="writer-output-language" [options]="[]" [name]="''"></app-search-select-dropdown>
+            <label for="writer-output-language" class="form-label">Output Language (TODO)</label>
+            <app-search-select-dropdown id="writer-output-language" [options]="[]"
+                                        [name]="''"></app-search-select-dropdown>
           </div>
 
         </div>
       </div>
 
+      <div class="card mt-3">
+        <div class="card-header">
+          <h4>Availability</h4>
+        </div>
+        <div class="card-body">
+          <h5>Code</h5>
+          <pre><code>{{ writerAvailableCode }}</code></pre>
 
 
+          <h5 class="mt-3">Result</h5>
+          <span class="code"
+                [class.code-warning]="writerAvailabilityStatus === AvailabilityStatusEnum.AfterDownload"
+                [class.code-danger]="writerAvailabilityStatus === AvailabilityStatusEnum.No"
+                [class.code-success]="writerAvailabilityStatus === AvailabilityStatusEnum.Readily"
+                [class.code-dark]="writerAvailabilityStatus === AvailabilityStatusEnum.Unknown"
+          >{{ writerAvailabilityStatus }}</span>
 
+          <div class="row mt-5">
+            <div class="col-12 d-grid">
+              <button class="btn btn-outline-primary d-block" (click)="writerAvailable()">Available</button>
+            </div>
+            </div>
 
-
-      <button class="btn btn-primary">Write</button>
+        </div>
+      </div>
 
       <div class="card mt-3">
         <div class="card-header d-flex">
-          <h4 class="flex-grow-1">Output</h4>
+          <h4>Output</h4>
 
-          <button class="btn btn-outline-primary btn-sm">Copy to Input box</button>
         </div>
-        <div class="card-body"></div>
+        <div class="card-body">
+          <h5>Code</h5>
+          <pre><code>{{ writerWriteCode }}</code></pre>
+
+          <div class="mt-3 mb-3 d-flex">
+            <app-step-title [status]="writeStatus" title="Result" class="flex-grow-1"></app-step-title>
+
+            <button class="btn btn-outline-primary btn-sm">Copy Result to Input box</button>
+          </div>
+          <div class="alert"
+               [class.alert-danger]="writeStatus === StepStatus.Error"
+               [class.alert-light]="writeStatus !== StepStatus.Error">{{ writerOutput }}</div>
+
+
+          <div class="row mt-5">
+            <div class="col-12 d-grid">
+              <button class="btn btn-primary d-block" (click)="write()">Write</button>
+            </div>
+          </div>
+
+        </div>
       </div>
 
 

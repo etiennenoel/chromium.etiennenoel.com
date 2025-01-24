@@ -25,4 +25,8 @@
     background-color: $danger-bg-subtle;
     border: 1px solid $danger-border-subtle;
   }
+  &.code-dark {
+    background-color: $dark-bg-subtle;
+    border: 1px solid $dark-border-subtle;
+  }
 }
