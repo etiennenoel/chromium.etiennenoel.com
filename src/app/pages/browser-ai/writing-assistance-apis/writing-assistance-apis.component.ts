@@ -1,18 +1,16 @@
 import {Component, Inject, OnDestroy, OnInit, PLATFORM_ID} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {FormControl} from '@angular/forms';
-import {WriterFormatEnum} from '../../../enums/writer-format.enum';
-import {WriterLengthEnum} from '../../../enums/writer-length.enum';
 import {WriterToneEnum} from '../../../enums/writer-tone.enum';
 import {RequirementStatus} from '../../../enums/requirement-status.enum';
 import {RequirementInterface} from './interfaces/requirement.interface';
-import {isPlatformBrowser} from '@angular/common';
+import {DOCUMENT, isPlatformBrowser} from '@angular/common';
 import {AvailabilityStatusEnum} from '../../../enums/availability-status.enum';
-import {Subscription} from 'rxjs';
 import {TaskStatus} from '../../../enums/task-status.enum';
 import {BaseComponent} from '../../../components/base/base.component';
 import {TextUtils} from '../../../utils/text.utils';
-
+import {WriterLengthEnum} from '../../../enums/writer-length.enum';
+import {WriterFormatEnum} from '../../../enums/writer-format.enum';
 
 
 @Component({
@@ -23,32 +21,15 @@ import {TextUtils} from '../../../utils/text.utils';
 })
 export class WritingAssistanceApisComponent extends BaseComponent implements OnInit, OnDestroy {
 
-  WriterToneEnum = WriterToneEnum;
-  WriterFormatEnum = WriterFormatEnum;
-  WriterLengthEnum = WriterLengthEnum;
-
   inputFormControl: FormControl<string | null> = new FormControl<string | null>("");
   sharedContextFormControl: FormControl<string | null> = new FormControl<string | null>("");
 
-  writerToneFormControl: FormControl<WriterToneEnum | null> = new FormControl<WriterToneEnum | null>(WriterToneEnum.Neutral);
-
-  writerFormatFormControl: FormControl<WriterFormatEnum | null> = new FormControl<WriterFormatEnum | null>(WriterFormatEnum.PlainText);
-
-  writerLengthFormControl: FormControl<WriterLengthEnum | null> = new FormControl<WriterLengthEnum | null>(WriterLengthEnum.Medium);
-
   protected readonly RequirementStatus = RequirementStatus;
 
-  public writerAvailabilityStatus: AvailabilityStatusEnum = AvailabilityStatusEnum.Unknown;
-  public writerOutput = "";
-  public writeStatus: TaskStatus = TaskStatus.Idle;
-  public writerExecutionTimeBegin = 0;
-  public writerFirstResponseTimeInMs: number | undefined = 0;
-  public writerFirstResponseNumberOfTokens: number | undefined = 0;
-  public writerExecutionTimeInMs: number | undefined = 0;
-  public writerTotalNumberOfTokens: number | undefined = 0;
-  public writerExecutionTimeInterval: any;
-  public writerResponseChunks: string[] = [];
-  public writerUseStreaming = new FormControl<boolean>(false);
+  writerTone: WriterToneEnum = WriterToneEnum.Neutral;
+  writerFormat: WriterFormatEnum = WriterFormatEnum.PlainText;
+  writerLength: WriterLengthEnum = WriterLengthEnum.Medium;
+  writerUseStreaming: boolean = false;
 
   requirements: RequirementInterface = {
     writerApiFlag: {
@@ -67,26 +48,13 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
+    @Inject(DOCUMENT) document: Document,
     private readonly router: Router,
     private route: ActivatedRoute,
               ) {
-    super();
+    super(document);
   }
 
-  checkWriterRequirements() {
-    if (isPlatformBrowser(this.platformId) && !("ai" in window)) {
-      this.requirements.writerApiFlag.status = RequirementStatus.Fail;
-      this.requirements.writerApiFlag.message = "'window.ai' is not defined. Activate the flag.";
-    }
-    // @ts-ignore
-    else if (isPlatformBrowser(this.platformId) && !("writer" in window.ai)) {
-      this.requirements.writerApiFlag.status = RequirementStatus.Fail;
-      this.requirements.writerApiFlag.message = "'window.ai.writer' is not defined. Activate the flag.";
-    } else {
-      this.requirements.writerApiFlag.status = RequirementStatus.Pass;
-      this.requirements.writerApiFlag.message = "Passed";
-    }
-  }
 
   checkRewriterRequirements() {
     if (isPlatformBrowser(this.platformId) && !("ai" in window)) {
@@ -122,7 +90,6 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
   override ngOnInit() {
     super.ngOnInit();
 
-    this.checkWriterRequirements();
     this.checkRewriterRequirements();
     this.checkSummarizerRequirements();
 
@@ -136,19 +103,19 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
       }
 
       if(params['writerTone']) {
-        this.writerToneFormControl.setValue(params['writerTone']);
+        this.writerTone = params['writerTone'];
       }
 
       if(params['writerFormat']) {
-        this.writerFormatFormControl.setValue(params['writerFormat']);
+        this.writerFormat = params['writerFormat'];
       }
 
       if(params['writerLength']) {
-        this.writerLengthFormControl.setValue(params['writerLength']);
+        this.writerLength = params['writerLength'];
       }
 
-      if(params['useStreaming']) {
-        this.writerUseStreaming.setValue(params['useStreaming']);
+      if(params['writerUseStreaming']) {
+        this.writerUseStreaming = params['writerUseStreaming'];
       }
     }));
 
@@ -159,141 +126,23 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
     this.subscriptions.push(this.sharedContextFormControl.valueChanges.subscribe((value) => {
       this.router.navigate(['.'], { relativeTo: this.route, queryParams: { sharedContext: value}, queryParamsHandling: 'merge' });
     }))
-
-    this.subscriptions.push(this.writerToneFormControl.valueChanges.subscribe((value) => {
-      this.router.navigate(['.'], { relativeTo: this.route, queryParams: { writerTone: value}, queryParamsHandling: 'merge' });
-    }))
-
-    this.subscriptions.push(this.writerFormatFormControl.valueChanges.subscribe((value) => {
-      this.router.navigate(['.'], { relativeTo: this.route, queryParams: { writerFormat: value}, queryParamsHandling: 'merge' });
-    }))
-
-    this.subscriptions.push(this.writerLengthFormControl.valueChanges.subscribe((value) => {
-      this.router.navigate(['.'], { relativeTo: this.route, queryParams: { writerLength: value}, queryParamsHandling: 'merge' });
-    }))
-    this.subscriptions.push(this.writerUseStreaming.valueChanges.subscribe((value) => {
-      this.router.navigate(['.'], { relativeTo: this.route, queryParams: { useStreaming: value}, queryParamsHandling: 'merge' });
-    }))
   }
 
-  get writerAvailableCode() {
-    return `window.ai.writer.availability({
-  tone: '${this.writerToneFormControl.value}',
-  format: '${this.writerFormatFormControl.value}',
-  length: '${this.writerLengthFormControl.value}',
-})`
+
+  writerToneChange() {
+    this.router.navigate(['.'], { relativeTo: this.route, queryParams: { writerTone: this.writerTone}, queryParamsHandling: 'merge' });
   }
 
-  async writerAvailable() {
-    // @ts-ignore
-    this.writerAvailabilityStatus = await window.ai.writer.availability({
-      tone: this.writerToneFormControl.value,
-      format: this.writerFormatFormControl.value,
-      length: this.writerLengthFormControl.value,
-    })
+  writerFormatChange() {
+    this.router.navigate(['.'], { relativeTo: this.route, queryParams: { writerFormat: this.writerFormat}, queryParamsHandling: 'merge' });
   }
 
-  get writerWriteCode() {
-    if(this.writerUseStreaming.value) {
-      return `const writer = await window.ai.writer.create({
-  tone: '${this.writerToneFormControl.value}',
-  format: '${this.writerFormatFormControl.value}',
-  length: '${this.writerLengthFormControl.value}',
-  sharedContext: '${this.sharedContextFormControl.value}',
-})
-
-const stream: ReadableStream = writer.writeStreaming('${this.inputFormControl.value}');
-
-for await (const chunk of stream) {
-  // Do something with each 'chunk'
-  this.writerOutput += chunk;
-}`;
-    } else {
-      return `const writer = await window.ai.writer.create({
-  tone: '${this.writerToneFormControl.value}',
-  format: '${this.writerFormatFormControl.value}',
-  length: '${this.writerLengthFormControl.value}',
-  sharedContext: '${this.sharedContextFormControl.value}',
-})
-
-await write.write('${this.inputFormControl.value}')`;
-    }
+  writerLengthChange() {
+    this.router.navigate(['.'], { relativeTo: this.route, queryParams: { writerLength: this.writerLength}, queryParamsHandling: 'merge' });
   }
 
-  startCalculatingWriterExecutionTime() {
-    this.stopCalculatingWriterExecutionTime()
-    this.writerExecutionTimeInMs = 0;
-    this.writerFirstResponseTimeInMs = 0;
-    this.writerExecutionTimeBegin = performance.now();
-
-    this.writerExecutionTimeInterval = setInterval(() => {
-      this.writerExecutionTimeInMs = Math.round(performance.now() - this.writerExecutionTimeBegin);
-    }, 50);
+  writerUseStreamingChange() {
+    this.router.navigate(['.'], { relativeTo: this.route, queryParams: { writerUseStreaming: this.writerUseStreaming}, queryParamsHandling: 'merge' });
   }
 
-  stopCalculatingWriterExecutionTime() {
-    clearInterval(this.writerExecutionTimeInterval);
-  }
-
-  async copyResultToInputBox() {
-    this.inputFormControl.setValue(this.writerOutput);
-  }
-
-  async write() {
-    this.writeStatus = TaskStatus.Executing;
-    this.writerOutput = "Preparing and downloading model...";
-    try {
-      // @ts-ignore
-      const writer = await window.ai.writer.create({
-        tone: this.writerToneFormControl.value,
-        format: this.writerFormatFormControl.value,
-        length: this.writerLengthFormControl.value,
-        sharedContext: this.sharedContextFormControl.value,
-      });
-
-      this.startCalculatingWriterExecutionTime();
-
-      this.writerOutput = "Running query...";
-
-      this.writerTotalNumberOfTokens = 0;
-      this.writerFirstResponseNumberOfTokens = 0;
-      this.writerResponseChunks = [];
-
-      if(this.writerUseStreaming.value) {
-
-        const stream: ReadableStream = writer.writeStreaming(this.inputFormControl.value)
-        for await (const chunk of stream) {
-          if(this.writerFirstResponseTimeInMs == 0) {
-            this.writerOutput = "";
-            this.writerFirstResponseTimeInMs = Math.round(performance.now() - this.writerExecutionTimeBegin);
-          }
-
-          if(this.writerFirstResponseNumberOfTokens == 0) {
-            this.writerFirstResponseNumberOfTokens = TextUtils.countWords(chunk);
-          }
-          this.writerTotalNumberOfTokens += TextUtils.countWords(chunk);
-
-          // Do something with each 'chunk'
-          this.writerOutput += chunk;
-          this.writerResponseChunks.push(chunk);
-        }
-
-      }
-      else {
-        this.writerOutput = await writer.write(this.inputFormControl.value);
-        this.writerTotalNumberOfTokens = TextUtils.countWords(this.writerOutput);
-      }
-
-      this.stopCalculatingWriterExecutionTime();
-
-      this.writeStatus = TaskStatus.Completed;
-    } catch (e) {
-      this.writeStatus = TaskStatus.Error;
-      this.writerOutput = `Error: ${e}`;
-    }
-
-  }
-
-  protected readonly AvailabilityStatusEnum = AvailabilityStatusEnum;
-  protected readonly StepStatus = TaskStatus;
 }

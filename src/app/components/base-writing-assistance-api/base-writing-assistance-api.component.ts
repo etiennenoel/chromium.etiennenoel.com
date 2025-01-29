@@ -1,4 +1,4 @@
-import {Component, Directive, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, Directive, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {RouterOutlet} from "@angular/router";
 import {TaskStatus} from '../../enums/task-status.enum';
 import {Subscription} from 'rxjs';
@@ -8,11 +8,31 @@ import {RequirementStatusInterface} from '../../interfaces/requirement-status.in
 import {RequirementStatus} from '../../enums/requirement-status.enum';
 import {FormControl} from '@angular/forms';
 
+declare global {
+  interface Window { ai: any; }
+}
+
+
 @Directive()
 export abstract class BaseWritingAssistanceApiComponent extends BaseComponent {
   public availabilityStatus: AvailabilityStatusEnum = AvailabilityStatusEnum.Unknown;
 
+
+  private _useStreaming: boolean | null = false;
   public useStreamingFormControl = new FormControl<boolean>(false);
+  @Output()
+  useStreamingChange = new EventEmitter<boolean | null>();
+
+  get useStreaming(): boolean | null {
+    return this._useStreaming;
+  }
+
+  @Input()
+  set useStreaming(value: boolean | null) {
+    this._useStreaming = value;
+    this.useStreamingFormControl.setValue(value);
+    this.useStreamingChange.emit(value);
+  }
 
   public status: TaskStatus = TaskStatus.Idle;
 

@@ -1,26 +1,14 @@
-import {
-  Component,
-  EventEmitter,
-  Inject,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  PLATFORM_ID,
-  SimpleChanges
-} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, Output, PLATFORM_ID} from '@angular/core';
 import {TaskStatus} from '../../enums/task-status.enum';
-import {RequirementStatusInterface} from '../../interfaces/requirement-status.interface';
-import {BaseComponent} from '../base/base.component';
 import {RequirementStatus} from '../../enums/requirement-status.enum';
-import {isPlatformBrowser} from '@angular/common';
+import {DOCUMENT, isPlatformBrowser} from '@angular/common';
 import {FormControl} from '@angular/forms';
 import {WriterToneEnum} from '../../enums/writer-tone.enum';
 import {WriterFormatEnum} from '../../enums/writer-format.enum';
 import {WriterLengthEnum} from '../../enums/writer-length.enum';
-import {window} from 'rxjs';
 import {BaseWritingAssistanceApiComponent} from '../base-writing-assistance-api/base-writing-assistance-api.component';
 import {TextUtils} from '../../utils/text.utils';
+import {AvailabilityStatusEnum} from '../../enums/availability-status.enum';
 
 @Component({
   selector: 'app-writer',
@@ -49,10 +37,11 @@ export class WriterApiComponent extends BaseWritingAssistanceApiComponent implem
     this._tone = value;
 
     this.toneFormControl.setValue(value);
+    this.toneChange.emit(value);
   }
 
   @Output()
-  toneChange = new EventEmitter<WriterToneEnum>();
+  toneChange = new EventEmitter<WriterToneEnum | null>();
   // </editor-fold>
 
   // <editor-fold desc="Format">
@@ -67,8 +56,10 @@ export class WriterApiComponent extends BaseWritingAssistanceApiComponent implem
   set format(value: WriterFormatEnum | null) {
     this._format = value;
     this.formatFormControl.setValue(value);
+    this.formatChange.emit(value);
   }
-
+  @Output()
+  formatChange = new EventEmitter<WriterFormatEnum | null>();
   // </editor-fold>
 
   // <editor-fold desc="Length">
@@ -83,8 +74,10 @@ export class WriterApiComponent extends BaseWritingAssistanceApiComponent implem
   set length(value: WriterLengthEnum | null) {
     this._length = value;
     this.lengthFormControl.setValue(value);
+    this.lengthChange.emit(value);
   }
-
+  @Output()
+  lengthChange = new EventEmitter<WriterLengthEnum | null>();
   // </editor-fold>
 
   protected outputStatusMessage: string = "";
@@ -129,8 +122,9 @@ await write.write('${this.input}')`;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
+    @Inject(DOCUMENT) document: Document,
   ) {
-    super();
+    super(document);
   }
 
 
@@ -152,12 +146,13 @@ await write.write('${this.input}')`;
   }
 
   checkRequirements() {
-    if (isPlatformBrowser(this.platformId) && !("ai" in window)) {
+    // @ts-ignore
+    if (isPlatformBrowser(this.platformId) && !("ai" in this.window)) {
       this.apiFlag.status = RequirementStatus.Fail;
       this.apiFlag.message = "'window.ai' is not defined. Activate the flag.";
     }
     // @ts-ignore
-    else if (isPlatformBrowser(this.platformId) && !("writer" in window.ai)) {
+    else if (isPlatformBrowser(this.platformId) && !("writer" in this.window.ai)) {
       this.apiFlag.status = RequirementStatus.Fail;
       this.apiFlag.message = "'window.ai.writer' is not defined. Activate the flag.";
     } else {
@@ -167,12 +162,16 @@ await write.write('${this.input}')`;
   }
 
   async checkAvailability() {
-    // @ts-ignore
-    this.writerAvailabilityStatus = await window.ai.writer.availability({
-      tone: this.toneFormControl.value,
-      format: this.formatFormControl.value,
-      length: this.lengthFormControl.value,
-    })
+    try {
+      // @ts-ignore
+      this.availabilityStatus = await this.window.ai.writer.availability({
+        tone: this.toneFormControl.value,
+        format: this.formatFormControl.value,
+        length: this.lengthFormControl.value,
+      })
+    } catch (e) {
+      this.availabilityStatus = AvailabilityStatusEnum.Unknown
+    }
   }
 
   async write() {
@@ -180,7 +179,7 @@ await write.write('${this.input}')`;
     this.outputStatusMessage = "Preparing and downloading model...";
     try {
       // @ts-ignore
-      const writer = await window.ai.writer.create({
+      const writer = await this.window.ai.writer.create({
         tone: this.toneFormControl.value,
         format: this.formatFormControl.value,
         length: this.lengthFormControl.value,

@@ -7,6 +7,12 @@ import {Subscription} from 'rxjs';
 export abstract class BaseComponent implements OnInit, OnDestroy {
   protected subscriptions: Subscription[] = [];
 
+  protected window: Window | null;
+
+  constructor(protected readonly document: Document) {
+    this.window = this.document?.defaultView;
+  }
+
   ngOnInit() {
   }
 
