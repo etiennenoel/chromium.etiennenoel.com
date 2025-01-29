@@ -168,14 +168,32 @@
 
           @if(writerUseStreaming.value && writeStatus !== StepStatus.Idle) {
             <small class="text-secondary">First response in: {{ writerFirstResponseTimeInMs }}ms</small><br>
-            <small class="text-secondary">First response (number of tokens): {{ writerFirstResponseNumberOfTokens }}</small><br>
+            <small class="text-secondary">First response (number of words): {{ writerFirstResponseNumberOfTokens }}</small><br>
+
+            <h6>Chunks</h6>
+            <table class="table">
+              <thead>
+              <tr>
+                <th>#</th>
+                <th>Chunk</th>
+              </tr>
+              </thead>
+              <tbody>
+                  <tr>
+                    <td>{{ $index }}</td>
+                    <td>{{ chunk }}</td>
+                  </tr>
+                }
+
+              </tbody>
+            </table>
           }
 
           @if(writeStatus === StepStatus.Executing) {
             <small class="text-secondary">{{ writerExecutionTimeInMs }}ms elapsed</small>
           } @else if(writeStatus !== StepStatus.Idle) {
             <small class="m-0 text-secondary">Executed in {{ writerExecutionTimeInMs }}ms</small> <br>
-            <small class="m-0 text-secondary">Total number of tokens: {{ writerTotalNumberOfTokens }}</small>
+            <small class="m-0 text-secondary">Total number of words: {{ writerTotalNumberOfTokens }}</small>
           }
 
           <div class="row mt-5">

@@ -59,6 +59,7 @@ export class WritingAssistanceApisComponent implements OnInit, OnDestroy {
   public writerExecutionTimeInMs: number | undefined = 0;
   public writerTotalNumberOfTokens: number | undefined = 0;
   public writerExecutionTimeInterval: any;
+  public writerResponseChunks: string[] = [];
   public writerUseStreaming = new FormControl<boolean>(false);
 
   public subscriptions: Subscription[] = [];
@@ -272,11 +273,15 @@ await write.write('${this.inputFormControl.value}')`;
       this.writerOutput = "Running query...";
 
       this.writerTotalNumberOfTokens = 0;
-      if(this.writerUseStreaming.value) {
-        const stream: ReadableStream = writer.writeStreaming(this.inputFormControl.value)
+      this.writerFirstResponseNumberOfTokens = 0;
+      this.writerResponseChunks = [];
 
+      if(this.writerUseStreaming.value) {
+
+        const stream: ReadableStream = writer.writeStreaming(this.inputFormControl.value)
         for await (const chunk of stream) {
           if(this.writerFirstResponseTimeInMs == 0) {
+            this.writerOutput = "";
             this.writerFirstResponseTimeInMs = Math.round(performance.now() - this.writerExecutionTimeBegin);
           }
 
@@ -287,6 +292,7 @@ await write.write('${this.inputFormControl.value}')`;
 
           // Do something with each 'chunk'
           this.writerOutput += chunk;
+          this.writerResponseChunks.push(chunk);
         }
 
       }
