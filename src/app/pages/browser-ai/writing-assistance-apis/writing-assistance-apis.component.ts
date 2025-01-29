@@ -11,6 +11,22 @@ import {AvailabilityStatusEnum} from '../../../enums/availability-status.enum';
 import {Subscription} from 'rxjs';
 import {StepStatus} from '../../../enums/step-status.enum';
 
+function countWords(str: string) {
+  // Trim leading and trailing whitespace
+  str = str.trim();
+
+  // If the string is empty, return 0
+  if (str === "") {
+    return 0;
+  }
+
+  // Split the string into an array of words
+  const words = str.split(/\s+/);
+
+  // Return the length of the array
+  return words.length;
+}
+
 @Component({
   selector: 'app-writing-assistance-apis',
   templateUrl: './writing-assistance-apis.component.html',
@@ -37,6 +53,13 @@ export class WritingAssistanceApisComponent implements OnInit, OnDestroy {
   public writerAvailabilityStatus: AvailabilityStatusEnum = AvailabilityStatusEnum.Unknown;
   public writerOutput = "";
   public writeStatus: StepStatus = StepStatus.Idle;
+  public writerExecutionTimeBegin = 0;
+  public writerFirstResponseTimeInMs: number | undefined = 0;
+  public writerFirstResponseNumberOfTokens: number | undefined = 0;
+  public writerExecutionTimeInMs: number | undefined = 0;
+  public writerTotalNumberOfTokens: number | undefined = 0;
+  public writerExecutionTimeInterval: any;
+  public writerUseStreaming = new FormControl<boolean>(false);
 
   public subscriptions: Subscription[] = [];
 
@@ -133,6 +156,10 @@ export class WritingAssistanceApisComponent implements OnInit, OnDestroy {
       if(params['writerLength']) {
         this.writerLengthFormControl.setValue(params['writerLength']);
       }
+
+      if(params['useStreaming']) {
+        this.writerUseStreaming.setValue(params['useStreaming']);
+      }
     }));
 
     this.subscriptions.push(this.inputFormControl.valueChanges.subscribe((value) => {
@@ -153,6 +180,9 @@ export class WritingAssistanceApisComponent implements OnInit, OnDestroy {
 
     this.subscriptions.push(this.writerLengthFormControl.valueChanges.subscribe((value) => {
       this.router.navigate(['.'], { relativeTo: this.route, queryParams: { writerLength: value}, queryParamsHandling: 'merge' });
+    }))
+    this.subscriptions.push(this.writerUseStreaming.valueChanges.subscribe((value) => {
+      this.router.navigate(['.'], { relativeTo: this.route, queryParams: { useStreaming: value}, queryParamsHandling: 'merge' });
     }))
   }
 
@@ -180,6 +210,21 @@ export class WritingAssistanceApisComponent implements OnInit, OnDestroy {
   }
 
   get writerWriteCode() {
+    if(this.writerUseStreaming.value) {
+      return `const writer = await window.ai.writer.create({
+  tone: '${this.writerToneFormControl.value}',
+  format: '${this.writerFormatFormControl.value}',
+  length: '${this.writerLengthFormControl.value}',
+  sharedContext: '${this.sharedContextFormControl.value}',
+})
+
+const stream: ReadableStream = writer.writeStreaming('${this.inputFormControl.value}');
+
+for await (const chunk of stream) {
+  // Do something with each 'chunk'
+  this.writerOutput += chunk;
+}`;
+    } else {
       return `const writer = await window.ai.writer.create({
   tone: '${this.writerToneFormControl.value}',
   format: '${this.writerFormatFormControl.value}',
@@ -188,6 +233,26 @@ export class WritingAssistanceApisComponent implements OnInit, OnDestroy {
 })
 
 await write.write('${this.inputFormControl.value}')`;
+    }
+  }
+
+  startCalculatingWriterExecutionTime() {
+    this.stopCalculatingWriterExecutionTime()
+    this.writerExecutionTimeInMs = 0;
+    this.writerFirstResponseTimeInMs = 0;
+    this.writerExecutionTimeBegin = performance.now();
+
+    this.writerExecutionTimeInterval = setInterval(() => {
+      this.writerExecutionTimeInMs = Math.round(performance.now() - this.writerExecutionTimeBegin);
+    }, 50);
+  }
+
+  stopCalculatingWriterExecutionTime() {
+    clearInterval(this.writerExecutionTimeInterval);
+  }
+
+  async copyResultToInputBox() {
+    this.inputFormControl.setValue(this.writerOutput);
   }
 
   async write() {
@@ -202,8 +267,35 @@ await write.write('${this.inputFormControl.value}')`;
         sharedContext: this.sharedContextFormControl.value,
       });
 
+      this.startCalculatingWriterExecutionTime();
+
       this.writerOutput = "Running query...";
-      writer.write();
+
+      this.writerTotalNumberOfTokens = 0;
+      if(this.writerUseStreaming.value) {
+        const stream: ReadableStream = writer.writeStreaming(this.inputFormControl.value)
+
+        for await (const chunk of stream) {
+          if(this.writerFirstResponseTimeInMs == 0) {
+            this.writerFirstResponseTimeInMs = Math.round(performance.now() - this.writerExecutionTimeBegin);
+          }
+
+          if(this.writerFirstResponseNumberOfTokens == 0) {
+            this.writerFirstResponseNumberOfTokens = countWords(chunk);
+          }
+          this.writerTotalNumberOfTokens += countWords(chunk);
+
+          // Do something with each 'chunk'
+          this.writerOutput += chunk;
+        }
+
+      }
+      else {
+        this.writerOutput = await writer.write(this.inputFormControl.value);
+        this.writerTotalNumberOfTokens = countWords(this.writerOutput);
+      }
+
+      this.stopCalculatingWriterExecutionTime();
 
       this.writeStatus = StepStatus.Completed;
     } catch (e) {

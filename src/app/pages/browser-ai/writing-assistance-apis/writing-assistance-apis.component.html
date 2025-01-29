@@ -146,8 +146,12 @@
 
       <div class="card mt-3">
         <div class="card-header d-flex">
-          <h4>Output</h4>
+          <h4 class="flex-grow-1 m-0">Output</h4>
 
+          <div class="form-check form-switch m-0 p-0">
+            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" [formControl]="writerUseStreaming">
+            <label class="form-check-label" for="flexSwitchCheckDefault">Streaming</label>
+          </div>
         </div>
         <div class="card-body">
           <h5>Code</h5>
@@ -156,12 +160,23 @@
           <div class="mt-3 mb-3 d-flex">
             <app-step-title [status]="writeStatus" title="Result" class="flex-grow-1"></app-step-title>
 
-            <button class="btn btn-outline-primary btn-sm">Copy Result to Input box</button>
+            <button class="btn btn-outline-primary btn-sm" (click)="copyResultToInputBox()">Copy Result to Input box</button>
           </div>
-          <div class="alert"
+          <div class="alert m-0"
                [class.alert-danger]="writeStatus === StepStatus.Error"
                [class.alert-light]="writeStatus !== StepStatus.Error">{{ writerOutput }}</div>
 
+          @if(writerUseStreaming.value && writeStatus !== StepStatus.Idle) {
+            <small class="text-secondary">First response in: {{ writerFirstResponseTimeInMs }}ms</small><br>
+            <small class="text-secondary">First response (number of tokens): {{ writerFirstResponseNumberOfTokens }}</small><br>
+          }
+
+          @if(writeStatus === StepStatus.Executing) {
+            <small class="text-secondary">{{ writerExecutionTimeInMs }}ms elapsed</small>
+          } @else if(writeStatus !== StepStatus.Idle) {
+            <small class="m-0 text-secondary">Executed in {{ writerExecutionTimeInMs }}ms</small> <br>
+            <small class="m-0 text-secondary">Total number of tokens: {{ writerTotalNumberOfTokens }}</small>
+          }
 
           <div class="row mt-5">
             <div class="col-12 d-grid">
