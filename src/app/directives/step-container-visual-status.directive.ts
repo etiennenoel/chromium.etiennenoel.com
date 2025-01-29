@@ -1,5 +1,5 @@
 import {Directive, HostBinding, Input} from '@angular/core';
-import {StepStatus} from '../enums/step-status.enum';
+import {TaskStatus} from '../enums/task-status.enum';
 
 @Directive({
   selector: '[stepVisualStatus]',
@@ -8,7 +8,7 @@ import {StepStatus} from '../enums/step-status.enum';
 export class StepContainerVisualStatusDirective {
 
   @Input()
-  public status?: StepStatus
+  public status?: TaskStatus
 
   @HostBinding('style.borderLeftWidth')
   get border() {
@@ -20,16 +20,16 @@ export class StepContainerVisualStatusDirective {
     let classes = "border-start";
 
     switch (this.status) {
-      case StepStatus.Idle:
+      case TaskStatus.Idle:
         classes += " border-dark-subtle"
         break;
-      case StepStatus.Executing:
+      case TaskStatus.Executing:
         classes += " border-primary"
         break;
-      case StepStatus.Error:
+      case TaskStatus.Error:
         classes += " border-danger"
         break;
-      case StepStatus.Completed:
+      case TaskStatus.Completed:
         classes += " border-success"
         break;
     }

@@ -16,6 +16,7 @@ import {EnumToSearchSelectDropdownOptionsPipe} from './pipes/enum-to-search-sele
 import {
   WritingAssistanceApisComponent
 } from './pages/browser-ai/writing-assistance-apis/writing-assistance-apis.component';
+import {WriterApiComponent} from './components/writer-api/writer-api.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import {
     IndexComponent,
 
     WritingAssistanceApisComponent,
+    WriterApiComponent,
 
     // Pipes
     EnumToSearchSelectDropdownOptionsPipe,

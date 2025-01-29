@@ -1,7 +1,7 @@
-import {StepStatus} from '../../../../enums/step-status.enum';
+import {TaskStatus} from '../../../../enums/task-status.enum';
 
 export interface Step2 {
-  status: StepStatus,
+  status: TaskStatus,
   sourceLanguage: string;
   targetLanguage: string;
   content: string;

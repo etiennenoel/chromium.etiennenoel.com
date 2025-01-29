@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {RouterOutlet} from "@angular/router";
-import {StepStatus} from '../../enums/step-status.enum';
+import {TaskStatus} from '../../enums/task-status.enum';
 
 @Component({
   selector: 'app-step-status-icon',
@@ -10,6 +10,6 @@ import {StepStatus} from '../../enums/step-status.enum';
 })
 export class StepStatusIconComponent {
   @Input()
-  status?: StepStatus;
-  protected readonly StepStatus = StepStatus;
+  status?: TaskStatus;
+  protected readonly StepStatus = TaskStatus;
 }

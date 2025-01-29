@@ -34,7 +34,7 @@
         <tr>
           <td>Activate <br><span class="code">chrome://flags/#writer-api-for-gemini-nano</span></td>
           <td>
-            @if (requirements.writerApiFlag.status === RequirementStatus.Checking) {
+            @if (requirements.writerApiFlag.status === RequirementStatus.Pending) {
               <div class="text-primary">
                 <div class="spinner-border" role="status">
                   <span class="visually-hidden">Loading...</span>
@@ -224,7 +224,7 @@
         <tr>
           <td>Activate <br><span class="code">chrome://flags/#rewriter-api-for-gemini-nano</span></td>
           <td>
-            @if (requirements.rewriterApiFlag.status === RequirementStatus.Checking) {
+            @if (requirements.rewriterApiFlag.status === RequirementStatus.Pending) {
               <div class="text-primary">
                 <div class="spinner-border" role="status">
                   <span class="visually-hidden">Loading...</span>
@@ -271,7 +271,7 @@
         <tr>
           <td>Activate <br><span class="code">chrome://flags/#summarization-api-for-gemini-nano</span></td>
           <td>
-            @if (requirements.summarizerApiFlag.status === RequirementStatus.Checking) {
+            @if (requirements.summarizerApiFlag.status === RequirementStatus.Pending) {
               <div class="text-primary">
                 <div class="spinner-border" role="status">
                   <span class="visually-hidden">Loading...</span>

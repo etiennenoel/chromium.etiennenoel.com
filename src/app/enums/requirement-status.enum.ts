@@ -1,5 +1,5 @@
 export enum RequirementStatus {
-  Checking = 'CHECKING',
+  Pending = 'PENDING',
   Fail = 'FAIL',
   Pass = 'PASS',
 }

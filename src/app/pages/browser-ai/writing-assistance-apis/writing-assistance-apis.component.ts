@@ -9,23 +9,11 @@ import {RequirementInterface} from './interfaces/requirement.interface';
 import {isPlatformBrowser} from '@angular/common';
 import {AvailabilityStatusEnum} from '../../../enums/availability-status.enum';
 import {Subscription} from 'rxjs';
-import {StepStatus} from '../../../enums/step-status.enum';
+import {TaskStatus} from '../../../enums/task-status.enum';
+import {BaseComponent} from '../../../components/base/base.component';
+import {TextUtils} from '../../../utils/text.utils';
 
-function countWords(str: string) {
-  // Trim leading and trailing whitespace
-  str = str.trim();
 
-  // If the string is empty, return 0
-  if (str === "") {
-    return 0;
-  }
-
-  // Split the string into an array of words
-  const words = str.split(/\s+/);
-
-  // Return the length of the array
-  return words.length;
-}
 
 @Component({
   selector: 'app-writing-assistance-apis',
@@ -33,7 +21,7 @@ function countWords(str: string) {
   standalone: false,
   styleUrl: './writing-assistance-apis.component.scss'
 })
-export class WritingAssistanceApisComponent implements OnInit, OnDestroy {
+export class WritingAssistanceApisComponent extends BaseComponent implements OnInit, OnDestroy {
 
   WriterToneEnum = WriterToneEnum;
   WriterFormatEnum = WriterFormatEnum;
@@ -52,7 +40,7 @@ export class WritingAssistanceApisComponent implements OnInit, OnDestroy {
 
   public writerAvailabilityStatus: AvailabilityStatusEnum = AvailabilityStatusEnum.Unknown;
   public writerOutput = "";
-  public writeStatus: StepStatus = StepStatus.Idle;
+  public writeStatus: TaskStatus = TaskStatus.Idle;
   public writerExecutionTimeBegin = 0;
   public writerFirstResponseTimeInMs: number | undefined = 0;
   public writerFirstResponseNumberOfTokens: number | undefined = 0;
@@ -62,19 +50,17 @@ export class WritingAssistanceApisComponent implements OnInit, OnDestroy {
   public writerResponseChunks: string[] = [];
   public writerUseStreaming = new FormControl<boolean>(false);
 
-  public subscriptions: Subscription[] = [];
-
   requirements: RequirementInterface = {
     writerApiFlag: {
-      status: RequirementStatus.Checking,
+      status: RequirementStatus.Pending,
       message: "Checking",
     },
     rewriterApiFlag: {
-      status: RequirementStatus.Checking,
+      status: RequirementStatus.Pending,
       message: "Checking",
     },
     summarizerApiFlag: {
-      status: RequirementStatus.Checking,
+      status: RequirementStatus.Pending,
       message: "Checking",
     }
   }
@@ -84,6 +70,7 @@ export class WritingAssistanceApisComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private route: ActivatedRoute,
               ) {
+    super();
   }
 
   checkWriterRequirements() {
@@ -132,7 +119,9 @@ export class WritingAssistanceApisComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnInit() {
+  override ngOnInit() {
+    super.ngOnInit();
+
     this.checkWriterRequirements();
     this.checkRewriterRequirements();
     this.checkSummarizerRequirements();
@@ -185,12 +174,6 @@ export class WritingAssistanceApisComponent implements OnInit, OnDestroy {
     this.subscriptions.push(this.writerUseStreaming.valueChanges.subscribe((value) => {
       this.router.navigate(['.'], { relativeTo: this.route, queryParams: { useStreaming: value}, queryParamsHandling: 'merge' });
     }))
-  }
-
-  ngOnDestroy() {
-    this.subscriptions.forEach(( subscription ) => {
-      subscription.unsubscribe();
-    });
   }
 
   get writerAvailableCode() {
@@ -257,7 +240,7 @@ await write.write('${this.inputFormControl.value}')`;
   }
 
   async write() {
-    this.writeStatus = StepStatus.Executing;
+    this.writeStatus = TaskStatus.Executing;
     this.writerOutput = "Preparing and downloading model...";
     try {
       // @ts-ignore
@@ -286,9 +269,9 @@ await write.write('${this.inputFormControl.value}')`;
           }
 
           if(this.writerFirstResponseNumberOfTokens == 0) {
-            this.writerFirstResponseNumberOfTokens = countWords(chunk);
+            this.writerFirstResponseNumberOfTokens = TextUtils.countWords(chunk);
           }
-          this.writerTotalNumberOfTokens += countWords(chunk);
+          this.writerTotalNumberOfTokens += TextUtils.countWords(chunk);
 
           // Do something with each 'chunk'
           this.writerOutput += chunk;
@@ -298,19 +281,19 @@ await write.write('${this.inputFormControl.value}')`;
       }
       else {
         this.writerOutput = await writer.write(this.inputFormControl.value);
-        this.writerTotalNumberOfTokens = countWords(this.writerOutput);
+        this.writerTotalNumberOfTokens = TextUtils.countWords(this.writerOutput);
       }
 
       this.stopCalculatingWriterExecutionTime();
 
-      this.writeStatus = StepStatus.Completed;
+      this.writeStatus = TaskStatus.Completed;
     } catch (e) {
-      this.writeStatus = StepStatus.Error;
+      this.writeStatus = TaskStatus.Error;
       this.writerOutput = `Error: ${e}`;
     }
 
   }
 
   protected readonly AvailabilityStatusEnum = AvailabilityStatusEnum;
-  protected readonly StepStatus = StepStatus;
+  protected readonly StepStatus = TaskStatus;
 }

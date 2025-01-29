@@ -1,7 +1,7 @@
-import {StepStatus} from '../../../../enums/step-status.enum';
+import {TaskStatus} from '../../../../enums/task-status.enum';
 
 export interface Step1 {
-  status: StepStatus,
+  status: TaskStatus,
   totalBytes: number;
   bytesDownloaded: number;
   outputCollapsed: boolean

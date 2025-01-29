@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {RouterOutlet} from "@angular/router";
-import {StepStatus} from '../../enums/step-status.enum';
+import {TaskStatus} from '../../enums/task-status.enum';
 
 @Component({
   selector: 'app-step-title',
@@ -10,10 +10,10 @@ import {StepStatus} from '../../enums/step-status.enum';
 })
 export class StepTitleComponent {
   @Input()
-  status?: StepStatus;
+  status?: TaskStatus;
 
   @Input()
   title?: string;
 
-  protected readonly StepStatus = StepStatus;
+  protected readonly StepStatus = TaskStatus;
 }

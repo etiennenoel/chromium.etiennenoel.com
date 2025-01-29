@@ -3,7 +3,7 @@ import {RequirementInterface} from './interfaces/requirement.interface';
 import {RequirementStatus} from '../../../enums/requirement-status.enum';
 import {isPlatformBrowser} from '@angular/common';
 import {Inject, Injectable, PLATFORM_ID} from '@angular/core';
-import {StepStatus} from '../../../enums/step-status.enum';
+import {TaskStatus} from '../../../enums/task-status.enum';
 import {Step0} from './interfaces/step-0.interface';
 
 @Injectable()
@@ -46,14 +46,14 @@ export class ExplainerApiExecutor implements ApiExecutorInterface {
 
       return {
         log: `Result of availability: '${availability}'.`,
-        status: StepStatus.Completed,
+        status: TaskStatus.Completed,
         available: availability,
         outputCollapsed: false,
       }
     } catch (e: any) {
       return {
         log: `Error: ${e.message}`,
-        status: StepStatus.Error,
+        status: TaskStatus.Error,
         available: "error",
         outputCollapsed: false,
       }
@@ -69,8 +69,8 @@ export class ExplainerApiExecutor implements ApiExecutorInterface {
   executeStep1(sourceLanguage: string, targetLanguage: string, callback?: (progress: {
     bytesDownloaded: number,
     totalBytes: number
-  }) => void): Promise<{ log: string; status: StepStatus }> {
-    return new Promise<{ log: string; status: StepStatus }>(async (resolve) => {
+  }) => void): Promise<{ log: string; status: TaskStatus }> {
+    return new Promise<{ log: string; status: TaskStatus }>(async (resolve) => {
       try {
         // @ts-ignore
         const translator = await ai.translator.create({
@@ -88,12 +88,12 @@ export class ExplainerApiExecutor implements ApiExecutorInterface {
 
         return resolve({
           log: "Translator created.",
-          status: StepStatus.Completed,
+          status: TaskStatus.Completed,
         })
       } catch (e: any) {
         return resolve({
           log: `Error: ${e.message}`,
-          status: StepStatus.Error,
+          status: TaskStatus.Error,
         })
       }
     });
@@ -115,7 +115,7 @@ export class ExplainerApiExecutor implements ApiExecutorInterface {
   async executeStep2(sourceLanguage: string, targetLanguage: string, content: string): Promise<{
     log: string;
     translatedContent: string,
-    status: StepStatus
+    status: TaskStatus
   }> {
     try {
       // @ts-ignore
@@ -129,13 +129,13 @@ export class ExplainerApiExecutor implements ApiExecutorInterface {
       return {
         log: `Translated content: ${translatedContent}`,
         translatedContent: translatedContent,
-        status: StepStatus.Completed,
+        status: TaskStatus.Completed,
       };
     } catch (e: any) {
       return {
         log: `Error: ${e.message}`,
         translatedContent: "",
-        status: StepStatus.Error,
+        status: TaskStatus.Error,
       }
     }
   }

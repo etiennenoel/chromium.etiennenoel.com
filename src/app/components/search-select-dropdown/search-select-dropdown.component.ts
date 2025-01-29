@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild, viewChild} from '@angular/core';
 import {RouterOutlet} from "@angular/router";
-import {StepStatus} from '../../enums/step-status.enum';
+import {TaskStatus} from '../../enums/task-status.enum';
 import {FormControl} from '@angular/forms';
 import {SearchSelectDropdownOptionsInterface} from './search-select-dropdown-options.interface';
 import {Subscription} from 'rxjs';

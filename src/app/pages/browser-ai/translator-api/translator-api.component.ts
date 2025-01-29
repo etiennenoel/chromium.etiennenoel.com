@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormControl} from "@angular/forms";
-import {StepStatus} from "../../../enums/step-status.enum";
+import {TaskStatus} from "../../../enums/task-status.enum";
 import {RequirementStatus} from "../../../enums/requirement-status.enum";
 import {languages} from "../../../constants/languages.constants";
 import {TranslatorApiVersionEnum} from "../../../enums/translator-api-version.enum";
@@ -39,7 +39,7 @@ export class TranslatorApiComponent implements OnInit, OnDestroy {
 
   requirements: RequirementInterface = {
     translationApiFlag: {
-        status: RequirementStatus.Checking,
+        status: RequirementStatus.Pending,
       message: "Checking",
     }
   }
@@ -52,7 +52,7 @@ export class TranslatorApiComponent implements OnInit, OnDestroy {
 
   public subscriptions: Subscription[] = [];
 
-  protected readonly StepStatus = StepStatus;
+  protected readonly StepStatus = TaskStatus;
 
   constructor(
       private readonly currentApiExecutor: CurrentApiExecutor,
@@ -123,20 +123,20 @@ export class TranslatorApiComponent implements OnInit, OnDestroy {
   reset() {
     this.steps = {
       step0: {
-        status: StepStatus.Idle,
+        status: TaskStatus.Idle,
         available: "",
         outputCollapsed: true,
         log: "",
       },
       step1: {
-        status: StepStatus.Idle,
+        status: TaskStatus.Idle,
         totalBytes: 0,
         bytesDownloaded: 0,
         outputCollapsed: true,
         log: "",
       },
       step2: {
-        status: StepStatus.Idle,
+        status: TaskStatus.Idle,
         translatedContent: "",
         outputCollapsed: true,
         log: "",
@@ -154,7 +154,7 @@ export class TranslatorApiComponent implements OnInit, OnDestroy {
   }
 
   async executeStep0() {
-    this.steps.step0.status = StepStatus.Executing;
+    this.steps.step0.status = TaskStatus.Executing;
     this.steps.step0.outputCollapsed = false;
 
     if(this.sourceLanguage.value === null || this.targetLanguage.value === null) {
@@ -170,7 +170,7 @@ export class TranslatorApiComponent implements OnInit, OnDestroy {
 
 
   async executeStep1() {
-    this.steps.step1.status = StepStatus.Executing;
+    this.steps.step1.status = TaskStatus.Executing;
     this.steps.step1.outputCollapsed = false;
 
     if(this.sourceLanguage.value === null || this.targetLanguage.value === null) {
@@ -187,7 +187,7 @@ export class TranslatorApiComponent implements OnInit, OnDestroy {
   }
 
   async executeStep2() {
-    this.steps.step2.status = StepStatus.Executing;
+    this.steps.step2.status = TaskStatus.Executing;
     this.steps.step2.outputCollapsed = false;
     this.steps.step2.content = this.content.value ?? "";
     this.steps.step2.targetLanguage = this.targetLanguage.value ?? "";
