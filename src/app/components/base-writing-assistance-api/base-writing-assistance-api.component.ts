@@ -69,6 +69,7 @@ export abstract class BaseWritingAssistanceApiComponent extends BaseComponent {
   }
 
   stopExecutionTime() {
+    this.totalExecutionTime = Math.round(performance.now() - this.startedExecutionAt);
     clearInterval(this.executionTimeInterval);
   }
 
