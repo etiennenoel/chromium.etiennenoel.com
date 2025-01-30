@@ -11,6 +11,7 @@ import {BaseComponent} from '../../../components/base/base.component';
 import {TextUtils} from '../../../utils/text.utils';
 import {WriterLengthEnum} from '../../../enums/writer-length.enum';
 import {WriterFormatEnum} from '../../../enums/writer-format.enum';
+import {LocaleEnum} from '../../../enums/locale.enum';
 
 
 @Component({
@@ -32,6 +33,7 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
   writerFormat: WriterFormatEnum = WriterFormatEnum.PlainText;
   writerLength: WriterLengthEnum = WriterLengthEnum.Medium;
   writerUseStreaming: boolean = false;
+  writerExpectedInputLanguages: LocaleEnum[] = [];
 
   requirements: RequirementInterface = {
     writerApiFlag: {
@@ -119,6 +121,15 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
       if(params['writerUseStreaming']) {
         this.writerUseStreaming = params['writerUseStreaming'];
       }
+
+      if(params['writerExpectedInputLanguages']) {
+        if(!Array.isArray(params['writerExpectedInputLanguages'])) {
+          this.writerExpectedInputLanguages = [params['writerExpectedInputLanguages']];
+        } else {
+          this.writerExpectedInputLanguages = params['writerExpectedInputLanguages'];
+        }
+
+      }
     }));
 
     this.subscriptions.push(this.inputFormControl.valueChanges.subscribe((value) => {
@@ -145,6 +156,10 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
 
   writerUseStreamingChange() {
     this.router.navigate(['.'], { relativeTo: this.route, queryParams: { writerUseStreaming: this.writerUseStreaming}, queryParamsHandling: 'merge' });
+  }
+
+  writerExpectedInputLanguagesChange() {
+    this.router.navigate(['.'], { relativeTo: this.route, queryParams: { writerExpectedInputLanguages: this.writerExpectedInputLanguages}, queryParamsHandling: 'merge' });
   }
 
 }

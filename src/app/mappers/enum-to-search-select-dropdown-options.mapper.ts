@@ -1,6 +1,6 @@
 import {
   SearchSelectDropdownOptionsInterface
-} from '../components/search-select-dropdown/search-select-dropdown-options.interface';
+} from '../interfaces/search-select-dropdown-options.interface';
 
 export class EnumToSearchSelectDropdownOptionsMapper {
   static map(enumType: any): SearchSelectDropdownOptionsInterface[] {

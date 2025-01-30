@@ -81,8 +81,10 @@
       <div class="col-6">
         <div class="mb-3">
           <label for="writer-expected-input-languages" class="form-label">Expected Input Languages (TODO)</label>
-          <app-search-select-dropdown id="writer-expected-input-languages" [options]="[]"
-                                      [name]="''"></app-search-select-dropdown>
+          <app-search-select-multiple-dropdown id="writer-expected-input-languages"
+                                               [options]="locales"
+                                               [control]="expectedInputLanguagesFormControl"
+                                      [name]="'expectedInputLanguages'"></app-search-select-multiple-dropdown>
         </div>
       </div>
       <div class="col-6">

@@ -1,5 +1,9 @@
+
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+
 .ace_editor{
-  background: #e9f2fb !important;
+  background: $primary-bg-subtle !important;
 
   .ace_gutter {
     background-color: #E8F0FE !important;

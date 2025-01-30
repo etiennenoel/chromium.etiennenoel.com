@@ -9,6 +9,8 @@ import {WriterLengthEnum} from '../../enums/writer-length.enum';
 import {BaseWritingAssistanceApiComponent} from '../base-writing-assistance-api/base-writing-assistance-api.component';
 import {TextUtils} from '../../utils/text.utils';
 import {AvailabilityStatusEnum} from '../../enums/availability-status.enum';
+import {SearchSelectDropdownOptionsInterface} from '../../interfaces/search-select-dropdown-options.interface';
+import {LocaleEnum} from '../../enums/locale.enum';
 
 
 @Component({
@@ -24,6 +26,21 @@ export class WriterApiComponent extends BaseWritingAssistanceApiComponent implem
 
   @Input()
   sharedContext: string = "";
+
+  locales: SearchSelectDropdownOptionsInterface[] = [
+    {
+      label: "Français",
+      value: "fr"
+    },
+    {
+      label: "English",
+      value: "en"
+    },
+    {
+      label: "Español",
+      value: "es"
+    }
+  ]
 
   // <editor-fold desc="Tone">
   private _tone: WriterToneEnum | null = WriterToneEnum.Neutral;
@@ -86,11 +103,33 @@ export class WriterApiComponent extends BaseWritingAssistanceApiComponent implem
   @Output()
   output = new EventEmitter<string>();
 
+  // <editor-fold desc="Expected Input Languages">
+  private _expectedInputLanguages: LocaleEnum[] | null = [];
+  public expectedInputLanguagesFormControl: FormControl<LocaleEnum[] | null> = new FormControl<LocaleEnum[] | null>([]);
+
+  get expectedInputLanguages(): LocaleEnum[] | null {
+    return this._expectedInputLanguages;
+  }
+
+  @Input()
+  set expectedInputLanguages(value: LocaleEnum[] | null) {
+    this._expectedInputLanguages = value;
+
+    this.expectedInputLanguagesChange.emit(value);
+    this.expectedInputLanguagesFormControl.setValue(value);
+  }
+
+  @Output()
+  expectedInputLanguagesChange = new EventEmitter<LocaleEnum[] | null>();
+
+  // </editor-fold>
+
   get checkAvailabilityCode() {
     return `window.ai.writer.availability({
   tone: '${this.toneFormControl.value}',
   format: '${this.formatFormControl.value}',
   length: '${this.lengthFormControl.value}',
+  expectedInputLanguages: ${JSON.stringify(this.expectedInputLanguagesFormControl.value)}
 })`
   }
 
@@ -101,6 +140,7 @@ export class WriterApiComponent extends BaseWritingAssistanceApiComponent implem
   format: '${this.formatFormControl.value}',
   length: '${this.lengthFormControl.value}',
   sharedContext: '${this.sharedContext}',
+  expectedInputLanguages: ${JSON.stringify(this.expectedInputLanguagesFormControl.value)}
 })
 
 const stream: ReadableStream = writer.writeStreaming('${this.input}');
@@ -115,6 +155,7 @@ for await (const chunk of stream) {
   format: '${this.formatFormControl.value}',
   length: '${this.lengthFormControl.value}',
   sharedContext: '${this.sharedContext}',
+  expectedInputLanguages: ${JSON.stringify(this.expectedInputLanguagesFormControl.value)}
 })
 
 await write.write('${this.input}')`;
@@ -144,6 +185,10 @@ await write.write('${this.input}')`;
     this.subscriptions.push(this.lengthFormControl.valueChanges.subscribe((value) => {
       this.length = value;
     }));
+    this.subscriptions.push(this.expectedInputLanguagesFormControl.valueChanges.subscribe((value) => {
+      this._expectedInputLanguages = value;
+      this.expectedInputLanguagesChange.emit(value);
+    }));
 
   }
 
@@ -170,6 +215,7 @@ await write.write('${this.input}')`;
         tone: this.toneFormControl.value,
         format: this.formatFormControl.value,
         length: this.lengthFormControl.value,
+        expectedInputLanguages: this.expectedInputLanguagesFormControl.value
       })
     } catch (e) {
       this.availabilityStatus = AvailabilityStatusEnum.Unknown
@@ -186,6 +232,7 @@ await write.write('${this.input}')`;
         format: this.formatFormControl.value,
         length: this.lengthFormControl.value,
         sharedContext: this.sharedContext,
+        expectedInputLanguages: this.expectedInputLanguagesFormControl.value
       });
 
       this.startExecutionTime();

@@ -44,7 +44,8 @@
               (useStreamingChange)="writerUseStreamingChange()"
               [input]="inputFormControl.value ?? ''"
               [sharedContext]="sharedContextFormControl.value ?? ''"
-
+              [expectedInputLanguages]="writerExpectedInputLanguages"
+              (expectedInputLanguagesChange)="writerExpectedInputLanguagesChange()"
             ></app-writer>
 
           }

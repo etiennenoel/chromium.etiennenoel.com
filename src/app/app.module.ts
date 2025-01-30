@@ -18,6 +18,9 @@ import {
 } from './pages/browser-ai/writing-assistance-apis/writing-assistance-apis.component';
 import {WriterApiComponent} from './components/writer-api/writer-api.component';
 import {CodeEditorComponent} from './components/code-editor/code-editor.component';
+import {
+  SearchSelectMultipleDropdownComponent
+} from './components/search-select-multiple-dropdown/search-select-multiple-dropdown.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +36,7 @@ import {CodeEditorComponent} from './components/code-editor/code-editor.componen
     EnumToSearchSelectDropdownOptionsPipe,
 
     SearchSelectDropdownComponent,
+    SearchSelectMultipleDropdownComponent,
 
     // Directives
     StepContainerVisualStatusDirective,

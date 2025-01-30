@@ -1,9 +1,20 @@
-import {AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild, viewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  Inject,
+  Input,
+  OnInit,
+  PLATFORM_ID,
+  ViewChild,
+  viewChild
+} from '@angular/core';
 import {RouterOutlet} from "@angular/router";
 import {TaskStatus} from '../../enums/task-status.enum';
 import {FormControl} from '@angular/forms';
-import {SearchSelectDropdownOptionsInterface} from './search-select-dropdown-options.interface';
+import {SearchSelectDropdownOptionsInterface} from '../../interfaces/search-select-dropdown-options.interface';
 import {Subscription} from 'rxjs';
+import {isPlatformServer} from '@angular/common';
 
 @Component({
   selector: 'app-search-select-dropdown',
@@ -41,6 +52,11 @@ export class SearchSelectDropdownComponent implements OnInit, AfterViewInit {
     this._cursorPosition = value;
   }
 
+  constructor(
+    @Inject(PLATFORM_ID) private readonly platformId: any,
+  ) {
+  }
+
   ngOnInit() {
 
 
@@ -55,6 +71,10 @@ export class SearchSelectDropdownComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    if(isPlatformServer(this.platformId)) {
+      return;
+    }
+
     // @ts-ignore
     this.dropdown = new bootstrap.Dropdown(this.dropdownMenuElement.nativeElement);
   }

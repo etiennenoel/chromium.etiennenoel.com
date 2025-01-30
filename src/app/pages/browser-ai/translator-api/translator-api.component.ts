@@ -15,7 +15,7 @@ import {Subscription} from 'rxjs';
 import {Step2} from './interfaces/step-2.interface';
 import {
   SearchSelectDropdownOptionsInterface
-} from '../../../components/search-select-dropdown/search-select-dropdown-options.interface';
+} from '../../../interfaces/search-select-dropdown-options.interface';
 
 @Component({
   selector: 'app-translator-api',
