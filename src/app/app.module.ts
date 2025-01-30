@@ -17,11 +17,14 @@ import {
   WritingAssistanceApisComponent
 } from './pages/browser-ai/writing-assistance-apis/writing-assistance-apis.component';
 import {WriterApiComponent} from './components/writer-api/writer-api.component';
+import {CodeEditorComponent} from './components/code-editor/code-editor.component';
 
 @NgModule({
   declarations: [
     RootComponent,
     IndexComponent,
+
+    CodeEditorComponent,
 
     WritingAssistanceApisComponent,
     WriterApiComponent,
@@ -44,7 +47,7 @@ import {WriterApiComponent} from './components/writer-api/writer-api.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   providers: [
     provideClientHydration(withEventReplay()),

@@ -15,21 +15,47 @@
 
   <hr>
 
-  <div class="row">
-    <div class="col-12 col-md-4">
-      <app-writer
-        [tone]="writerTone"
-        (toneChange)="writerToneChange()"
-        [format]="writerFormat"
-        (formatChange)="writerFormatChange()"
-        [length]="writerLength"
-        (lengthChange)="writerLengthChange()"
-        [useStreaming]="writerUseStreaming"
-        (useStreamingChange)="writerUseStreamingChange()"
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="activeTab === 0" (click)="activeTab = 0" aria-current="page" href="#">Writer
+        API</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="activeTab === 1" (click)="activeTab = 1" href="#">ReWriter API</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" [class.active]="activeTab === 2" (click)="activeTab = 2" href="#">Summarizer API</button>
+    </li>
+  </ul>
 
-      ></app-writer>
+  <div class="row">
+    <div class="col-12">
+      <div class="border border-top-0 p-3">
+        @switch (activeTab) {
+          @case (0) {
+            <app-writer
+              [tone]="writerTone"
+              (toneChange)="writerToneChange()"
+              [format]="writerFormat"
+              (formatChange)="writerFormatChange()"
+              [length]="writerLength"
+              (lengthChange)="writerLengthChange()"
+              [useStreaming]="writerUseStreaming"
+              (useStreamingChange)="writerUseStreamingChange()"
+              [input]="inputFormControl.value ?? ''"
+              [sharedContext]="sharedContextFormControl.value ?? ''"
+
+            ></app-writer>
+
+          }
+        }
+      </div>
+
 
     </div>
+  </div>
+  <hr>
+  <div class="row">
     <div class="col-12 col-md-4">
       <h3>Rewriter API</h3>
 

@@ -36,12 +36,27 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "input": "node_modules/ace-builds/src/",
+                "glob": "mode-javascript.js"
+              },
+              {
+                "input": "node_modules/ace-builds/src/",
+                "glob": "theme-github.js"
+              },
+              {
+                "input": "node_modules/ace-builds/src/",
+                "glob": "theme-xcode.js"
               }
             ],
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": [],
+            "scripts": [
+              "node_modules/ace-builds/src/ace.js",
+
+            ],
             "server": "src/main.server.ts",
             "outputMode": "server",
             "ssr": {

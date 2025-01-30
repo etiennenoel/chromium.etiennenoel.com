@@ -1,0 +1,22 @@
+.ace_editor{
+  background: #e9f2fb !important;
+
+  .ace_gutter {
+    background-color: #E8F0FE !important;
+    .ace_gutter-cell {
+      background-color: #E8F0FE;
+      color: #9AA0A6;
+    }
+
+    .ace_gutter-layer {
+      background-color: white;
+    }
+
+    .ace_gutter-active-line, .ace_active-line {
+      background-color: #E8F0FE !important;
+    }
+  }
+
+
+}
+

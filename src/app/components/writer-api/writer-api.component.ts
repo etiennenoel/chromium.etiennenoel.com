@@ -10,6 +10,7 @@ import {BaseWritingAssistanceApiComponent} from '../base-writing-assistance-api/
 import {TextUtils} from '../../utils/text.utils';
 import {AvailabilityStatusEnum} from '../../enums/availability-status.enum';
 
+
 @Component({
   selector: 'app-writer',
   templateUrl: './writer-api.component.html',
@@ -143,6 +144,7 @@ await write.write('${this.input}')`;
     this.subscriptions.push(this.lengthFormControl.valueChanges.subscribe((value) => {
       this.length = value;
     }));
+
   }
 
   checkRequirements() {

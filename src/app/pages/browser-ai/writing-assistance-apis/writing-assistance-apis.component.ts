@@ -26,6 +26,8 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
 
   protected readonly RequirementStatus = RequirementStatus;
 
+  activeTab: number = 0;
+
   writerTone: WriterToneEnum = WriterToneEnum.Neutral;
   writerFormat: WriterFormatEnum = WriterFormatEnum.PlainText;
   writerLength: WriterLengthEnum = WriterLengthEnum.Medium;
