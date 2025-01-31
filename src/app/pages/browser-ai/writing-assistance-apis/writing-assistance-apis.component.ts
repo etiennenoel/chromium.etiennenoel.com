@@ -33,6 +33,7 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
   writerFormat: WriterFormatEnum = WriterFormatEnum.PlainText;
   writerLength: WriterLengthEnum = WriterLengthEnum.Medium;
   writerUseStreaming: boolean = false;
+  writerContext: string = "";
   writerExpectedInputLanguages: LocaleEnum[] = [];
   writerExpectedContextLanguages: LocaleEnum[] = [];
   writerOutputLanguage: LocaleEnum = LocaleEnum.en;
@@ -124,6 +125,10 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
         this.writerUseStreaming = params['writerUseStreaming'] !== "false";
       }
 
+      if(params['writerContext']) {
+        this.writerContext = params['writerContext'];
+      }
+
       if(params['writerExpectedInputLanguages']) {
         if(!Array.isArray(params['writerExpectedInputLanguages'])) {
           this.writerExpectedInputLanguages = [params['writerExpectedInputLanguages']];
@@ -165,6 +170,10 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
 
   writerLengthChange() {
     this.router.navigate(['.'], { relativeTo: this.route, queryParams: { writerLength: this.writerLength}, queryParamsHandling: 'merge' });
+  }
+
+  writerContextChange() {
+    this.router.navigate(['.'], { relativeTo: this.route, queryParams: { writerContext: this.writerContext}, queryParamsHandling: 'merge' });
   }
 
   writerUseStreamingChange() {

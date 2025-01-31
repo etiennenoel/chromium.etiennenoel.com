@@ -53,6 +53,31 @@ export class WriterApiComponent extends BaseWritingAssistanceApiComponent implem
   toneChange = new EventEmitter<WriterToneEnum | null>();
   // </editor-fold>
 
+  // <editor-fold desc="Context">
+  private _context: string | null = "";
+  public contextFormControl = new FormControl<string | null>("");
+
+  get context(): string | null {
+    return this._context;
+  }
+
+  @Input()
+  set context(value: string | null) {
+   this.setContext(value);
+  }
+
+  setContext(value: string | null, options?: {emitFormControlEvent?: boolean, emitChangeEvent?: boolean}) {
+    this._context = value;
+    this.contextFormControl.setValue(value, {emitEvent: options?.emitFormControlEvent ?? true});
+    if(options?.emitChangeEvent ?? true) {
+      this.contextChange.emit(value);
+    }
+  }
+
+  @Output()
+  contextChange = new EventEmitter<string | null>();
+  // </editor-fold>
+
   // <editor-fold desc="Format">
   private _format: WriterFormatEnum | null = WriterFormatEnum.PlainText;
   public formatFormControl: FormControl<WriterFormatEnum | null> = new FormControl<WriterFormatEnum | null>(WriterFormatEnum.PlainText);
@@ -206,7 +231,7 @@ export class WriterApiComponent extends BaseWritingAssistanceApiComponent implem
   outputLanguage: '${this.outputLanguageFormControl.value}',
 })
 
-const stream: ReadableStream = writer.writeStreaming('${this.input}');
+const stream: ReadableStream = writer.writeStreaming('${this.input}', {context: '${this.contextFormControl.value}'});
 
 for await (const chunk of stream) {
   // Do something with each 'chunk'
@@ -223,7 +248,7 @@ for await (const chunk of stream) {
   outputLanguage: '${this.outputLanguageFormControl.value}',
 })
 
-await write.write('${this.input}')`;
+await write.write('${this.input}', {context: '${this.contextFormControl.value}'})`;
     }
   }
 
@@ -258,6 +283,10 @@ await write.write('${this.input}')`;
     }));
     this.subscriptions.push(this.outputLanguageFormControl.valueChanges.subscribe((value) => {
       this.setOutputLanguage(value, {emitChangeEvent: true, emitFormControlEvent: false});
+    }));
+
+    this.subscriptions.push(this.contextFormControl.valueChanges.subscribe((value) => {
+      this.setContext(value, {emitChangeEvent: true, emitFormControlEvent: false});
     }));
 
   }
@@ -318,7 +347,7 @@ await write.write('${this.input}')`;
       this.responseChunks = [];
 
       if(this.useStreamingFormControl.value) {
-        const stream: ReadableStream = writer.writeStreaming(this.input)
+        const stream: ReadableStream = writer.writeStreaming(this.input, {context: this.contextFormControl.value})
 
         let hasFirstResponse = false;
 
@@ -340,7 +369,7 @@ await write.write('${this.input}')`;
 
       }
       else {
-        const output = await writer.write(this.input);
+        const output = await writer.write(this.input, {context: this.contextFormControl.value});
         this.totalNumberOfWords = TextUtils.countWords(output);
 
         this.output = output;
