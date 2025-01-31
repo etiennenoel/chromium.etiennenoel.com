@@ -27,20 +27,6 @@ export class WriterApiComponent extends BaseWritingAssistanceApiComponent implem
   @Input()
   sharedContext: string = "";
 
-  locales: SearchSelectDropdownOptionsInterface[] = [
-    {
-      label: "Français",
-      value: "fr"
-    },
-    {
-      label: "English",
-      value: "en"
-    },
-    {
-      label: "Español",
-      value: "es"
-    }
-  ]
 
   // <editor-fold desc="Tone">
   private _tone: WriterToneEnum | null = WriterToneEnum.Neutral;
@@ -119,8 +105,7 @@ export class WriterApiComponent extends BaseWritingAssistanceApiComponent implem
 
   protected outputStatusMessage: string = "";
 
-  @Output()
-  output = new EventEmitter<string>();
+  output: string = "";
 
   // <editor-fold desc="Expected Input Languages">
   private _expectedInputLanguages: LocaleEnum[] | null = [];
@@ -358,7 +343,7 @@ await write.write('${this.input}')`;
         const output = await writer.write(this.input);
         this.totalNumberOfWords = TextUtils.countWords(output);
 
-        this.output.emit(output);
+        this.output = output;
       }
 
       this.stopExecutionTime();

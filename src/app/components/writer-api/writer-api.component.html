@@ -154,14 +154,12 @@
 
           <!--      <button class="btn btn-outline-primary btn-sm" (click)="copyResultToInputBox()">Copy Result to Input box</button>-->
         </div>
-        <div class="alert m-0"
-             [class.alert-danger]="status === TaskStatus.Error"
-             [class.alert-light]="status !== TaskStatus.Error">{{ outputStatusMessage }}
-        </div>
+        @if(status === TaskStatus.Error) {
+          <div class="alert alert-danger m-0 mb-2">{{ outputStatusMessage }}</div>
+        }
 
         @if (status !== TaskStatus.Idle) {
           @if (useStreamingFormControl.value) {
-            <h6>Chunks</h6>
             <table class="table">
               <thead>
               <tr>

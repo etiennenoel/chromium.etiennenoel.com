@@ -29,9 +29,15 @@ export abstract class BaseWritingAssistanceApiComponent extends BaseComponent {
 
   @Input()
   set useStreaming(value: boolean | null) {
+    this.setUseStreaming(value);
+  }
+
+  setUseStreaming(value: boolean | null, options?: {emitChangeEvent: boolean, emitFormControlEvent: boolean}) {
     this._useStreaming = value;
-    this.useStreamingFormControl.setValue(value);
-    this.useStreamingChange.emit(value);
+    this.useStreamingFormControl.setValue(value, {emitEvent: options?.emitFormControlEvent ?? true});
+    if(options?.emitChangeEvent ?? true) {
+      this.useStreamingChange.emit(value);
+    }
   }
 
   public status: TaskStatus = TaskStatus.Idle;
@@ -50,6 +56,14 @@ export abstract class BaseWritingAssistanceApiComponent extends BaseComponent {
   public totalNumberOfWords = 0;
 
   public responseChunks: string[] = [];
+
+  override ngOnInit() {
+    super.ngOnInit();
+
+    this.subscriptions.push(this.useStreamingFormControl.valueChanges.subscribe((value) => {
+      this.setUseStreaming(value, {emitChangeEvent: true, emitFormControlEvent: false});
+    }));
+  }
 
   startExecutionTime() {
     this.stopExecutionTime()

@@ -121,7 +121,7 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
       }
 
       if(params['writerUseStreaming']) {
-        this.writerUseStreaming = params['writerUseStreaming'];
+        this.writerUseStreaming = params['writerUseStreaming'] !== "false";
       }
 
       if(params['writerExpectedInputLanguages']) {
