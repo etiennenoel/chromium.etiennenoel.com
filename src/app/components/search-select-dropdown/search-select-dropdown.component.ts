@@ -23,6 +23,8 @@ import {isPlatformServer} from '@angular/common';
   styleUrl: './search-select-dropdown.component.scss'
 })
 export class SearchSelectDropdownComponent implements OnInit, AfterViewInit {
+  searchControl = new FormControl("");
+
   @Input()
   control = new FormControl();
 
@@ -58,9 +60,9 @@ export class SearchSelectDropdownComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.searchControl.setValue(this.control.value);
 
-
-    this.subscriptions.push(this.control.valueChanges.subscribe((value) => {
+    this.subscriptions.push(this.searchControl.valueChanges.subscribe((value) => {
       this.cursorPosition = -1;
 
       this.filterOptions();
@@ -85,6 +87,12 @@ export class SearchSelectDropdownComponent implements OnInit, AfterViewInit {
     } else if(event.key === "ArrowDown") {
       this.moveCursorDown();
     } else if(event.key === "Enter") {
+      if(this.cursorPosition === -1) {
+        this.control.setValue(this.searchControl.value);
+        this.dropdown.hide();
+        return;
+      }
+
       this.selectOption(this.filteredOptions[this.cursorPosition]);
     }
   }
@@ -109,11 +117,15 @@ export class SearchSelectDropdownComponent implements OnInit, AfterViewInit {
 
   selectOption(option: SearchSelectDropdownOptionsInterface) {
     this.control.setValue(option.value);
+    this.searchControl.setValue(option.value);
+
+    this.dropdown.hide();
   }
+
 
   filterOptions() {
     this.filteredOptions = this.options.filter(option => {
-      return !this.control.value || (option.label.toLowerCase().includes(this.control.value) || option.value.toLowerCase().includes(this.control.value));
+      return !this.searchControl.value || (option.label.toLowerCase().includes(this.searchControl.value) || option.value.toLowerCase().includes(this.searchControl.value));
     })
   }
 

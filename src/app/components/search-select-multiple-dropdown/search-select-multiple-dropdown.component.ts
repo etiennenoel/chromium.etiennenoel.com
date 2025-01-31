@@ -117,6 +117,7 @@ export class SearchSelectMultipleDropdownComponent implements OnInit, AfterViewI
     selectedOptions.push(option);
 
     this.control.setValue(selectedOptions);
+    this.searchControl.setValue("")
   }
 
   unselectOption(option: string) {

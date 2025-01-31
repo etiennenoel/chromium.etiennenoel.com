@@ -34,18 +34,22 @@
         @switch (activeTab) {
           @case (0) {
             <app-writer
-              [tone]="writerTone"
+              [(tone)]="writerTone"
               (toneChange)="writerToneChange()"
-              [format]="writerFormat"
+              [(format)]="writerFormat"
               (formatChange)="writerFormatChange()"
-              [length]="writerLength"
+              [(length)]="writerLength"
               (lengthChange)="writerLengthChange()"
-              [useStreaming]="writerUseStreaming"
+              [(useStreaming)]="writerUseStreaming"
               (useStreamingChange)="writerUseStreamingChange()"
               [input]="inputFormControl.value ?? ''"
               [sharedContext]="sharedContextFormControl.value ?? ''"
-              [expectedInputLanguages]="writerExpectedInputLanguages"
+              [(expectedInputLanguages)]="writerExpectedInputLanguages"
               (expectedInputLanguagesChange)="writerExpectedInputLanguagesChange()"
+              [(expectedContextLanguages)]="writerExpectedContextLanguages"
+              (expectedContextLanguagesChange)="writerExpectedContextLanguagesChange()"
+              [(outputLanguage)]="writerOutputLanguage"
+              (outputLanguageChange)="writerOutputLanguageChange()"
             ></app-writer>
 
           }

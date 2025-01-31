@@ -3,11 +3,15 @@
     <div class="d-flex h-75 gap-1 ps-2">
       @for (selectedOption of this.control.value; track $index) {
 
-        <button type="button" class="btn btn-primary btn-sm pt-0 pb-0 d-flex ps-0 gap-1" (click)="unselectOption(selectedOption)"><i class="bi bi-x ps-1"></i> <span>{{ this.getOptionLabel(selectedOption) }}({{ selectedOption }})</span></button>
+        <button type="button" class="btn btn-primary btn-sm pt-0 pb-0 d-flex ps-0 gap-1" (click)="unselectOption(selectedOption)"><i class="bi bi-x ps-1"></i> <span>{{ this.getOptionLabel(selectedOption) }}</span></button>
       }
     </div>
 
-    <input type="text" class="dropdown-toggle p-0 border-0" style="background:none; width: inherit; height: inherit" role="button" data-bs-toggle="dropdown" [name]="name" [formControl]="searchControl" (keyup)="keyUp($event)" (click)="dropdownClicked()" />
+    <input type="text" class="dropdown-toggle p-0 border-0" style="background:none; width: inherit; height: inherit" role="button" data-bs-toggle="dropdown"
+           [name]="name"
+           [formControl]="searchControl"
+           (keyup)="keyUp($event)"
+           (click)="dropdownClicked()" />
 
     <ul class="dropdown-menu" #dropdownMenu>
       @for (option of filteredOptions; track $index) {

@@ -80,25 +80,29 @@
 
       <div class="col-6">
         <div class="mb-3">
-          <label for="writer-expected-input-languages" class="form-label">Expected Input Languages (TODO)</label>
+          <label for="writer-expected-input-languages" class="form-label">Expected Input Languages</label>
           <app-search-select-multiple-dropdown id="writer-expected-input-languages"
-                                               [options]="locales"
+                                               [options]="LocaleEnum | enumToSearchSelectDropdownOptions"
                                                [control]="expectedInputLanguagesFormControl"
                                       [name]="'expectedInputLanguages'"></app-search-select-multiple-dropdown>
         </div>
       </div>
       <div class="col-6">
         <div class="mb-3">
-          <label for="writer-expected-context-languages" class="form-label">Expected Context Languages (TODO)</label>
-          <app-search-select-dropdown id="writer-expected-context-languages" [options]="[]"
-                                      [name]="''"></app-search-select-dropdown>
+          <label for="writer-expected-context-languages" class="form-label">Expected Context Languages</label>
+          <app-search-select-multiple-dropdown id="writer-expected-context-languages"
+                                      [options]="LocaleEnum | enumToSearchSelectDropdownOptions"
+                                      [control]="expectedContextLanguagesFormControl"
+                                      [name]="'expectedContextLanguages'"></app-search-select-multiple-dropdown>
         </div>
       </div>
       <div class="col-6">
         <div class="mb-3">
           <label for="writer-output-language" class="form-label">Output Language (TODO)</label>
-          <app-search-select-dropdown id="writer-output-language" [options]="[]"
-                                      [name]="''"></app-search-select-dropdown>
+          <app-search-select-dropdown id="writer-output-language"
+                                      [options]="LocaleEnum | enumToSearchSelectDropdownOptions"
+                                      [control]="outputLanguageFormControl"
+                                      [name]="'outputLanguage'"></app-search-select-dropdown>
         </div>
 
       </div>

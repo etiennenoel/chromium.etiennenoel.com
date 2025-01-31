@@ -34,6 +34,8 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
   writerLength: WriterLengthEnum = WriterLengthEnum.Medium;
   writerUseStreaming: boolean = false;
   writerExpectedInputLanguages: LocaleEnum[] = [];
+  writerExpectedContextLanguages: LocaleEnum[] = [];
+  writerOutputLanguage: LocaleEnum = LocaleEnum.en;
 
   requirements: RequirementInterface = {
     writerApiFlag: {
@@ -130,6 +132,17 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
         }
 
       }
+      if(params['writerExpectedContextLanguages']) {
+        if(!Array.isArray(params['writerExpectedContextLanguages'])) {
+          this.writerExpectedContextLanguages = [params['writerExpectedContextLanguages']];
+        } else {
+          this.writerExpectedContextLanguages = params['writerExpectedContextLanguages'];
+        }
+      }
+
+      if(params['writerOutputLanguage']) {
+        this.writerOutputLanguage = params['writerOutputLanguage'];
+      }
     }));
 
     this.subscriptions.push(this.inputFormControl.valueChanges.subscribe((value) => {
@@ -160,6 +173,14 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
 
   writerExpectedInputLanguagesChange() {
     this.router.navigate(['.'], { relativeTo: this.route, queryParams: { writerExpectedInputLanguages: this.writerExpectedInputLanguages}, queryParamsHandling: 'merge' });
+  }
+
+  writerExpectedContextLanguagesChange() {
+    this.router.navigate(['.'], { relativeTo: this.route, queryParams: { writerExpectedContextLanguages: this.writerExpectedContextLanguages}, queryParamsHandling: 'merge' });
+  }
+
+  writerOutputLanguageChange() {
+    this.router.navigate(['.'], { relativeTo: this.route, queryParams: { writerOutputLanguage: this.writerOutputLanguage}, queryParamsHandling: 'merge' });
   }
 
 }
