@@ -21,6 +21,8 @@ import {CodeEditorComponent} from './components/code-editor/code-editor.componen
 import {
   SearchSelectMultipleDropdownComponent
 } from './components/search-select-multiple-dropdown/search-select-multiple-dropdown.component';
+import {ToastStore} from './stores/toast.store';
+import {ToastComponent} from './components/toast/toast.component';
 
 @NgModule({
   declarations: [
@@ -47,6 +49,7 @@ import {
     // Browser AI APIs
     TranslatorApiComponent,
     StepContainerVisualStatusDirective,
+    ToastComponent,
   ],
   imports: [
     BrowserModule,
@@ -59,6 +62,9 @@ import {
     // Translator API
     ExplainerApiExecutor,
     CurrentApiExecutor,
+
+    // Stores
+    ToastStore,
   ],
   bootstrap: [RootComponent]
 })

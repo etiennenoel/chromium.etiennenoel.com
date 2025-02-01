@@ -10,6 +10,73 @@
       <h3 class="mt-3">Shared Context:</h3>
       <textarea class="form-control" rows="3" [formControl]="sharedContextFormControl"></textarea>
 
+      <div class="card mt-3">
+        <div class="card-header"
+             [class.bg-primary-subtle]="status === TaskStatus.Executing"
+             [class.bg-success-subtle]="status === TaskStatus.Completed"
+             [class.bg-danger-subtle]="status === TaskStatus.Error"
+        >
+          <h3 class="m-0 p-0">Output:</h3>
+        </div>
+        <div class="card-body">
+
+          @if (status !== TaskStatus.Idle && loaded < 100) {
+            <div class="mb-5">
+              <h6 class="mt-4">Model download progress</h6>
+              <div class="progress mt-2 mb-2" role="progressbar" aria-label="Basic example" aria-valuenow="0"
+                   aria-valuemin="0" aria-valuemax="100">
+                <div class="progress-bar" [style.width]="loaded + '%'">{{ loaded }}%</div>
+              </div>
+              <span class="text-muted">Model downloading...</span>
+            </div>
+          }
+
+
+          @if (writerUseStreaming && status !== TaskStatus.Idle) {
+            <div>{{ this.output }} <button class="btn btn-link" *ngIf="this.output != ''" (click)="copyToClipboard(this.output)"><i class="bi bi-copy"></i></button></div>
+
+            <table class="table mt-3">
+              <thead>
+              <tr>
+                <th>#</th>
+                <th>Chunk</th>
+              </tr>
+              </thead>
+              <tbody>
+
+                @for (chunk of outputChunks; track $index) {
+                  <tr>
+                    <td>{{ $index }}</td>
+                    <td>{{ chunk }} <button class="btn btn-link" (click)="copyToClipboard(chunk)"><i class="bi bi-copy"></i></button> </td>
+                  </tr>
+                }
+
+              </tbody>
+            </table>
+          }
+
+        </div>
+        <div class="card-footer d-flex gap-3 align-items-center"
+             [class.bg-primary-subtle]="status === TaskStatus.Executing"
+             [class.bg-success-subtle]="status === TaskStatus.Completed"
+             [class.bg-danger-subtle]="status === TaskStatus.Error"
+        >
+          <span class="badge"
+                [class.text-bg-secondary]="status === TaskStatus.Idle"
+                [class.text-bg-primary]="status === TaskStatus.Executing"
+                [class.text-bg-success]="status === TaskStatus.Completed"
+                [class.text-bg-danger]="status === TaskStatus.Error"
+          >{{ status }}</span>
+          <div class="flex-fill">Elapsed time: <strong>{{ this.executionPerformanceResult.elapsedTime }} ms</strong>
+          </div>
+          <div class="flex-fill">First Response: <strong>{{ this.executionPerformanceResult.firstResponseIn }}</strong>
+            ms, <strong>{{ this.executionPerformanceResult.firstResponseNumberOfWords }} words</strong></div>
+          <div class="flex-fill">Total: <strong>{{ this.executionPerformanceResult.totalExecutionTime }} ms</strong>,
+            <strong>{{ this.executionPerformanceResult.totalNumberOfWords }} words</strong></div>
+        </div>
+      </div>
+
+
     </div>
   </div>
 
@@ -17,14 +84,17 @@
 
   <ul class="nav nav-tabs">
     <li class="nav-item">
-      <button class="nav-link" [class.active]="activeTab === 0" (click)="activeTab = 0" aria-current="page" href="#">Writer
-        API</button>
+      <button class="nav-link" [class.active]="activeTab === 0" (click)="activeTab = 0" aria-current="page" href="#">
+        Writer
+        API
+      </button>
     </li>
     <li class="nav-item">
       <button class="nav-link" [class.active]="activeTab === 1" (click)="activeTab = 1" href="#">ReWriter API</button>
     </li>
     <li class="nav-item">
-      <button class="nav-link" [class.active]="activeTab === 2" (click)="activeTab = 2" href="#">Summarizer API</button>
+      <button class="nav-link" [class.active]="activeTab === 2" (click)="activeTab = 2" href="#">Summarizer API
+      </button>
     </li>
   </ul>
 
@@ -52,6 +122,11 @@
               (outputLanguageChange)="writerOutputLanguageChange()"
               [(context)]="writerContext"
               (contextChange)="writerContextChange()"
+              (executionPerformanceChange)="executionPerformanceChange($event)"
+              (outputChange)="outputChange($event)"
+              (outputChunksChange)="outputChunksChange($event)"
+              (statusChange)="statusChange($event)"
+              (loadedChange)="loadedChange($event)"
             ></app-writer>
 
           }

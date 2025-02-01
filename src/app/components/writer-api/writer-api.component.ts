@@ -27,7 +27,6 @@ export class WriterApiComponent extends BaseWritingAssistanceApiComponent implem
   @Input()
   sharedContext: string = "";
 
-
   // <editor-fold desc="Tone">
   private _tone: WriterToneEnum | null = WriterToneEnum.Neutral;
   public toneFormControl: FormControl<WriterToneEnum | null> = new FormControl<WriterToneEnum | null>(WriterToneEnum.Neutral);
@@ -130,8 +129,6 @@ export class WriterApiComponent extends BaseWritingAssistanceApiComponent implem
 
   protected outputStatusMessage: string = "";
 
-  output: string = "";
-
   // <editor-fold desc="Expected Input Languages">
   private _expectedInputLanguages: LocaleEnum[] | null = [];
   public expectedInputLanguagesFormControl: FormControl<LocaleEnum[] | null> = new FormControl<LocaleEnum[] | null>([]);
@@ -229,6 +226,11 @@ export class WriterApiComponent extends BaseWritingAssistanceApiComponent implem
   expectedInputLanguages: ${JSON.stringify(this.expectedInputLanguagesFormControl.value)},
   expectedContextLanguages: ${JSON.stringify(this.expectedContextLanguagesFormControl.value)},
   outputLanguage: '${this.outputLanguageFormControl.value}',
+  monitor(m: any)  {
+    m.addEventListener("downloadprogress", (e: any) => {
+      console.log(\`Downloaded \${e.loaded * 100}%\`);
+    });
+  },
 })
 
 const stream: ReadableStream = writer.writeStreaming('${this.input}', {context: '${this.contextFormControl.value}'});
@@ -246,6 +248,11 @@ for await (const chunk of stream) {
   expectedInputLanguages: ${JSON.stringify(this.expectedInputLanguagesFormControl.value)},
   expectedContextLanguages: ${JSON.stringify(this.expectedContextLanguagesFormControl.value)},
   outputLanguage: '${this.outputLanguageFormControl.value}',
+  monitor(m: any)  {
+    m.addEventListener("downloadprogress", (e: any) => {
+      console.log(\`Downloaded \${e.loaded * 100}%\`);
+    });
+  },
 })
 
 await write.write('${this.input}', {context: '${this.contextFormControl.value}'})`;
@@ -327,6 +334,8 @@ await write.write('${this.input}', {context: '${this.contextFormControl.value}'}
     this.status = TaskStatus.Executing;
     this.outputStatusMessage = "Preparing and downloading model...";
     try {
+      this.loaded = 0;
+
       // @ts-ignore
       const writer = await this.window.ai.writer.create({
         tone: this.toneFormControl.value,
@@ -335,16 +344,24 @@ await write.write('${this.input}', {context: '${this.contextFormControl.value}'}
         sharedContext: this.sharedContext,
         expectedInputLanguages: this.expectedInputLanguagesFormControl.value,
         expectedContextLanguages: this.expectedContextLanguagesFormControl.value,
-        outputLanguage: this.outputLanguageFormControl.value
+        outputLanguage: this.outputLanguageFormControl.value,
+        monitor(m: any)  {
+          m.addEventListener("downloadprogress", (e: any) => {
+            console.log(`Downloaded ${e.loaded * 100}%`);
+            this.loaded = e.loaded;
+          });
+        },
       });
 
       this.startExecutionTime();
 
       this.outputStatusMessage = "Running query...";
 
-      this.firstResponseNumberOfWords = 0;
-      this.totalNumberOfWords = 0;
-      this.responseChunks = [];
+      this.executionPerformance.firstResponseNumberOfWords = 0;
+      this.executionPerformance.totalNumberOfWords = 0;
+      this.emitExecutionPerformanceChange();
+      this.outputChunks = [];
+      this.output = "";
 
       if(this.useStreamingFormControl.value) {
         const stream: ReadableStream = writer.writeStreaming(this.input, {context: this.contextFormControl.value})
@@ -357,20 +374,24 @@ await write.write('${this.input}', {context: '${this.contextFormControl.value}'}
             this.lapFirstResponseTime();
           }
 
-          if(this.firstResponseNumberOfWords == 0) {
-            this.firstResponseNumberOfWords = TextUtils.countWords(chunk);
+          if(this.executionPerformance.firstResponseNumberOfWords == 0) {
+            this.executionPerformance.firstResponseNumberOfWords = TextUtils.countWords(chunk);
           }
-          this.totalNumberOfWords += TextUtils.countWords(chunk);
+          this.executionPerformance.totalNumberOfWords += TextUtils.countWords(chunk);
+
+          this.emitExecutionPerformanceChange();
 
           // Do something with each 'chunk'
           this.output += chunk;
-          this.responseChunks.push(chunk);
+          this.outputChunks.push(chunk);
+          this.outputChunksChange.emit(this.outputChunks);
         }
 
       }
       else {
         const output = await writer.write(this.input, {context: this.contextFormControl.value});
-        this.totalNumberOfWords = TextUtils.countWords(output);
+        this.executionPerformance.totalNumberOfWords = TextUtils.countWords(output);
+        this.emitExecutionPerformanceChange();
 
         this.output = output;
       }

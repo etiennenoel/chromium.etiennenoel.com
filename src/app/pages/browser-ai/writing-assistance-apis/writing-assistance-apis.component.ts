@@ -5,13 +5,13 @@ import {WriterToneEnum} from '../../../enums/writer-tone.enum';
 import {RequirementStatus} from '../../../enums/requirement-status.enum';
 import {RequirementInterface} from './interfaces/requirement.interface';
 import {DOCUMENT, isPlatformBrowser} from '@angular/common';
-import {AvailabilityStatusEnum} from '../../../enums/availability-status.enum';
 import {TaskStatus} from '../../../enums/task-status.enum';
 import {BaseComponent} from '../../../components/base/base.component';
-import {TextUtils} from '../../../utils/text.utils';
 import {WriterLengthEnum} from '../../../enums/writer-length.enum';
 import {WriterFormatEnum} from '../../../enums/writer-format.enum';
 import {LocaleEnum} from '../../../enums/locale.enum';
+import {ExecutionPerformanceResultInterface} from '../../../interfaces/execution-performance-result.interface';
+import {ToastStore} from '../../../stores/toast.store';
 
 
 @Component({
@@ -37,6 +37,12 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
   writerExpectedInputLanguages: LocaleEnum[] = [];
   writerExpectedContextLanguages: LocaleEnum[] = [];
   writerOutputLanguage: LocaleEnum = LocaleEnum.en;
+  output: string = "";
+  outputChunks: string[] = [];
+
+  loaded:number = 0;
+
+  status: TaskStatus = TaskStatus.Idle;
 
   requirements: RequirementInterface = {
     writerApiFlag: {
@@ -53,11 +59,21 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
     }
   }
 
+  executionPerformanceResult: ExecutionPerformanceResultInterface = {
+    startedExecutionAt: 0,
+    firstResponseIn: 0,
+    elapsedTime: 0,
+    totalExecutionTime: 0,
+    firstResponseNumberOfWords: 0,
+    totalNumberOfWords: 0,
+  }
+
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     @Inject(DOCUMENT) document: Document,
     private readonly router: Router,
     private route: ActivatedRoute,
+    private readonly toastStore: ToastStore,
               ) {
     super(document);
   }
@@ -159,6 +175,33 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
     }))
   }
 
+  copyToClipboard(chunk: string) {
+    navigator.clipboard.writeText(chunk)
+    this.toastStore.publish({
+      message: "Copied to clipboard",
+    })
+  }
+
+  executionPerformanceChange(value: ExecutionPerformanceResultInterface) {
+    this.executionPerformanceResult = value;
+  }
+
+  outputChange(value: string) {
+    this.output = value;
+  }
+
+  statusChange(value: TaskStatus) {
+    this.status = value;
+    window.scroll(0,0);
+  }
+
+  outputChunksChange(value: string[]) {
+    this.outputChunks = value;
+  }
+
+  loadedChange(value: number) {
+    this.loaded = value;
+  }
 
   writerToneChange() {
     this.router.navigate(['.'], { relativeTo: this.route, queryParams: { writerTone: this.writerTone}, queryParamsHandling: 'merge' });
@@ -192,4 +235,5 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
     this.router.navigate(['.'], { relativeTo: this.route, queryParams: { writerOutputLanguage: this.writerOutputLanguage}, queryParamsHandling: 'merge' });
   }
 
+  protected readonly navigator = navigator;
 }
