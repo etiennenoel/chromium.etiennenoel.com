@@ -14,12 +14,12 @@ import {LocaleEnum} from '../../enums/locale.enum';
 
 
 @Component({
-  selector: 'app-writer',
-  templateUrl: './writer-api.component.html',
+  selector: 'app-rewriter',
+  templateUrl: './rewriter-api.component.html',
   standalone: false,
-  styleUrl: './writer-api.component.scss'
+  styleUrl: './rewriter-api.component.scss'
 })
-export class WriterApiComponent extends BaseWritingAssistanceApiComponent implements OnInit {
+export class RewriterApiComponent extends BaseWritingAssistanceApiComponent implements OnInit {
 
   @Input()
   input: string = "";
@@ -206,7 +206,7 @@ export class WriterApiComponent extends BaseWritingAssistanceApiComponent implem
   // </editor-fold>
 
   get checkAvailabilityCode() {
-    return `window.ai.writer.availability({
+    return `window.ai.rewriter.availability({
   tone: '${this.toneFormControl.value}',
   format: '${this.formatFormControl.value}',
   length: '${this.lengthFormControl.value}',
@@ -216,9 +216,9 @@ export class WriterApiComponent extends BaseWritingAssistanceApiComponent implem
 })`
   }
 
-  get writeCode() {
+  get rewriteCode() {
     if(this.useStreamingFormControl.value) {
-      return `const writer = await window.ai.writer.create({
+      return `const rewriter = await window.ai.rewriter.create({
   tone: '${this.toneFormControl.value}',
   format: '${this.formatFormControl.value}',
   length: '${this.lengthFormControl.value}',
@@ -233,14 +233,14 @@ export class WriterApiComponent extends BaseWritingAssistanceApiComponent implem
   },
 })
 
-const stream: ReadableStream = writer.writeStreaming('${this.input}', {context: '${this.contextFormControl.value}'});
+const stream: ReadableStream = rewriter.rewriteStreaming('${this.input}', {context: '${this.contextFormControl.value}'});
 
 for await (const chunk of stream) {
   // Do something with each 'chunk'
-  this.writerOutput += chunk;
+  this.rewriterOutput += chunk;
 }`;
     } else {
-      return `const writer = await window.ai.writer.create({
+      return `const rewriter = await window.ai.rewriter.create({
   tone: '${this.toneFormControl.value}',
   format: '${this.formatFormControl.value}',
   length: '${this.lengthFormControl.value}',
@@ -255,7 +255,7 @@ for await (const chunk of stream) {
   },
 })
 
-await writer.write('${this.input}', {context: '${this.contextFormControl.value}'})`;
+await rewriter.rewrite('${this.input}', {context: '${this.contextFormControl.value}'})`;
     }
   }
 
@@ -331,14 +331,14 @@ await writer.write('${this.input}', {context: '${this.contextFormControl.value}'
     }
   }
 
-  async write() {
+  async rewrite() {
     this.status = TaskStatus.Executing;
     this.outputStatusMessage = "Preparing and downloading model...";
     try {
       this.loaded = 0;
 
       // @ts-ignore
-      const writer = await this.window.ai.writer.create({
+      const rewriter = await this.window.ai.rewriter.create({
         tone: this.toneFormControl.value,
         format: this.formatFormControl.value,
         length: this.lengthFormControl.value,
@@ -365,7 +365,7 @@ await writer.write('${this.input}', {context: '${this.contextFormControl.value}'
       this.output = "";
 
       if(this.useStreamingFormControl.value) {
-        const stream: ReadableStream = writer.writeStreaming(this.input, {context: this.contextFormControl.value})
+        const stream: ReadableStream = rewriter.rewriteStreaming(this.input, {context: this.contextFormControl.value})
 
         let hasFirstResponse = false;
 
@@ -390,7 +390,7 @@ await writer.write('${this.input}', {context: '${this.contextFormControl.value}'
 
       }
       else {
-        const output = await writer.write(this.input, {context: this.contextFormControl.value});
+        const output = await rewriter.write(this.input, {context: this.contextFormControl.value});
         this.executionPerformance.totalNumberOfWords = TextUtils.countWords(output);
         this.emitExecutionPerformanceChange();
 

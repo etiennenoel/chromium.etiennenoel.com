@@ -12,6 +12,8 @@ import {WriterFormatEnum} from '../../../enums/writer-format.enum';
 import {LocaleEnum} from '../../../enums/locale.enum';
 import {ExecutionPerformanceResultInterface} from '../../../interfaces/execution-performance-result.interface';
 import {ToastStore} from '../../../stores/toast.store';
+import {ActiveTabEnum} from './active-tab.enum';
+import {window} from 'rxjs';
 
 
 @Component({
@@ -27,7 +29,18 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
 
   protected readonly RequirementStatus = RequirementStatus;
 
-  activeTab: number = 0;
+  // <editor-fold desc="Active Tab">
+  private _activeTab: ActiveTabEnum = ActiveTabEnum.Writer;
+
+  get activeTab(): ActiveTabEnum {
+    return this._activeTab;
+  }
+
+  set activeTab(value: ActiveTabEnum) {
+    this._activeTab = value;
+    this.router.navigate(['.'], { relativeTo: this.route, queryParams: { activeTab: value}, queryParamsHandling: 'merge' });
+  }
+  // </editor-fold>
 
   writerTone: WriterToneEnum = WriterToneEnum.Neutral;
   writerFormat: WriterFormatEnum = WriterFormatEnum.PlainText;
@@ -127,6 +140,10 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
         this.sharedContextFormControl.setValue(params['sharedContext']);
       }
 
+      if(params['activeTab']) {
+        this.activeTab = params['activeTab'];
+      }
+
       if(params['writerTone']) {
         this.writerTone = params['writerTone'];
       }
@@ -194,7 +211,7 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
 
   statusChange(value: TaskStatus) {
     this.status = value;
-    window.scroll(0,0);
+    this.window?.scroll(0,0);
   }
 
   outputChunksChange(value: string[]) {
@@ -242,4 +259,5 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
   }
 
   protected readonly navigator = navigator;
+  protected readonly ActiveTabEnum = ActiveTabEnum;
 }

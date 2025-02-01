@@ -90,16 +90,16 @@
 
   <ul class="nav nav-tabs">
     <li class="nav-item">
-      <button class="nav-link" [class.active]="activeTab === 0" (click)="activeTab = 0" aria-current="page" href="#">
+      <button class="nav-link" [class.active]="activeTab === ActiveTabEnum.Writer" (click)="activeTab = ActiveTabEnum.Writer" aria-current="page" href="#">
         Writer
         API
       </button>
     </li>
     <li class="nav-item">
-      <button class="nav-link" [class.active]="activeTab === 1" (click)="activeTab = 1" href="#">ReWriter API</button>
+      <button class="nav-link" [class.active]="activeTab === ActiveTabEnum.Rewriter" (click)="activeTab = ActiveTabEnum.Rewriter" href="#">ReWriter API</button>
     </li>
     <li class="nav-item">
-      <button class="nav-link" [class.active]="activeTab === 2" (click)="activeTab = 2" href="#">Summarizer API
+      <button class="nav-link" [class.active]="activeTab === ActiveTabEnum.Summarizer" (click)="activeTab = ActiveTabEnum.Summarizer" href="#">Summarizer API
       </button>
     </li>
   </ul>
@@ -108,7 +108,7 @@
     <div class="col-12">
       <div class="border border-top-0 p-3">
         @switch (activeTab) {
-          @case (0) {
+          @case (ActiveTabEnum.Writer) {
             <app-writer
               [(tone)]="writerTone"
               (toneChange)="writerToneChange()"
@@ -135,7 +135,34 @@
               (loadedChange)="loadedChange($event)"
               (errorChange)="errorChange($event)"
             ></app-writer>
-
+          }
+          @case (ActiveTabEnum.Rewriter) {
+            <app-rewriter
+              [(tone)]="writerTone"
+              (toneChange)="writerToneChange()"
+              [(format)]="writerFormat"
+              (formatChange)="writerFormatChange()"
+              [(length)]="writerLength"
+              (lengthChange)="writerLengthChange()"
+              [(useStreaming)]="writerUseStreaming"
+              (useStreamingChange)="writerUseStreamingChange()"
+              [input]="inputFormControl.value ?? ''"
+              [sharedContext]="sharedContextFormControl.value ?? ''"
+              [(expectedInputLanguages)]="writerExpectedInputLanguages"
+              (expectedInputLanguagesChange)="writerExpectedInputLanguagesChange()"
+              [(expectedContextLanguages)]="writerExpectedContextLanguages"
+              (expectedContextLanguagesChange)="writerExpectedContextLanguagesChange()"
+              [(outputLanguage)]="writerOutputLanguage"
+              (outputLanguageChange)="writerOutputLanguageChange()"
+              [(context)]="writerContext"
+              (contextChange)="writerContextChange()"
+              (executionPerformanceChange)="executionPerformanceChange($event)"
+              (outputChange)="outputChange($event)"
+              (outputChunksChange)="outputChunksChange($event)"
+              (statusChange)="statusChange($event)"
+              (loadedChange)="loadedChange($event)"
+              (errorChange)="errorChange($event)"
+            ></app-rewriter>
           }
         }
       </div>
@@ -145,52 +172,6 @@
   </div>
   <hr>
   <div class="row">
-    <div class="col-12 col-md-4">
-      <h3>Rewriter API</h3>
-
-      <h4>Requirements</h4>
-
-      <table class="table">
-        <thead>
-        <tr>
-          <th>Step</th>
-          <th>Status</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td>Activate <br><span class="code">chrome://flags/#rewriter-api-for-gemini-nano</span></td>
-          <td>
-            @if (requirements.rewriterApiFlag.status === RequirementStatus.Pending) {
-              <div class="text-primary">
-                <div class="spinner-border" role="status">
-                  <span class="visually-hidden">Loading...</span>
-                </div>
-                {{ requirements.rewriterApiFlag.message }}
-              </div>
-            } @else if (requirements.rewriterApiFlag.status === RequirementStatus.Pass) {
-              <div class="text-success">
-                <i class="bi bi-check-circle-fill text-success"></i>
-                {{ requirements.rewriterApiFlag.message }}
-              </div>
-            } @else if (requirements.rewriterApiFlag.status === RequirementStatus.Fail) {
-              <div class="text-danger">
-                <i class="bi bi-x-circle-fill"></i>
-                {{ requirements.rewriterApiFlag.message }}
-              </div>
-            }
-          </td>
-        </tr>
-        </tbody>
-      </table>
-
-
-      <button class="btn btn-sm btn-outline-primary" (click)="checkRewriterRequirements()"><i
-        class="bi bi-arrow-clockwise"></i>
-        Check requirements
-      </button>
-
-    </div>
     <div class="col-12 col-md-4">
       <h3>Summarizer API</h3>
 

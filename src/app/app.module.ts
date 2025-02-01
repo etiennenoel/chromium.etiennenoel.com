@@ -23,6 +23,7 @@ import {
 } from './components/search-select-multiple-dropdown/search-select-multiple-dropdown.component';
 import {ToastStore} from './stores/toast.store';
 import {ToastComponent} from './components/toast/toast.component';
+import {RewriterApiComponent} from './components/rewriter-api/rewriter-api.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import {ToastComponent} from './components/toast/toast.component';
 
     WritingAssistanceApisComponent,
     WriterApiComponent,
+    RewriterApiComponent,
 
     // Pipes
     EnumToSearchSelectDropdownOptionsPipe,
