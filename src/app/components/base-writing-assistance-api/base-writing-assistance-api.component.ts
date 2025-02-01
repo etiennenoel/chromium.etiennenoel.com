@@ -107,6 +107,9 @@ export abstract class BaseWritingAssistanceApiComponent extends BaseComponent {
   loadedChange = new EventEmitter<number>();
   // </editor-fold>
 
+  @Output()
+  errorChange = new EventEmitter<Error>();
+
   public apiFlag: RequirementStatusInterface = {
     status: RequirementStatus.Pending,
     message: 'Pending'

@@ -325,8 +325,9 @@ await write.write('${this.input}', {context: '${this.contextFormControl.value}'}
         expectedContextLanguages: this.expectedContextLanguagesFormControl.value,
         outputLanguage: this.outputLanguageFormControl.value
       })
-    } catch (e) {
+    } catch (e: any) {
       this.availabilityStatus = AvailabilityStatusEnum.Unknown
+      this.errorChange.emit(e);
     }
   }
 
@@ -396,12 +397,13 @@ await write.write('${this.input}', {context: '${this.contextFormControl.value}'}
         this.output = output;
       }
 
-      this.stopExecutionTime();
-
       this.status = TaskStatus.Completed;
-    } catch (e) {
+    } catch (e: any) {
       this.status = TaskStatus.Error;
       this.outputStatusMessage = `Error: ${e}`;
+      this.errorChange.emit(e);
+    } finally {
+      this.stopExecutionTime();
     }
 
   }

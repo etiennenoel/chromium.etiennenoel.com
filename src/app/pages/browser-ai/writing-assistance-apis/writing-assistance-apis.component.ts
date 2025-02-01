@@ -40,6 +40,8 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
   output: string = "";
   outputChunks: string[] = [];
 
+  error: Error | null = null;
+
   loaded:number = 0;
 
   status: TaskStatus = TaskStatus.Idle;
@@ -201,6 +203,10 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
 
   loadedChange(value: number) {
     this.loaded = value;
+  }
+
+  errorChange(value: Error) {
+    this.error = value;
   }
 
   writerToneChange() {

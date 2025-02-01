@@ -33,6 +33,10 @@
             </div>
           }
 
+          @if(error !== null) {
+            <div class="alert alert-danger">{{ error }}</div>
+          }
+
           <div>{{ this.output }} <button class="btn btn-link" *ngIf="this.output != ''" (click)="copyToClipboard(this.output)"><i class="bi bi-copy"></i></button></div>
 
           @if (writerUseStreaming && status !== TaskStatus.Idle) {
@@ -129,6 +133,7 @@
               (outputChunksChange)="outputChunksChange($event)"
               (statusChange)="statusChange($event)"
               (loadedChange)="loadedChange($event)"
+              (errorChange)="errorChange($event)"
             ></app-writer>
 
           }
