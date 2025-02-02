@@ -6,6 +6,7 @@ import {TranslatorApiComponent} from './pages/browser-ai/translator-api/translat
 import {
   WritingAssistanceApisComponent
 } from './pages/browser-ai/writing-assistance-apis/writing-assistance-apis.component';
+import {PromptApiComponent} from './pages/browser-ai/prompt-api/prompt-api.component';
 
 const routes: Routes = [
   {
@@ -26,6 +27,10 @@ const routes: Routes = [
           {
             path: "writing-assistance-apis",
             component: WritingAssistanceApisComponent
+          },
+          {
+            path: "prompt-api",
+            component: PromptApiComponent,
           }
         ]
       }

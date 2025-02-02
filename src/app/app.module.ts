@@ -25,6 +25,10 @@ import {ToastStore} from './stores/toast.store';
 import {ToastComponent} from './components/toast/toast.component';
 import {RewriterApiComponent} from './components/rewriter-api/rewriter-api.component';
 import {SummarizerApiComponent} from './components/summarizer-api/summarizer-api.component';
+import {PromptApiComponent} from './pages/browser-ai/prompt-api/prompt-api.component';
+import {
+  DragAndDropFileSystemHandleComponent
+} from './components/drag-and-drop-file-system-handle/drag-and-drop-file-system-handle.component';
 
 @NgModule({
   declarations: [
@@ -52,9 +56,13 @@ import {SummarizerApiComponent} from './components/summarizer-api/summarizer-api
     StepTitleComponent,
 
     // Browser AI APIs
+    PromptApiComponent,
     TranslatorApiComponent,
     StepContainerVisualStatusDirective,
     ToastComponent,
+
+    // Components
+    DragAndDropFileSystemHandleComponent,
   ],
   imports: [
     BrowserModule,
