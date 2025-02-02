@@ -142,7 +142,9 @@ export class SummarizerApiComponent extends BaseWritingAssistanceApiComponent im
 
   get summarizeCode() {
     if(this.useStreamingFormControl.value) {
-      return `const summarizer = await window.ai.summarizer.create({
+      return `const abortController = new AbortController();
+
+const summarizer = await window.ai.summarizer.create({
   type: '${this.typeFormControl.value}',
   format: '${this.formatFormControl.value}',
   length: '${this.lengthFormControl.value}',
@@ -155,6 +157,7 @@ export class SummarizerApiComponent extends BaseWritingAssistanceApiComponent im
       console.log(\`Downloaded \${e.loaded * 100}%\`);
     });
   },
+  signal: abortController.signal,
 })
 
 const stream: ReadableStream = summarizer.summarizeStreaming('${this.input}', {context: '${this.contextFormControl.value}'});
@@ -164,7 +167,9 @@ for await (const chunk of stream) {
   this.summarizerOutput += chunk;
 }`;
     } else {
-      return `const summarizer = await window.ai.summarizer.create({
+      return `const abortController = new AbortController();
+
+const summarizer = await window.ai.summarizer.create({
   type: '${this.typeFormControl.value}',
   format: '${this.formatFormControl.value}',
   length: '${this.lengthFormControl.value}',
@@ -177,6 +182,7 @@ for await (const chunk of stream) {
       console.log(\`Downloaded \${e.loaded * 100}%\`);
     });
   },
+  signal: abortController.signal,
 })
 
 await summarizer.summarize('${this.input}', {context: '${this.contextFormControl.value}'})`;
@@ -265,6 +271,9 @@ await summarizer.summarize('${this.input}', {context: '${this.contextFormControl
     this.loaded = 0;
 
     try {
+      this.abortControllerFromCreate  = new AbortController();
+      this.abortController = new AbortController();
+
       // @ts-ignore
       const summarizer = await this.window.ai.summarizer.create({
         type: this.typeFormControl.value,
@@ -280,6 +289,7 @@ await summarizer.summarize('${this.input}', {context: '${this.contextFormControl
             this.loaded = e.loaded;
           });
         },
+        signal: this.abortControllerFromCreate.signal,
       });
 
       this.startExecutionTime();
@@ -289,7 +299,7 @@ await summarizer.summarize('${this.input}', {context: '${this.contextFormControl
       this.emitExecutionPerformanceChange();
 
       if(this.useStreamingFormControl.value) {
-        const stream: ReadableStream = summarizer.summarizeStreaming(this.input, {context: this.contextFormControl.value})
+        const stream: ReadableStream = summarizer.summarizeStreaming(this.input, {context: this.contextFormControl.value, signal: this.abortController.signal});
 
         let hasFirstResponse = false;
 
@@ -314,7 +324,7 @@ await summarizer.summarize('${this.input}', {context: '${this.contextFormControl
 
       }
       else {
-        const output = await summarizer.summarize(this.input, {context: this.contextFormControl.value});
+        const output = await summarizer.summarize(this.input, {context: this.contextFormControl.value, signal: this.abortController.signal});
         this.executionPerformance.totalNumberOfWords = TextUtils.countWords(output);
         this.emitExecutionPerformanceChange();
 

@@ -142,7 +142,9 @@ export class WriterApiComponent extends BaseWritingAssistanceApiComponent implem
 
   get writeCode() {
     if(this.useStreamingFormControl.value) {
-      return `const writer = await window.ai.writer.create({
+      return `const abortController = new AbortController();
+
+const writer = await window.ai.writer.create({
   tone: '${this.toneFormControl.value}',
   format: '${this.formatFormControl.value}',
   length: '${this.lengthFormControl.value}',
@@ -155,6 +157,7 @@ export class WriterApiComponent extends BaseWritingAssistanceApiComponent implem
       console.log(\`Downloaded \${e.loaded * 100}%\`);
     });
   },
+  signal: abortController.signal,
 })
 
 const stream: ReadableStream = writer.writeStreaming('${this.input}', {context: '${this.contextFormControl.value}'});
@@ -164,7 +167,9 @@ for await (const chunk of stream) {
   this.writerOutput += chunk;
 }`;
     } else {
-      return `const writer = await window.ai.writer.create({
+      return `const abortController = new AbortController();
+
+const writer = await window.ai.writer.create({
   tone: '${this.toneFormControl.value}',
   format: '${this.formatFormControl.value}',
   length: '${this.lengthFormControl.value}',
@@ -177,6 +182,7 @@ for await (const chunk of stream) {
       console.log(\`Downloaded \${e.loaded * 100}%\`);
     });
   },
+  signal: abortController.signal,
 })
 
 await writer.write('${this.input}', {context: '${this.contextFormControl.value}'})`;
@@ -265,6 +271,9 @@ await writer.write('${this.input}', {context: '${this.contextFormControl.value}'
     this.outputStatusMessage = "Running query...";
 
     try {
+      this.abortControllerFromCreate  = new AbortController();
+      this.abortController = new AbortController();
+
       // @ts-ignore
       const writer = await this.window.ai.writer.create({
         tone: this.toneFormControl.value,
@@ -280,6 +289,7 @@ await writer.write('${this.input}', {context: '${this.contextFormControl.value}'
             this.loaded = e.loaded;
           });
         },
+        signal: this.abortControllerFromCreate.signal,
       });
 
       this.startExecutionTime();
@@ -289,7 +299,8 @@ await writer.write('${this.input}', {context: '${this.contextFormControl.value}'
       this.emitExecutionPerformanceChange();
 
       if(this.useStreamingFormControl.value) {
-        const stream: ReadableStream = writer.writeStreaming(this.input, {context: this.contextFormControl.value})
+        this.abortController = new AbortController();
+        const stream: ReadableStream = writer.writeStreaming(this.input, {context: this.contextFormControl.value, signal: this.abortController.signal});
 
         let hasFirstResponse = false;
 
@@ -314,7 +325,7 @@ await writer.write('${this.input}', {context: '${this.contextFormControl.value}'
 
       }
       else {
-        const output = await writer.write(this.input, {context: this.contextFormControl.value});
+        const output = await writer.write(this.input, {context: this.contextFormControl.value, signal: this.abortController.signal});
         this.executionPerformance.totalNumberOfWords = TextUtils.countWords(output);
         this.emitExecutionPerformanceChange();
 

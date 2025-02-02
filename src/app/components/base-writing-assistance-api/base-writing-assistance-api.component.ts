@@ -170,6 +170,38 @@ export abstract class BaseWritingAssistanceApiComponent extends BaseComponent {
   outputLanguageChange = new EventEmitter<LocaleEnum | null>();
   // </editor-fold>
 
+  // <editor-fold desc="AbortControllerFromCreate">
+  private _abortControllerFromCreate: AbortController | null = null;
+
+  get abortControllerFromCreate(): AbortController | null {
+    return this._abortControllerFromCreate;
+  }
+
+  set abortControllerFromCreate(value: AbortController | null) {
+    this._abortControllerFromCreate = value;
+    this.abortControllerFromCreateChange.emit(value);
+  }
+
+  @Output()
+  abortControllerFromCreateChange = new EventEmitter<AbortController | null>();
+  // </editor-fold>
+
+  // <editor-fold desc="AbortController">
+  private _abortController: AbortController | null = null;
+
+  get abortController(): AbortController | null {
+    return this._abortController;
+  }
+
+  set abortController(value: AbortController | null) {
+    this._abortController = value;
+    this.abortControllerChange.emit(value);
+  }
+
+  @Output()
+  abortControllerChange = new EventEmitter<AbortController | null>();
+  // </editor-fold>
+
   // <editor-fold desc="Download Progress">
   private _loaded: number = 0;
   get loaded(): number {

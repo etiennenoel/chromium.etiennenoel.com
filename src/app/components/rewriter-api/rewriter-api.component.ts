@@ -142,7 +142,9 @@ export class RewriterApiComponent extends BaseWritingAssistanceApiComponent impl
 
   get rewriteCode() {
     if(this.useStreamingFormControl.value) {
-      return `const rewriter = await window.ai.rewriter.create({
+      return `const abortController = new AbortController();
+
+const rewriter = await window.ai.rewriter.create({
   tone: '${this.toneFormControl.value}',
   format: '${this.formatFormControl.value}',
   length: '${this.lengthFormControl.value}',
@@ -155,6 +157,7 @@ export class RewriterApiComponent extends BaseWritingAssistanceApiComponent impl
       console.log(\`Downloaded \${e.loaded * 100}%\`);
     });
   },
+  signal: abortController.signal,
 })
 
 const stream: ReadableStream = rewriter.rewriteStreaming('${this.input}', {context: '${this.contextFormControl.value}'});
@@ -164,7 +167,9 @@ for await (const chunk of stream) {
   this.rewriterOutput += chunk;
 }`;
     } else {
-      return `const rewriter = await window.ai.rewriter.create({
+      return `const abortController = new AbortController();
+
+const rewriter = await window.ai.rewriter.create({
   tone: '${this.toneFormControl.value}',
   format: '${this.formatFormControl.value}',
   length: '${this.lengthFormControl.value}',
@@ -177,6 +182,7 @@ for await (const chunk of stream) {
       console.log(\`Downloaded \${e.loaded * 100}%\`);
     });
   },
+  signal: abortController.signal,
 })
 
 await rewriter.rewrite('${this.input}', {context: '${this.contextFormControl.value}'})`;
@@ -265,6 +271,9 @@ await rewriter.rewrite('${this.input}', {context: '${this.contextFormControl.val
     this.loaded = 0;
 
     try {
+      this.abortControllerFromCreate  = new AbortController();
+      this.abortController = new AbortController();
+
       // @ts-ignore
       const rewriter = await this.window.ai.rewriter.create({
         tone: this.toneFormControl.value,
@@ -280,6 +289,7 @@ await rewriter.rewrite('${this.input}', {context: '${this.contextFormControl.val
             this.loaded = e.loaded;
           });
         },
+        signal: this.abortControllerFromCreate.signal,
       });
 
       this.startExecutionTime();
@@ -289,7 +299,7 @@ await rewriter.rewrite('${this.input}', {context: '${this.contextFormControl.val
       this.emitExecutionPerformanceChange();
 
       if(this.useStreamingFormControl.value) {
-        const stream: ReadableStream = rewriter.rewriteStreaming(this.input, {context: this.contextFormControl.value})
+        const stream: ReadableStream = rewriter.rewriteStreaming(this.input, {context: this.contextFormControl.value, signal: this.abortController.signal});
 
         let hasFirstResponse = false;
 
@@ -314,7 +324,7 @@ await rewriter.rewrite('${this.input}', {context: '${this.contextFormControl.val
 
       }
       else {
-        const output = await rewriter.rewrite(this.input, {context: this.contextFormControl.value});
+        const output = await rewriter.rewrite(this.input, {context: this.contextFormControl.value, signal: this.abortController.signal});
         this.executionPerformance.totalNumberOfWords = TextUtils.countWords(output);
         this.emitExecutionPerformanceChange();
 

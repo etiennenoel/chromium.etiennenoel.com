@@ -41,6 +41,13 @@
             </div>
           }
 
+          @if(status === TaskStatus.Executing) {
+            <div class="mb-5">
+              <button class="btn btn-danger" (click)="abortExecution()">Abort execution</button>
+              <button class="btn btn-danger ms-3" (click)="abortExecutionFromCreate()">Abort from 'create' signal execution</button>
+            </div>
+          }
+
           @if(error !== null) {
             <div class="alert alert-danger">{{ error }}</div>
           }
@@ -142,6 +149,8 @@
               (statusChange)="statusChange($event)"
               (loadedChange)="loadedChange($event)"
               (errorChange)="errorChange($event)"
+              (abortControllerChange)="abortControllerChange($event)"
+              (abortControllerFromCreateChange)="abortControllerFromCreateChange($event)"
             ></app-writer>
           }
           @case (ActiveTabEnum.Rewriter) {
@@ -170,6 +179,8 @@
               (statusChange)="statusChange($event)"
               (loadedChange)="loadedChange($event)"
               (errorChange)="errorChange($event)"
+              (abortControllerChange)="abortControllerChange($event)"
+              (abortControllerFromCreateChange)="abortControllerFromCreateChange($event)"
             ></app-rewriter>
           }
           @case (ActiveTabEnum.Summarizer) {
@@ -198,6 +209,8 @@
               (statusChange)="statusChange($event)"
               (loadedChange)="loadedChange($event)"
               (errorChange)="errorChange($event)"
+              (abortControllerChange)="abortControllerChange($event)"
+              (abortControllerFromCreateChange)="abortControllerFromCreateChange($event)"
             ></app-summarizer>
           }
         }

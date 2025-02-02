@@ -79,6 +79,9 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
   outputChunks: string[] = [];
   error: Error | null = null;
 
+  abortController: AbortController | null = null;
+  abortFromCreateController: AbortController | null = null;
+
   outputCollapsed: boolean = false;
 
   loaded:number = 0;
@@ -332,6 +335,22 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
 
   errorChange(value: Error) {
     this.error = value;
+  }
+
+  abortControllerChange(value: AbortController | null) {
+    this.abortController = value;
+  }
+
+  abortExecution() {
+   this.abortController?.abort();
+  }
+
+  abortControllerFromCreateChange(value: AbortController | null) {
+    this.abortFromCreateController = value;
+  }
+
+  abortExecutionFromCreate() {
+   this.abortFromCreateController?.abort();
   }
 
   writerToneChange() {
