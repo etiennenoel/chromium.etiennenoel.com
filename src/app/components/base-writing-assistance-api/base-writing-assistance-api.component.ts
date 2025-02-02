@@ -8,6 +8,7 @@ import {RequirementStatusInterface} from '../../interfaces/requirement-status.in
 import {RequirementStatus} from '../../enums/requirement-status.enum';
 import {FormControl} from '@angular/forms';
 import {ExecutionPerformanceResultInterface} from '../../interfaces/execution-performance-result.interface';
+import {LocaleEnum} from '../../enums/locale.enum';
 
 declare global {
   interface Window { ai: any; }
@@ -90,6 +91,83 @@ export abstract class BaseWritingAssistanceApiComponent extends BaseComponent {
 
   @Output()
   public statusChange = new EventEmitter<TaskStatus>();
+  // </editor-fold>
+
+
+  // <editor-fold desc="Expected Input Languages">
+  private _expectedInputLanguages: LocaleEnum[] | null = [];
+  public expectedInputLanguagesFormControl: FormControl<LocaleEnum[] | null> = new FormControl<LocaleEnum[] | null>([]);
+
+  get expectedInputLanguages(): LocaleEnum[] | null {
+    return this._expectedInputLanguages;
+  }
+
+  @Input()
+  set expectedInputLanguages(value: LocaleEnum[] | null) {
+    this.setExpectedInputLanguages(value);
+  }
+
+  setExpectedInputLanguages(value: LocaleEnum[] | null, options?: {emitFormControlEvent?: boolean, emitChangeEvent?: boolean}) {
+    this._expectedInputLanguages = value;
+    this.expectedInputLanguagesFormControl.setValue(value, {emitEvent: options?.emitFormControlEvent ?? true});
+    if(options?.emitChangeEvent ?? true) {
+      this.expectedInputLanguagesChange.emit(value);
+    }
+  }
+
+  @Output()
+  expectedInputLanguagesChange = new EventEmitter<LocaleEnum[] | null>();
+
+  // </editor-fold>
+
+  // <editor-fold desc="Expected Context Languages">
+  private _expectedContextLanguages: LocaleEnum[] | null = [];
+  public expectedContextLanguagesFormControl: FormControl<LocaleEnum[] | null> = new FormControl<LocaleEnum[] | null>([]);
+
+  get expectedContextLanguages(): LocaleEnum[] | null {
+    return this._expectedContextLanguages;
+  }
+
+  @Input()
+  set expectedContextLanguages(value: LocaleEnum[] | null) {
+    this.setExpectedContextLanguages(value);
+  }
+
+  setExpectedContextLanguages(value: LocaleEnum[] | null, options?: {emitFormControlEvent?: boolean, emitChangeEvent?: boolean}) {
+    this._expectedContextLanguages = value;
+    this.expectedContextLanguagesFormControl.setValue(value, {emitEvent: options?.emitFormControlEvent ?? true});
+    if(options?.emitChangeEvent ?? true) {
+      this.expectedContextLanguagesChange.emit(value);
+    }
+  }
+
+  @Output()
+  expectedContextLanguagesChange = new EventEmitter<LocaleEnum[] | null>();
+  // </editor-fold>
+
+  // <editor-fold desc="OutputLanguage">
+  private _outputLanguage: LocaleEnum | null = null;
+  public outputLanguageFormControl: FormControl<LocaleEnum | null> = new FormControl<LocaleEnum | null>(null);
+
+  get outputLanguage(): LocaleEnum | null {
+    return this._outputLanguage;
+  }
+
+  @Input()
+  set outputLanguage(value: LocaleEnum | null) {
+    this.setOutputLanguage(value);
+  }
+
+  setOutputLanguage(value: LocaleEnum | null, options?: {emitFormControlEvent?: boolean, emitChangeEvent?: boolean}) {
+    this._outputLanguage = value;
+    this.outputLanguageFormControl.setValue(value, {emitEvent: options?.emitFormControlEvent ?? true});
+    if(options?.emitChangeEvent ?? true) {
+      this.outputLanguageChange.emit(value);
+    }
+  }
+
+  @Output()
+  outputLanguageChange = new EventEmitter<LocaleEnum | null>();
   // </editor-fold>
 
   // <editor-fold desc="Download Progress">

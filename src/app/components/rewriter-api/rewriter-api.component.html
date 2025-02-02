@@ -44,7 +44,7 @@
       <div class="col-4">
         <div class="mb-3">
           <label for="writer-tone" class="form-label">Tone</label>
-          <app-search-select-dropdown id="writer-tone" [options]="WriterToneEnum | enumToSearchSelectDropdownOptions"
+          <app-search-select-dropdown id="writer-tone" [options]="RewriterToneEnum | enumToSearchSelectDropdownOptions"
                                       [control]="toneFormControl"
                                       [name]="'writerTone'"></app-search-select-dropdown>
         </div>
@@ -53,7 +53,7 @@
         <div class="mb-3">
           <label for="writer-format" class="form-label">Format</label>
           <app-search-select-dropdown id="writer-format"
-                                      [options]="WriterFormatEnum | enumToSearchSelectDropdownOptions"
+                                      [options]="RewriterFormatEnum | enumToSearchSelectDropdownOptions"
                                       [control]="formatFormControl"
                                       [name]="'writerFormat'"></app-search-select-dropdown>
         </div>
@@ -62,7 +62,7 @@
         <div class="mb-3">
           <label for="writer-length" class="form-label">Length</label>
           <app-search-select-dropdown id="writer-length"
-                                      [options]="WriterLengthEnum | enumToSearchSelectDropdownOptions"
+                                      [options]="RewriterLengthEnum | enumToSearchSelectDropdownOptions"
                                       [control]="lengthFormControl"
                                       [name]="'writerLength'"></app-search-select-dropdown>
         </div>

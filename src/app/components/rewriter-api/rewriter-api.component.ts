@@ -3,14 +3,14 @@ import {TaskStatus} from '../../enums/task-status.enum';
 import {RequirementStatus} from '../../enums/requirement-status.enum';
 import {DOCUMENT, isPlatformBrowser} from '@angular/common';
 import {FormControl} from '@angular/forms';
-import {WriterToneEnum} from '../../enums/writer-tone.enum';
-import {WriterFormatEnum} from '../../enums/writer-format.enum';
-import {WriterLengthEnum} from '../../enums/writer-length.enum';
 import {BaseWritingAssistanceApiComponent} from '../base-writing-assistance-api/base-writing-assistance-api.component';
 import {TextUtils} from '../../utils/text.utils';
 import {AvailabilityStatusEnum} from '../../enums/availability-status.enum';
 import {SearchSelectDropdownOptionsInterface} from '../../interfaces/search-select-dropdown-options.interface';
 import {LocaleEnum} from '../../enums/locale.enum';
+import {RewriterLengthEnum} from '../../enums/rewriter-length.enum';
+import {RewriterFormatEnum} from '../../enums/rewriter-format.enum';
+import {RewriterToneEnum} from '../../enums/rewriter-tone.enum';
 
 
 @Component({
@@ -28,19 +28,19 @@ export class RewriterApiComponent extends BaseWritingAssistanceApiComponent impl
   sharedContext: string = "";
 
   // <editor-fold desc="Tone">
-  private _tone: WriterToneEnum | null = WriterToneEnum.Neutral;
-  public toneFormControl: FormControl<WriterToneEnum | null> = new FormControl<WriterToneEnum | null>(WriterToneEnum.Neutral);
+  private _tone: RewriterToneEnum | null = RewriterToneEnum.AsIs;
+  public toneFormControl: FormControl<RewriterToneEnum | null> = new FormControl<RewriterToneEnum | null>(RewriterToneEnum.AsIs);
 
-  get tone(): WriterToneEnum | null {
+  get tone(): RewriterToneEnum | null {
     return this._tone;
   }
 
   @Input()
-  set tone(value: WriterToneEnum | null) {
+  set tone(value: RewriterToneEnum | null) {
    this.setTone(value);
   }
 
-  setTone(value: WriterToneEnum | null, options?: {emitFormControlEvent?: boolean, emitChangeEvent?: boolean}) {
+  setTone(value: RewriterToneEnum | null, options?: {emitFormControlEvent?: boolean, emitChangeEvent?: boolean}) {
     this._tone = value;
     this.toneFormControl.setValue(value, {emitEvent: options?.emitFormControlEvent ?? true});
     if(options?.emitChangeEvent ?? true) {
@@ -49,7 +49,7 @@ export class RewriterApiComponent extends BaseWritingAssistanceApiComponent impl
   }
 
   @Output()
-  toneChange = new EventEmitter<WriterToneEnum | null>();
+  toneChange = new EventEmitter<RewriterToneEnum | null>();
   // </editor-fold>
 
   // <editor-fold desc="Context">
@@ -78,19 +78,19 @@ export class RewriterApiComponent extends BaseWritingAssistanceApiComponent impl
   // </editor-fold>
 
   // <editor-fold desc="Format">
-  private _format: WriterFormatEnum | null = WriterFormatEnum.PlainText;
-  public formatFormControl: FormControl<WriterFormatEnum | null> = new FormControl<WriterFormatEnum | null>(WriterFormatEnum.PlainText);
+  private _format: RewriterFormatEnum | null = RewriterFormatEnum.PlainText;
+  public formatFormControl: FormControl<RewriterFormatEnum | null> = new FormControl<RewriterFormatEnum | null>(RewriterFormatEnum.PlainText);
 
-  get format(): WriterFormatEnum | null {
+  get format(): RewriterFormatEnum | null {
     return this._format;
   }
 
   @Input()
-  set format(value: WriterFormatEnum | null) {
+  set format(value: RewriterFormatEnum | null) {
     this.setFormat(value);
   }
 
-  setFormat(value: WriterFormatEnum | null, options?: {emitFormControlEvent?: boolean, emitChangeEvent?: boolean}) {
+  setFormat(value: RewriterFormatEnum | null, options?: {emitFormControlEvent?: boolean, emitChangeEvent?: boolean}) {
     this._format = value;
     this.formatFormControl.setValue(value, {emitEvent: options?.emitFormControlEvent ?? true});
     if(options?.emitChangeEvent ?? true) {
@@ -99,23 +99,23 @@ export class RewriterApiComponent extends BaseWritingAssistanceApiComponent impl
   }
 
   @Output()
-  formatChange = new EventEmitter<WriterFormatEnum | null>();
+  formatChange = new EventEmitter<RewriterFormatEnum | null>();
   // </editor-fold>
 
   // <editor-fold desc="Length">
-  private _length: WriterLengthEnum | null = WriterLengthEnum.Medium;
-  public lengthFormControl: FormControl<WriterLengthEnum | null> = new FormControl<WriterLengthEnum | null>(WriterLengthEnum.Medium);
+  private _length: RewriterLengthEnum | null = RewriterLengthEnum.AsIs;
+  public lengthFormControl: FormControl<RewriterLengthEnum | null> = new FormControl<RewriterLengthEnum | null>(RewriterLengthEnum.AsIs);
 
-  get length(): WriterLengthEnum | null {
+  get length(): RewriterLengthEnum | null {
     return this._length;
   }
 
   @Input()
-  set length(value: WriterLengthEnum | null) {
+  set length(value: RewriterLengthEnum | null) {
     this.setLength(value);
   }
 
-  setLength(value: WriterLengthEnum | null, options?: {emitFormControlEvent?: boolean, emitChangeEvent?: boolean}) {
+  setLength(value: RewriterLengthEnum | null, options?: {emitFormControlEvent?: boolean, emitChangeEvent?: boolean}) {
     this._length = value;
     this.lengthFormControl.setValue(value, {emitEvent: options?.emitFormControlEvent ?? true});
     if(options?.emitChangeEvent ?? true) {
@@ -124,86 +124,10 @@ export class RewriterApiComponent extends BaseWritingAssistanceApiComponent impl
   }
 
   @Output()
-  lengthChange = new EventEmitter<WriterLengthEnum | null>();
+  lengthChange = new EventEmitter<RewriterLengthEnum | null>();
   // </editor-fold>
 
   protected outputStatusMessage: string = "";
-
-  // <editor-fold desc="Expected Input Languages">
-  private _expectedInputLanguages: LocaleEnum[] | null = [];
-  public expectedInputLanguagesFormControl: FormControl<LocaleEnum[] | null> = new FormControl<LocaleEnum[] | null>([]);
-
-  get expectedInputLanguages(): LocaleEnum[] | null {
-    return this._expectedInputLanguages;
-  }
-
-  @Input()
-  set expectedInputLanguages(value: LocaleEnum[] | null) {
-    this.setExpectedInputLanguages(value);
-  }
-
-  setExpectedInputLanguages(value: LocaleEnum[] | null, options?: {emitFormControlEvent?: boolean, emitChangeEvent?: boolean}) {
-    this._expectedInputLanguages = value;
-    this.expectedInputLanguagesFormControl.setValue(value, {emitEvent: options?.emitFormControlEvent ?? true});
-    if(options?.emitChangeEvent ?? true) {
-      this.expectedInputLanguagesChange.emit(value);
-    }
-  }
-
-  @Output()
-  expectedInputLanguagesChange = new EventEmitter<LocaleEnum[] | null>();
-
-  // </editor-fold>
-
-  // <editor-fold desc="Expected Context Languages">
-  private _expectedContextLanguages: LocaleEnum[] | null = [];
-  public expectedContextLanguagesFormControl: FormControl<LocaleEnum[] | null> = new FormControl<LocaleEnum[] | null>([]);
-
-  get expectedContextLanguages(): LocaleEnum[] | null {
-    return this._expectedContextLanguages;
-  }
-
-  @Input()
-  set expectedContextLanguages(value: LocaleEnum[] | null) {
-    this.setExpectedContextLanguages(value);
-  }
-
-  setExpectedContextLanguages(value: LocaleEnum[] | null, options?: {emitFormControlEvent?: boolean, emitChangeEvent?: boolean}) {
-    this._expectedContextLanguages = value;
-    this.expectedContextLanguagesFormControl.setValue(value, {emitEvent: options?.emitFormControlEvent ?? true});
-    if(options?.emitChangeEvent ?? true) {
-      this.expectedContextLanguagesChange.emit(value);
-    }
-  }
-
-  @Output()
-  expectedContextLanguagesChange = new EventEmitter<LocaleEnum[] | null>();
-  // </editor-fold>
-
-  // <editor-fold desc="OutputLanguage">
-  private _outputLanguage: LocaleEnum | null = null;
-  public outputLanguageFormControl: FormControl<LocaleEnum | null> = new FormControl<LocaleEnum | null>(null);
-
-  get outputLanguage(): LocaleEnum | null {
-    return this._outputLanguage;
-  }
-
-  @Input()
-  set outputLanguage(value: LocaleEnum | null) {
-    this.setOutputLanguage(value);
-  }
-
-  setOutputLanguage(value: LocaleEnum | null, options?: {emitFormControlEvent?: boolean, emitChangeEvent?: boolean}) {
-    this._outputLanguage = value;
-    this.outputLanguageFormControl.setValue(value, {emitEvent: options?.emitFormControlEvent ?? true});
-    if(options?.emitChangeEvent ?? true) {
-      this.outputLanguageChange.emit(value);
-    }
-  }
-
-  @Output()
-  outputLanguageChange = new EventEmitter<LocaleEnum | null>();
-  // </editor-fold>
 
   get checkAvailabilityCode() {
     return `window.ai.rewriter.availability({
@@ -317,7 +241,7 @@ await rewriter.rewrite('${this.input}', {context: '${this.contextFormControl.val
   async checkAvailability() {
     try {
       // @ts-ignore
-      this.availabilityStatus = await this.window.ai.writer.availability({
+      this.availabilityStatus = await this.window.ai.rewriter.availability({
         tone: this.toneFormControl.value,
         format: this.formatFormControl.value,
         length: this.lengthFormControl.value,
@@ -408,8 +332,8 @@ await rewriter.rewrite('${this.input}', {context: '${this.contextFormControl.val
 
   }
 
-  WriterToneEnum = WriterToneEnum;
-  WriterFormatEnum = WriterFormatEnum;
-  WriterLengthEnum = WriterLengthEnum;
+  RewriterToneEnum = RewriterToneEnum;
+  RewriterFormatEnum = RewriterFormatEnum;
+  RewriterLengthEnum = RewriterLengthEnum;
   protected readonly LocaleEnum = LocaleEnum;
 }
