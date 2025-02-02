@@ -258,9 +258,13 @@ await writer.write('${this.input}', {context: '${this.contextFormControl.value}'
   async write() {
     this.status = TaskStatus.Executing;
     this.outputStatusMessage = "Preparing and downloading model...";
-    try {
-      this.loaded = 0;
+    this.loaded = 0;
+    this.outputChunks = [];
+    this.outputChunksChange.emit(this.outputChunks);
+    this.output = "";
+    this.outputStatusMessage = "Running query...";
 
+    try {
       // @ts-ignore
       const writer = await this.window.ai.writer.create({
         tone: this.toneFormControl.value,
@@ -280,13 +284,9 @@ await writer.write('${this.input}', {context: '${this.contextFormControl.value}'
 
       this.startExecutionTime();
 
-      this.outputStatusMessage = "Running query...";
-
       this.executionPerformance.firstResponseNumberOfWords = 0;
       this.executionPerformance.totalNumberOfWords = 0;
       this.emitExecutionPerformanceChange();
-      this.outputChunks = [];
-      this.output = "";
 
       if(this.useStreamingFormControl.value) {
         const stream: ReadableStream = writer.writeStreaming(this.input, {context: this.contextFormControl.value})

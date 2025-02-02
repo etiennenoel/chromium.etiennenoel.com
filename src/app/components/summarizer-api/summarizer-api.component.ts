@@ -8,18 +8,18 @@ import {TextUtils} from '../../utils/text.utils';
 import {AvailabilityStatusEnum} from '../../enums/availability-status.enum';
 import {SearchSelectDropdownOptionsInterface} from '../../interfaces/search-select-dropdown-options.interface';
 import {LocaleEnum} from '../../enums/locale.enum';
-import {RewriterLengthEnum} from '../../enums/rewriter-length.enum';
-import {RewriterFormatEnum} from '../../enums/rewriter-format.enum';
-import {RewriterToneEnum} from '../../enums/rewriter-tone.enum';
+import {SummarizerTypeEnum} from '../../enums/summarizer-type.enum';
+import {SummarizerFormatEnum} from '../../enums/summarizer-format.enum';
+import {SummarizerLengthEnum} from '../../enums/summarizer-length.enum';
 
 
 @Component({
-  selector: 'app-rewriter',
-  templateUrl: './rewriter-api.component.html',
+  selector: 'app-summarizer',
+  templateUrl: './summarizer-api.component.html',
   standalone: false,
-  styleUrl: './rewriter-api.component.scss'
+  styleUrl: './summarizer-api.component.scss'
 })
-export class RewriterApiComponent extends BaseWritingAssistanceApiComponent implements OnInit {
+export class SummarizerApiComponent extends BaseWritingAssistanceApiComponent implements OnInit {
 
   @Input()
   input: string = "";
@@ -27,29 +27,29 @@ export class RewriterApiComponent extends BaseWritingAssistanceApiComponent impl
   @Input()
   sharedContext: string = "";
 
-  // <editor-fold desc="Tone">
-  private _tone: RewriterToneEnum | null = RewriterToneEnum.AsIs;
-  public toneFormControl: FormControl<RewriterToneEnum | null> = new FormControl<RewriterToneEnum | null>(RewriterToneEnum.AsIs);
+  // <editor-fold desc="Type">
+  private _type: SummarizerTypeEnum | null = SummarizerTypeEnum.Headline;
+  public typeFormControl: FormControl<SummarizerTypeEnum | null> = new FormControl<SummarizerTypeEnum | null>(SummarizerTypeEnum.Headline);
 
-  get tone(): RewriterToneEnum | null {
-    return this._tone;
+  get type(): SummarizerTypeEnum | null {
+    return this._type;
   }
 
   @Input()
-  set tone(value: RewriterToneEnum | null) {
-   this.setTone(value);
+  set type(value: SummarizerTypeEnum | null) {
+   this.setType(value);
   }
 
-  setTone(value: RewriterToneEnum | null, options?: {emitFormControlEvent?: boolean, emitChangeEvent?: boolean}) {
-    this._tone = value;
-    this.toneFormControl.setValue(value, {emitEvent: options?.emitFormControlEvent ?? true});
+  setType(value: SummarizerTypeEnum | null, options?: {emitFormControlEvent?: boolean, emitChangeEvent?: boolean}) {
+    this._type = value;
+    this.typeFormControl.setValue(value, {emitEvent: options?.emitFormControlEvent ?? true});
     if(options?.emitChangeEvent ?? true) {
-      this.toneChange.emit(value);
+      this.typeChange.emit(value);
     }
   }
 
   @Output()
-  toneChange = new EventEmitter<RewriterToneEnum | null>();
+  typeChange = new EventEmitter<SummarizerTypeEnum | null>();
   // </editor-fold>
 
   // <editor-fold desc="Context">
@@ -78,19 +78,19 @@ export class RewriterApiComponent extends BaseWritingAssistanceApiComponent impl
   // </editor-fold>
 
   // <editor-fold desc="Format">
-  private _format: RewriterFormatEnum | null = RewriterFormatEnum.PlainText;
-  public formatFormControl: FormControl<RewriterFormatEnum | null> = new FormControl<RewriterFormatEnum | null>(RewriterFormatEnum.PlainText);
+  private _format: SummarizerFormatEnum | null = SummarizerFormatEnum.PlainText;
+  public formatFormControl: FormControl<SummarizerFormatEnum | null> = new FormControl<SummarizerFormatEnum | null>(SummarizerFormatEnum.PlainText);
 
-  get format(): RewriterFormatEnum | null {
+  get format(): SummarizerFormatEnum | null {
     return this._format;
   }
 
   @Input()
-  set format(value: RewriterFormatEnum | null) {
+  set format(value: SummarizerFormatEnum | null) {
     this.setFormat(value);
   }
 
-  setFormat(value: RewriterFormatEnum | null, options?: {emitFormControlEvent?: boolean, emitChangeEvent?: boolean}) {
+  setFormat(value: SummarizerFormatEnum | null, options?: {emitFormControlEvent?: boolean, emitChangeEvent?: boolean}) {
     this._format = value;
     this.formatFormControl.setValue(value, {emitEvent: options?.emitFormControlEvent ?? true});
     if(options?.emitChangeEvent ?? true) {
@@ -99,23 +99,23 @@ export class RewriterApiComponent extends BaseWritingAssistanceApiComponent impl
   }
 
   @Output()
-  formatChange = new EventEmitter<RewriterFormatEnum | null>();
+  formatChange = new EventEmitter<SummarizerFormatEnum | null>();
   // </editor-fold>
 
   // <editor-fold desc="Length">
-  private _length: RewriterLengthEnum | null = RewriterLengthEnum.AsIs;
-  public lengthFormControl: FormControl<RewriterLengthEnum | null> = new FormControl<RewriterLengthEnum | null>(RewriterLengthEnum.AsIs);
+  private _length: SummarizerLengthEnum | null = SummarizerLengthEnum.Medium;
+  public lengthFormControl: FormControl<SummarizerLengthEnum | null> = new FormControl<SummarizerLengthEnum | null>(SummarizerLengthEnum.Medium);
 
-  get length(): RewriterLengthEnum | null {
+  get length(): SummarizerLengthEnum | null {
     return this._length;
   }
 
   @Input()
-  set length(value: RewriterLengthEnum | null) {
+  set length(value: SummarizerLengthEnum | null) {
     this.setLength(value);
   }
 
-  setLength(value: RewriterLengthEnum | null, options?: {emitFormControlEvent?: boolean, emitChangeEvent?: boolean}) {
+  setLength(value: SummarizerLengthEnum | null, options?: {emitFormControlEvent?: boolean, emitChangeEvent?: boolean}) {
     this._length = value;
     this.lengthFormControl.setValue(value, {emitEvent: options?.emitFormControlEvent ?? true});
     if(options?.emitChangeEvent ?? true) {
@@ -124,14 +124,14 @@ export class RewriterApiComponent extends BaseWritingAssistanceApiComponent impl
   }
 
   @Output()
-  lengthChange = new EventEmitter<RewriterLengthEnum | null>();
+  lengthChange = new EventEmitter<SummarizerLengthEnum | null>();
   // </editor-fold>
 
   protected outputStatusMessage: string = "";
 
   get checkAvailabilityCode() {
-    return `window.ai.rewriter.availability({
-  tone: '${this.toneFormControl.value}',
+    return `window.ai.summarizer.availability({
+  type: '${this.typeFormControl.value}',
   format: '${this.formatFormControl.value}',
   length: '${this.lengthFormControl.value}',
   expectedInputLanguages: ${JSON.stringify(this.expectedInputLanguagesFormControl.value)},
@@ -140,10 +140,10 @@ export class RewriterApiComponent extends BaseWritingAssistanceApiComponent impl
 })`
   }
 
-  get rewriteCode() {
+  get summarizeCode() {
     if(this.useStreamingFormControl.value) {
-      return `const rewriter = await window.ai.rewriter.create({
-  tone: '${this.toneFormControl.value}',
+      return `const summarizer = await window.ai.summarizer.create({
+  type: '${this.typeFormControl.value}',
   format: '${this.formatFormControl.value}',
   length: '${this.lengthFormControl.value}',
   sharedContext: '${this.sharedContext}',
@@ -157,15 +157,15 @@ export class RewriterApiComponent extends BaseWritingAssistanceApiComponent impl
   },
 })
 
-const stream: ReadableStream = rewriter.rewriteStreaming('${this.input}', {context: '${this.contextFormControl.value}'});
+const stream: ReadableStream = summarizer.summarizeStreaming('${this.input}', {context: '${this.contextFormControl.value}'});
 
 for await (const chunk of stream) {
   // Do something with each 'chunk'
-  this.rewriterOutput += chunk;
+  this.summarizerOutput += chunk;
 }`;
     } else {
-      return `const rewriter = await window.ai.rewriter.create({
-  tone: '${this.toneFormControl.value}',
+      return `const summarizer = await window.ai.summarizer.create({
+  type: '${this.typeFormControl.value}',
   format: '${this.formatFormControl.value}',
   length: '${this.lengthFormControl.value}',
   sharedContext: '${this.sharedContext}',
@@ -179,7 +179,7 @@ for await (const chunk of stream) {
   },
 })
 
-await rewriter.rewrite('${this.input}', {context: '${this.contextFormControl.value}'})`;
+await summarizer.summarize('${this.input}', {context: '${this.contextFormControl.value}'})`;
     }
   }
 
@@ -197,8 +197,8 @@ await rewriter.rewrite('${this.input}', {context: '${this.contextFormControl.val
     this.checkRequirements()
 
     // Register form changes events
-    this.subscriptions.push(this.toneFormControl.valueChanges.subscribe((value) => {
-      this.setTone(value, {emitChangeEvent: true, emitFormControlEvent: false});
+    this.subscriptions.push(this.typeFormControl.valueChanges.subscribe((value) => {
+      this.setType(value, {emitChangeEvent: true, emitFormControlEvent: false});
     }));
     this.subscriptions.push(this.formatFormControl.valueChanges.subscribe((value) => {
       this.setFormat(value, {emitChangeEvent: true, emitFormControlEvent: false});
@@ -229,9 +229,9 @@ await rewriter.rewrite('${this.input}', {context: '${this.contextFormControl.val
       this.apiFlag.message = "'window.ai' is not defined. Activate the flag.";
     }
     // @ts-ignore
-    else if (isPlatformBrowser(this.platformId) && !("rewriter" in this.window.ai)) {
+    else if (isPlatformBrowser(this.platformId) && !("summarizer" in this.window.ai)) {
       this.apiFlag.status = RequirementStatus.Fail;
-      this.apiFlag.message = "'window.ai.rewriter' is not defined. Activate the flag.";
+      this.apiFlag.message = "'window.ai.summarizer' is not defined. Activate the flag.";
     } else {
       this.apiFlag.status = RequirementStatus.Pass;
       this.apiFlag.message = "Passed";
@@ -241,8 +241,8 @@ await rewriter.rewrite('${this.input}', {context: '${this.contextFormControl.val
   async checkAvailability() {
     try {
       // @ts-ignore
-      this.availabilityStatus = await this.window.ai.rewriter.availability({
-        tone: this.toneFormControl.value,
+      this.availabilityStatus = await this.window.ai.summarizer.availability({
+        type: this.typeFormControl.value,
         format: this.formatFormControl.value,
         length: this.lengthFormControl.value,
         expectedInputLanguages: this.expectedInputLanguagesFormControl.value,
@@ -255,7 +255,7 @@ await rewriter.rewrite('${this.input}', {context: '${this.contextFormControl.val
     }
   }
 
-  async rewrite() {
+  async summarize() {
     this.status = TaskStatus.Executing;
     this.outputStatusMessage = "Preparing and downloading model...";
     this.outputChunks = [];
@@ -266,8 +266,8 @@ await rewriter.rewrite('${this.input}', {context: '${this.contextFormControl.val
 
     try {
       // @ts-ignore
-      const rewriter = await this.window.ai.rewriter.create({
-        tone: this.toneFormControl.value,
+      const summarizer = await this.window.ai.summarizer.create({
+        type: this.typeFormControl.value,
         format: this.formatFormControl.value,
         length: this.lengthFormControl.value,
         sharedContext: this.sharedContext,
@@ -289,7 +289,7 @@ await rewriter.rewrite('${this.input}', {context: '${this.contextFormControl.val
       this.emitExecutionPerformanceChange();
 
       if(this.useStreamingFormControl.value) {
-        const stream: ReadableStream = rewriter.rewriteStreaming(this.input, {context: this.contextFormControl.value})
+        const stream: ReadableStream = summarizer.summarizeStreaming(this.input, {context: this.contextFormControl.value})
 
         let hasFirstResponse = false;
 
@@ -314,7 +314,7 @@ await rewriter.rewrite('${this.input}', {context: '${this.contextFormControl.val
 
       }
       else {
-        const output = await rewriter.rewrite(this.input, {context: this.contextFormControl.value});
+        const output = await summarizer.summarize(this.input, {context: this.contextFormControl.value});
         this.executionPerformance.totalNumberOfWords = TextUtils.countWords(output);
         this.emitExecutionPerformanceChange();
 
@@ -332,8 +332,8 @@ await rewriter.rewrite('${this.input}', {context: '${this.contextFormControl.val
 
   }
 
-  RewriterToneEnum = RewriterToneEnum;
-  RewriterFormatEnum = RewriterFormatEnum;
-  RewriterLengthEnum = RewriterLengthEnum;
+  SummarizerTypeEnum = SummarizerTypeEnum;
+  SummarizerFormatEnum = SummarizerFormatEnum;
+  SummarizerLengthEnum = SummarizerLengthEnum;
   protected readonly LocaleEnum = LocaleEnum;
 }

@@ -24,6 +24,7 @@ import {
 import {ToastStore} from './stores/toast.store';
 import {ToastComponent} from './components/toast/toast.component';
 import {RewriterApiComponent} from './components/rewriter-api/rewriter-api.component';
+import {SummarizerApiComponent} from './components/summarizer-api/summarizer-api.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,8 @@ import {RewriterApiComponent} from './components/rewriter-api/rewriter-api.compo
     WritingAssistanceApisComponent,
     WriterApiComponent,
     RewriterApiComponent,
+
+    SummarizerApiComponent,
 
     // Pipes
     EnumToSearchSelectDropdownOptionsPipe,

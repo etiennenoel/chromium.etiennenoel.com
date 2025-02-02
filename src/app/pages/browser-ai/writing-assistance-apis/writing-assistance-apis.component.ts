@@ -14,6 +14,12 @@ import {ExecutionPerformanceResultInterface} from '../../../interfaces/execution
 import {ToastStore} from '../../../stores/toast.store';
 import {ActiveTabEnum} from './active-tab.enum';
 import {window} from 'rxjs';
+import {RewriterToneEnum} from '../../../enums/rewriter-tone.enum';
+import {RewriterFormatEnum} from '../../../enums/rewriter-format.enum';
+import {RewriterLengthEnum} from '../../../enums/rewriter-length.enum';
+import {SummarizerTypeEnum} from '../../../enums/summarizer-type.enum';
+import {SummarizerFormatEnum} from '../../../enums/summarizer-format.enum';
+import {SummarizerLengthEnum} from '../../../enums/summarizer-length.enum';
 
 
 @Component({
@@ -50,10 +56,30 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
   writerExpectedInputLanguages: LocaleEnum[] = [];
   writerExpectedContextLanguages: LocaleEnum[] = [];
   writerOutputLanguage: LocaleEnum = LocaleEnum.en;
+
+  rewriterTone: RewriterToneEnum = RewriterToneEnum.AsIs;
+  rewriterFormat: RewriterFormatEnum = RewriterFormatEnum.PlainText;
+  rewriterLength: RewriterLengthEnum = RewriterLengthEnum.AsIs;
+  rewriterUseStreaming: boolean = false;
+  rewriterContext: string = "";
+  rewriterExpectedInputLanguages: LocaleEnum[] = [];
+  rewriterExpectedContextLanguages: LocaleEnum[] = [];
+  rewriterOutputLanguage: LocaleEnum = LocaleEnum.en;
+
+  summarizerType: SummarizerTypeEnum = SummarizerTypeEnum.Headline;
+  summarizerFormat: SummarizerFormatEnum = SummarizerFormatEnum.PlainText;
+  summarizerLength: SummarizerLengthEnum = SummarizerLengthEnum.Medium;
+  summarizerUseStreaming: boolean = false;
+  summarizerContext: string = "";
+  summarizerExpectedInputLanguages: LocaleEnum[] = [];
+  summarizerExpectedContextLanguages: LocaleEnum[] = [];
+  summarizerOutputLanguage: LocaleEnum = LocaleEnum.en;
+
   output: string = "";
   outputChunks: string[] = [];
-
   error: Error | null = null;
+
+  outputCollapsed: boolean = false;
 
   loaded:number = 0;
 
@@ -183,6 +209,88 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
       if(params['writerOutputLanguage']) {
         this.writerOutputLanguage = params['writerOutputLanguage'];
       }
+
+      // Rewriter
+      if(params['rewriterTone']) {
+        this.rewriterTone = params['rewriterTone'];
+      }
+
+      if(params['rewriterFormat']) {
+        this.rewriterFormat = params['rewriterFormat'];
+      }
+
+      if(params['rewriterLength']) {
+        this.rewriterLength = params['rewriterLength'];
+      }
+
+      if(params['rewriterUseStreaming']) {
+        this.rewriterUseStreaming = params['rewriterUseStreaming'] !== "false";
+      }
+
+      if(params['rewriterContext']) {
+        this.rewriterContext = params['rewriterContext'];
+      }
+
+      if(params['rewriterExpectedInputLanguages']) {
+        if(!Array.isArray(params['rewriterExpectedInputLanguages'])) {
+          this.rewriterExpectedInputLanguages = [params['rewriterExpectedInputLanguages']];
+        } else {
+          this.rewriterExpectedInputLanguages = params['rewriterExpectedInputLanguages'];
+        }
+
+      }
+      if(params['rewriterExpectedContextLanguages']) {
+        if(!Array.isArray(params['rewriterExpectedContextLanguages'])) {
+          this.rewriterExpectedContextLanguages = [params['rewriterExpectedContextLanguages']];
+        } else {
+          this.rewriterExpectedContextLanguages = params['rewriterExpectedContextLanguages'];
+        }
+      }
+
+      if(params['rewriterOutputLanguage']) {
+        this.rewriterOutputLanguage = params['rewriterOutputLanguage'];
+      }
+
+      // Summarizer
+      if(params['summarizerType']) {
+        this.summarizerType = params['summarizerType'];
+      }
+
+      if(params['summarizerFormat']) {
+        this.summarizerFormat = params['summarizerFormat'];
+      }
+
+      if(params['summarizerLength']) {
+        this.summarizerLength = params['summarizerLength'];
+      }
+
+      if(params['summarizerUseStreaming']) {
+        this.summarizerUseStreaming = params['summarizerUseStreaming'] !== "false";
+      }
+
+      if(params['summarizerContext']) {
+        this.summarizerContext = params['summarizerContext'];
+      }
+
+      if(params['summarizerExpectedInputLanguages']) {
+        if(!Array.isArray(params['summarizerExpectedInputLanguages'])) {
+          this.summarizerExpectedInputLanguages = [params['summarizerExpectedInputLanguages']];
+        } else {
+          this.summarizerExpectedInputLanguages = params['summarizerExpectedInputLanguages'];
+        }
+
+      }
+      if(params['summarizerExpectedContextLanguages']) {
+        if(!Array.isArray(params['summarizerExpectedContextLanguages'])) {
+          this.summarizerExpectedContextLanguages = [params['summarizerExpectedContextLanguages']];
+        } else {
+          this.summarizerExpectedContextLanguages = params['summarizerExpectedContextLanguages'];
+        }
+      }
+
+      if(params['summarizerOutputLanguage']) {
+        this.summarizerOutputLanguage = params['summarizerOutputLanguage'];
+      }
     }));
 
     this.subscriptions.push(this.inputFormControl.valueChanges.subscribe((value) => {
@@ -256,6 +364,70 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
 
   writerOutputLanguageChange() {
     this.router.navigate(['.'], { relativeTo: this.route, queryParams: { writerOutputLanguage: this.writerOutputLanguage}, queryParamsHandling: 'merge' });
+  }
+  rewriterToneChange() {
+    this.router.navigate(['.'], { relativeTo: this.route, queryParams: { rewriterTone: this.rewriterTone}, queryParamsHandling: 'merge' });
+  }
+
+  rewriterFormatChange() {
+    this.router.navigate(['.'], { relativeTo: this.route, queryParams: { rewriterFormat: this.rewriterFormat}, queryParamsHandling: 'merge' });
+  }
+
+  rewriterLengthChange() {
+    this.router.navigate(['.'], { relativeTo: this.route, queryParams: { rewriterLength: this.rewriterLength}, queryParamsHandling: 'merge' });
+  }
+
+  rewriterContextChange() {
+    this.router.navigate(['.'], { relativeTo: this.route, queryParams: { rewriterContext: this.rewriterContext}, queryParamsHandling: 'merge' });
+  }
+
+  rewriterUseStreamingChange() {
+    this.router.navigate(['.'], { relativeTo: this.route, queryParams: { rewriterUseStreaming: this.rewriterUseStreaming}, queryParamsHandling: 'merge' });
+  }
+
+  rewriterExpectedInputLanguagesChange() {
+    this.router.navigate(['.'], { relativeTo: this.route, queryParams: { rewriterExpectedInputLanguages: this.rewriterExpectedInputLanguages}, queryParamsHandling: 'merge' });
+  }
+
+  rewriterExpectedContextLanguagesChange() {
+    this.router.navigate(['.'], { relativeTo: this.route, queryParams: { rewriterExpectedContextLanguages: this.rewriterExpectedContextLanguages}, queryParamsHandling: 'merge' });
+  }
+
+  rewriterOutputLanguageChange() {
+    this.router.navigate(['.'], { relativeTo: this.route, queryParams: { rewriterOutputLanguage: this.rewriterOutputLanguage}, queryParamsHandling: 'merge' });
+  }
+
+  // Summarizer
+  summarizerToneChange() {
+    this.router.navigate(['.'], { relativeTo: this.route, queryParams: { summarizerType: this.summarizerType}, queryParamsHandling: 'merge' });
+  }
+
+  summarizerFormatChange() {
+    this.router.navigate(['.'], { relativeTo: this.route, queryParams: { summarizerFormat: this.summarizerFormat}, queryParamsHandling: 'merge' });
+  }
+
+  summarizerLengthChange() {
+    this.router.navigate(['.'], { relativeTo: this.route, queryParams: { summarizerLength: this.summarizerLength}, queryParamsHandling: 'merge' });
+  }
+
+  summarizerContextChange() {
+    this.router.navigate(['.'], { relativeTo: this.route, queryParams: { summarizerContext: this.summarizerContext}, queryParamsHandling: 'merge' });
+  }
+
+  summarizerUseStreamingChange() {
+    this.router.navigate(['.'], { relativeTo: this.route, queryParams: { summarizerUseStreaming: this.summarizerUseStreaming}, queryParamsHandling: 'merge' });
+  }
+
+  summarizerExpectedInputLanguagesChange() {
+    this.router.navigate(['.'], { relativeTo: this.route, queryParams: { summarizerExpectedInputLanguages: this.summarizerExpectedInputLanguages}, queryParamsHandling: 'merge' });
+  }
+
+  summarizerExpectedContextLanguagesChange() {
+    this.router.navigate(['.'], { relativeTo: this.route, queryParams: { summarizerExpectedContextLanguages: this.summarizerExpectedContextLanguages}, queryParamsHandling: 'merge' });
+  }
+
+  summarizerOutputLanguageChange() {
+    this.router.navigate(['.'], { relativeTo: this.route, queryParams: { summarizerOutputLanguage: this.summarizerOutputLanguage}, queryParamsHandling: 'merge' });
   }
 
   protected readonly navigator = navigator;
