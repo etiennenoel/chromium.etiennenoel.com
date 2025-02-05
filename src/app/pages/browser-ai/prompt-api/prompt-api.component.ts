@@ -6,10 +6,13 @@ import {BaseComponent} from '../../../components/base/base.component';
 import {RequirementStatusInterface} from '../../../interfaces/requirement-status.interface';
 import {RequirementStatus} from '../../../enums/requirement-status.enum';
 import {DOCUMENT, isPlatformBrowser} from '@angular/common';
-import {FormControl} from '@angular/forms';
+import {FormArray, FormControl, FormGroup} from '@angular/forms';
 import {LocaleEnum} from '../../../enums/locale.enum';
 import {SummarizerFormatEnum} from '../../../enums/summarizer-format.enum';
 import {ActivatedRoute, Router} from '@angular/router';
+import {PromptInterface} from '../../../components/prompt/prompt.interface';
+import {PromptInitialRoleEnum} from '../../../enums/prompt-initial-role.enum';
+import {AILanguageModelParamsInterface} from '../../../interfaces/ai-language-model-params.interface';
 
 
 @Component({
@@ -102,6 +105,42 @@ export class PromptApiComponent extends BaseComponent implements OnInit {
 
   // </editor-fold>
 
+  // <editor-fold desc="System Prompt">
+  private _systemPrompt: string | null = "";
+  public systemPromptFormControl: FormControl<string | null> = new FormControl<string | null>("");
+
+  get systemPrompt(): string | null {
+    return this._systemPrompt;
+  }
+
+  @Input()
+  set systemPrompt(value: string | null) {
+    this.setSystemPrompt(value);
+  }
+
+  setSystemPrompt(value: string | null, options?: {
+    emitFormControlEvent?: boolean,
+    emitChangeEvent?: boolean
+  }) {
+    this._systemPrompt = value;
+    this.systemPromptFormControl.setValue(value, {emitEvent: options?.emitFormControlEvent ?? true});
+    if (options?.emitChangeEvent ?? true) {
+      this.systemPromptChange.emit(value);
+    }
+  }
+
+  @Output()
+  systemPromptChange = new EventEmitter<string | null>();
+
+  // </editor-fold>
+
+  initialPromptsFormArray = new FormArray<FormGroup<{
+    prompt: FormControl<string | null>,
+    role: FormControl<string | null>
+  }>>([]);
+
+  params: AILanguageModelParamsInterface | null = null;
+
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     @Inject(DOCUMENT) document: Document,
@@ -117,13 +156,10 @@ export class PromptApiComponent extends BaseComponent implements OnInit {
   }
 
   checkRequirements() {
-// @ts-ignore
-    if (isPlatformBrowser(this.platformId) && !("ai" in this.window)) {
+    if (isPlatformBrowser(this.platformId) && this.window && !("ai" in this.window)) {
       this.apiFlag.status = RequirementStatus.Fail;
       this.apiFlag.message = "'window.ai' is not defined. Activate the flag.";
-    }
-    // @ts-ignore
-    else if (isPlatformBrowser(this.platformId) && !("languageModel" in this.window.ai)) {
+    } else if (isPlatformBrowser(this.platformId) && this.window && !("languageModel" in this.window.ai)) {
       this.apiFlag.status = RequirementStatus.Fail;
       this.apiFlag.message = "'window.ai.languageModel' is not defined. Activate the flag.";
     } else {
@@ -155,6 +191,35 @@ export class PromptApiComponent extends BaseComponent implements OnInit {
     }
   }
 
+  get paramsCode(): string {
+    return `const params = window.ai.languageModel.params()`;
+  }
+
+  async getParams() {
+    try {
+      this.params = await window.ai.languageModel.params();
+    } catch (e: any) {
+      this.error = e;
+    }
+  }
+
+  get executeCode(): string {
+    return `const abortController = new AbortController();
+
+const session = await window.ai.languageModel.create({
+  topK: ${this.topKFormControl.value},
+  temperature: ${this.temperatureFormControl.value},
+  expectedInputLanguages: ${JSON.stringify(this.expectedInputLanguagesFormControl.value)},
+  systemPrompt: ${JSON.stringify(this.systemPromptFormControl.value)},
+  initialPrompts: ${JSON.stringify(this.initialPromptsFormArray.value)},
+  monitor(m: any)  {
+    m.addEventListener("downloadprogress", (e: any) => {
+      console.log(\`Downloaded \${e.loaded * 100}%\`);
+    });
+  },
+  signal: abortController.signal,
+})`;
+  }
 
   override ngOnInit() {
     super.ngOnInit();
@@ -177,6 +242,14 @@ export class PromptApiComponent extends BaseComponent implements OnInit {
         queryParamsHandling: 'merge'
       });
     }));
+    this.subscriptions.push(this.systemPromptFormControl.valueChanges.subscribe((value) => {
+      this.setSystemPrompt(value, {emitChangeEvent: true, emitFormControlEvent: false});
+      this.router.navigate(['.'], {
+        relativeTo: this.route,
+        queryParams: {systemPrompt: this.systemPrompt},
+        queryParamsHandling: 'merge'
+      });
+    }));
     this.subscriptions.push(this.expectedInputLanguagesFormControl.valueChanges.subscribe((value) => {
       this.setExpectedInputLanguages(value, {emitChangeEvent: true, emitFormControlEvent: false});
       this.router.navigate(['.'], {
@@ -195,6 +268,10 @@ export class PromptApiComponent extends BaseComponent implements OnInit {
         this.setTemperature(params['temperature'], {emitChangeEvent: false, emitFormControlEvent: false});
       }
 
+      if (params['systemPrompt']) {
+        this.setSystemPrompt(params['systemPrompt'], {emitChangeEvent: false, emitFormControlEvent: false});
+      }
+
       if (params['expectedInputLanguages']) {
         if (!Array.isArray(params['expectedInputLanguages'])) {
           this.setExpectedInputLanguages([params['expectedInputLanguages']], {
@@ -209,6 +286,13 @@ export class PromptApiComponent extends BaseComponent implements OnInit {
         }
 
       }
+    }));
+  }
+
+  appendInitialPrompt() {
+    this.initialPromptsFormArray.push(new FormGroup({
+      prompt: new FormControl<string | null>(null),
+      role: new FormControl<string | null>(null),
     }));
   }
 
@@ -264,4 +348,5 @@ export class PromptApiComponent extends BaseComponent implements OnInit {
   protected readonly RequirementStatus = RequirementStatus;
   protected readonly LocaleEnum = LocaleEnum;
   protected readonly SummarizerFormatEnum = SummarizerFormatEnum;
+  protected readonly PromptInitialRoleEnum = PromptInitialRoleEnum;
 }
