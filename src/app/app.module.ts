@@ -5,7 +5,7 @@ import {AppRoutingModule} from './app-routing.module';
 import {IndexComponent} from './pages/index/index.component';
 import {RootComponent} from './components/root/root.component';
 import {TranslatorApiComponent} from './pages/browser-ai/translator-api/translator-api.component';
-import {ReactiveFormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ExplainerApiExecutor} from "./pages/browser-ai/translator-api/explainer-api.executor";
 import {CurrentApiExecutor} from "./pages/browser-ai/translator-api/current-api.executor";
 import {StepStatusIconComponent} from "./components/step-status-icon/step-status-icon.component";
@@ -29,6 +29,7 @@ import {PromptApiComponent} from './pages/browser-ai/prompt-api/prompt-api.compo
 import {
   DragAndDropFileSystemHandleComponent
 } from './components/drag-and-drop-file-system-handle/drag-and-drop-file-system-handle.component';
+import {DragDropModule} from '@angular/cdk/drag-drop';
 
 @NgModule({
   declarations: [
@@ -68,6 +69,8 @@ import {
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
+    FormsModule,
+    DragDropModule,
   ],
   providers: [
     provideClientHydration(withEventReplay()),

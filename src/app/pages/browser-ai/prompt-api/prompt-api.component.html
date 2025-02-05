@@ -4,19 +4,64 @@
 
   <h2>Prompt API</h2>
 
-  <div class="form-group">
-    <label for="prompt">Prompt</label>
-    <textarea class="form-control" rows="10" id="prompt" placeholder="Enter your prompt here"></textarea>
-  </div>
-
-  <h3>Image</h3>
-
-  <file-drag-and-drop-file-system-handle>
-    <div class="d-flex flex-column h-100">
-      <div class="align-content-center flex-fill">
-        <i class="bi bi-images "></i>
-        Drag and drop an image here
+  <div class="row">
+    <div class="col-12 col-md-6">
+      <div class="form-group">
+        <label for="prompt">Prompt</label>
+        <textarea class="form-control" rows="10" id="prompt" placeholder="Enter your prompt here"></textarea>
       </div>
     </div>
-  </file-drag-and-drop-file-system-handle>
+    <div class="col-12 col-md-6">
+      <h3>Medias</h3>
+
+      <div cdkDropList (cdkDropListDropped)="drop($event)">
+      @for (media of medias; track $index) {
+        <div class="card d-flex flex-row align-items-center gap-3 p-3 mb-3" style="height: 150px;"  cdkDrag>
+          <button class="btn"><i class="bi bi-grip-vertical"></i></button>
+
+
+            @if(media.type === 'image') {
+              <div>
+                <img class="img-fluid" [src]="getImageSrc(media)" /></div>
+              <div class="flex-grow-1">
+                <h6 class="m-0 p-0 mt-2 ms-2">{{ media.filename }}</h6>
+              </div>
+            } @else if (media.type === 'audio') {
+              <div class="flex-grow-1">
+              <audio [src]="getAudioSrc(media)" controls></audio>
+              <h6 class="m-0 p-0 mt-2 ms-2">{{ media.filename }}</h6>
+              </div>
+            }
+
+
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" [(ngModel)]="media.includeInPrompt">
+            <label class="form-check-label" for="flexSwitchCheckDefault">Pass to prompt?</label>
+          </div>
+
+          <div><button class="btn btn-danger btn-sm" (click)="deleteMedia($index)">Delete</button></div>
+        </div>
+      }
+        </div>
+
+      <file-drag-and-drop-file-system-handle (onFileSystemHandlesDropped)="onFileSystemHandlesDropped($event)">
+        <div class="d-flex flex-column h-100 w-100">
+          <div class="align-content-center flex-fill">
+
+            Click or drag and drop an <strong><i class="bi bi-music-note"></i>audio</strong> file or <strong> <i class="bi bi-images "></i> image</strong> here
+          </div>
+        </div>
+      </file-drag-and-drop-file-system-handle>
+    </div>
+  </div>
+
+  <div class="row mt-5">
+    <div class="col-12 col-md-6">
+      <h3>Availability</h3>
+    </div>
+    <div class="col-12 col-md-6">
+      <h3>Execute</h3>
+    </div>
+  </div>
+
 </div>
