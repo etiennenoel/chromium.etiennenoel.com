@@ -31,6 +31,7 @@ import {
 } from './components/drag-and-drop-file-system-handle/drag-and-drop-file-system-handle.component';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import {PromptComponent} from './components/prompt/prompt.component';
+import {OutputComponent} from './components/output/output.component';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,8 @@ import {PromptComponent} from './components/prompt/prompt.component';
 
     SummarizerApiComponent,
     PromptComponent,
+    OutputComponent,
+
     // Pipes
     EnumToSearchSelectDropdownOptionsPipe,
 
