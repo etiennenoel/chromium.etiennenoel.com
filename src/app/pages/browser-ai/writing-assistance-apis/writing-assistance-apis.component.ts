@@ -77,7 +77,7 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
 
   output: string = "";
   outputChunks: string[] = [];
-  error: Error | null = null;
+  error?: Error;
 
   abortController: AbortController | null = null;
   abortFromCreateController: AbortController | null = null;
