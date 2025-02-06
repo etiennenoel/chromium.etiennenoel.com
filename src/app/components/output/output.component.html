@@ -1,9 +1,5 @@
-<div class="card mt-3">
-  <div class="card-header d-flex"
-       [class.bg-primary-subtle]="status === TaskStatus.Executing"
-       [class.bg-success-subtle]="status === TaskStatus.Completed"
-       [class.bg-danger-subtle]="status === TaskStatus.Error"
-  >
+<app-card [status]="this.status" class="mt-3">
+  <div class="d-flex" header>
     <h3 class="m-0 p-0 flex-grow-1">Output:</h3>
 
     <button class="btn btn-link" (click)="outputCollapsed = !outputCollapsed">
@@ -14,6 +10,7 @@
       }
     </button>
   </div>
+
   <div class="card-body" [class.collapse]="outputCollapsed">
 
     @if (status !== TaskStatus.Idle && downloadProgress < 100) {
@@ -63,11 +60,8 @@
     }
 
   </div>
-  <div class="card-footer d-flex gap-3 align-items-center"
-       [class.bg-primary-subtle]="status === TaskStatus.Executing"
-       [class.bg-success-subtle]="status === TaskStatus.Completed"
-       [class.bg-danger-subtle]="status === TaskStatus.Error"
-  >
+
+  <div class="d-flex gap-3 align-items-center" footer>
           <span class="badge"
                 [class.text-bg-secondary]="status === TaskStatus.Idle"
                 [class.text-bg-primary]="status === TaskStatus.Executing"
@@ -81,4 +75,4 @@
     <div class="flex-fill">Total: <strong>{{ this.executionPerformanceResult?.totalExecutionTime ?? "N/A" }} ms</strong>,
       <strong>{{ this.executionPerformanceResult?.totalNumberOfWords ?? "N/A" }} words</strong></div>
   </div>
-</div>
+</app-card>

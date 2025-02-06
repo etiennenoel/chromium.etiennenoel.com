@@ -32,6 +32,7 @@ import {
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import {PromptComponent} from './components/prompt/prompt.component';
 import {OutputComponent} from './components/output/output.component';
+import {CardComponent} from './components/card/card.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import {OutputComponent} from './components/output/output.component';
     PromptComponent,
     OutputComponent,
 
+    CardComponent,
     // Pipes
     EnumToSearchSelectDropdownOptionsPipe,
 
