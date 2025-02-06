@@ -1,5 +1,5 @@
-export interface PromptInterface {
-  prompt: string;
+export interface PromptInterface<T> {
+  content: string;
 
-  role: string;
+  role: T;
 }
