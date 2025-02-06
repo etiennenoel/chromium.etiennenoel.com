@@ -20,7 +20,7 @@ export abstract class BaseWritingAssistanceApiComponent extends BaseComponent {
 
   public availabilityStatus: AvailabilityStatusEnum = AvailabilityStatusEnum.Unknown;
 
-// <editor-fold desc="Use Streaming">
+  // <editor-fold desc="Use Streaming">
   private _useStreaming: boolean | null = false;
   public useStreamingFormControl = new FormControl<boolean>(false);
   @Output()
@@ -92,7 +92,6 @@ export abstract class BaseWritingAssistanceApiComponent extends BaseComponent {
   @Output()
   public statusChange = new EventEmitter<TaskStatus>();
   // </editor-fold>
-
 
   // <editor-fold desc="Expected Input Languages">
   private _expectedInputLanguages: LocaleEnum[] | null = [];
@@ -267,7 +266,6 @@ export abstract class BaseWritingAssistanceApiComponent extends BaseComponent {
     this.emitExecutionPerformanceChange();
     clearInterval(this.executionTimeInterval);
   }
-
 
   public readonly RequirementStatus = RequirementStatus;
   public readonly AvailabilityStatusEnum = AvailabilityStatusEnum;

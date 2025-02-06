@@ -1,4 +1,4 @@
-import {Component, Inject, OnDestroy, OnInit, PLATFORM_ID} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit, PLATFORM_ID, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {FormControl} from '@angular/forms';
 import {WriterToneEnum} from '../../../enums/writer-tone.enum';
@@ -20,6 +20,9 @@ import {RewriterLengthEnum} from '../../../enums/rewriter-length.enum';
 import {SummarizerTypeEnum} from '../../../enums/summarizer-type.enum';
 import {SummarizerFormatEnum} from '../../../enums/summarizer-format.enum';
 import {SummarizerLengthEnum} from '../../../enums/summarizer-length.enum';
+import {WriterApiComponent} from '../../../components/writer-api/writer-api.component';
+import {RewriterApiComponent} from '../../../components/rewriter-api/rewriter-api.component';
+import {SummarizerApiComponent} from '../../../components/summarizer-api/summarizer-api.component';
 
 
 @Component({
@@ -111,6 +114,15 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
     firstResponseNumberOfWords: 0,
     totalNumberOfWords: 0,
   }
+
+  @ViewChild(WriterApiComponent)
+  writerApiComponent: WriterApiComponent | undefined;
+
+  @ViewChild(RewriterApiComponent)
+  rewriterApiComponent: RewriterApiComponent | undefined;
+
+  @ViewChild(SummarizerApiComponent)
+  summarizerApiComponent: SummarizerApiComponent | undefined
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
@@ -310,6 +322,20 @@ export class WritingAssistanceApisComponent extends BaseComponent implements OnI
     this.toastStore.publish({
       message: "Copied to clipboard",
     })
+  }
+
+  execute() {
+    switch (this.activeTab) {
+      case ActiveTabEnum.Writer:
+        this.writerApiComponent?.write();
+        break;
+      case ActiveTabEnum.Rewriter:
+        this.rewriterApiComponent?.rewrite();
+        break;
+      case ActiveTabEnum.Summarizer:
+        this.summarizerApiComponent?.summarize();
+        break;
+    }
   }
 
   executionPerformanceChange(value: ExecutionPerformanceResultInterface) {

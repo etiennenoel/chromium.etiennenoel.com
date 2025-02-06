@@ -53,7 +53,7 @@ export class WriterApiComponent extends BaseWritingAssistanceApiComponent implem
   // </editor-fold>
 
   // <editor-fold desc="Context">
-  private _context: string | null = "";
+  private _context: string | null = null;
   public contextFormControl = new FormControl<string | null>("");
 
   get context(): string | null {
