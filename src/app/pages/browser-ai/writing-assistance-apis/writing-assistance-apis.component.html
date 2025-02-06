@@ -10,7 +10,19 @@
       <textarea class="form-control" rows="8" [formControl]="inputFormControl"></textarea>
 
       <div class="d-grid">
-        <button class="btn btn-primary d-block mt-2 btn-lg" (click)="execute()">Execute</button>
+        <button class="btn btn-primary d-block mt-2 btn-lg" (click)="execute()">
+          @switch (activeTab) {
+            @case (ActiveTabEnum.Writer) {
+              Write
+            }
+            @case (ActiveTabEnum.Rewriter) {
+              Rewrite
+            }
+            @case (ActiveTabEnum.Summarizer) {
+              Summarize
+            }
+          }
+            </button>
       </div>
 
       <h3 class="mt-3">Shared Context:</h3>
