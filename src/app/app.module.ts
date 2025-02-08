@@ -35,6 +35,7 @@ import {OutputComponent} from './components/output/output.component';
 import {CardComponent} from './components/card/card.component';
 import {LanguageDetectorComponent} from './pages/browser-ai/language-detector/language-detector.component';
 import {RequirementComponent} from './components/requirement/requirement.component';
+import {BrowserAIIndexComponent} from './pages/browser-ai/index/browser-ai-index.component';
 
 @NgModule({
   declarations: [
@@ -51,6 +52,8 @@ import {RequirementComponent} from './components/requirement/requirement.compone
     PromptComponent,
     OutputComponent,
     RequirementComponent,
+
+    BrowserAIIndexComponent,
 
     CardComponent,
     // Pipes

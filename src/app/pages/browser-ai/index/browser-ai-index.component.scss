@@ -1,0 +1,38 @@
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+
+.sidebar {
+  background-color: $gray-200;
+  height: 100vh;
+  margin: 0;
+  width: 300px;
+
+  header {
+    .title {
+      font-weight: bold;
+    }
+  }
+
+  nav {
+    ul {
+      li {
+        &.active {
+          background-color: $primary-bg-subtle;
+        }
+        &:hover {
+          background-color: $gray-400;
+
+        }
+
+        border-radius: 10px;
+        margin-top: 10px;
+        padding: 5px;
+      }
+    }
+  }
+}
+
+.content {
+  height: 100vh;
+  overflow: auto;
+}

@@ -8,6 +8,7 @@ import {
 } from './pages/browser-ai/writing-assistance-apis/writing-assistance-apis.component';
 import {PromptApiComponent} from './pages/browser-ai/prompt-api/prompt-api.component';
 import {LanguageDetectorComponent} from './pages/browser-ai/language-detector/language-detector.component';
+import {BrowserAIIndexComponent} from './pages/browser-ai/index/browser-ai-index.component';
 
 const routes: Routes = [
   {
@@ -20,6 +21,7 @@ const routes: Routes = [
       },
       {
         path: "browser-ai",
+        component: BrowserAIIndexComponent,
         children: [
           {
             path: "translator-api",
