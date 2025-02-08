@@ -13,6 +13,8 @@ export class BrowserAIIndexComponent extends BaseComponent implements OnInit {
 
   public currentRoute?: 'translator-api' | 'language-detector-api' | 'writing-assistance-apis' | 'prompt-api';
 
+  public expanded = true;
+
   constructor(
     @Inject(DOCUMENT) document: Document,
     protected readonly route: ActivatedRoute,
@@ -31,6 +33,14 @@ export class BrowserAIIndexComponent extends BaseComponent implements OnInit {
         this.setCurrentRoute(event.url);
       }
     }))
+
+    this.subscriptions.push(this.route.queryParams.subscribe(params => {
+      if(params['expanded'] === 'false') {
+        this.expanded = false;
+      } else if(params['expanded'] === 'true') {
+        this.expanded = true;
+      }
+    }))
   }
 
   setCurrentRoute(url: string) {
@@ -45,4 +55,11 @@ export class BrowserAIIndexComponent extends BaseComponent implements OnInit {
     }
   }
 
+  toggleSidebar() {
+    this.expanded = !this.expanded;
+
+    const urlTree = this.router.parseUrl(this.router.url)
+    urlTree.queryParams['expanded'] = this.expanded;
+    this.router.navigateByUrl(urlTree)
+  }
 }

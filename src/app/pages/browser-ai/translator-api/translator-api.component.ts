@@ -44,6 +44,8 @@ export class TranslatorApiComponent implements OnInit, OnDestroy {
     }
   }
 
+  allRequirementsStatus: RequirementStatus = RequirementStatus.Pending;
+
   steps!: {
     step0: Step0,
     step1: Step1,
@@ -151,6 +153,8 @@ export class TranslatorApiComponent implements OnInit, OnDestroy {
 
   checkRequirements() {
     this.requirements = this.apiExecutor.checkRequirements();
+
+    this.allRequirementsStatus = this.requirements.translationApiFlag.status;
   }
 
   async executeStep0() {

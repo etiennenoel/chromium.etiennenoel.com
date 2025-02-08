@@ -7,9 +7,39 @@
   margin: 0;
   width: 300px;
 
+  &.sidebar-collapsed {
+    width: 75px;
+    .title {
+      display: none;
+    }
+    nav {
+      ul {
+        li {
+          text-align: center;
+
+          span {
+            display: none;
+          }
+        }
+      }
+    }
+
+    header {
+      margin-left: 0;
+      margin-right: 0 !important;
+      flex-direction: column;
+    }
+  }
+
   header {
+    margin-left: 25px;
+    margin-right: .5rem !important;
+
+    flex-direction: row;
+
     .title {
       font-weight: bold;
+      margin: 0;
     }
   }
 
@@ -24,10 +54,21 @@
 
         }
 
+        span {
+          margin-left: 0.5rem;
+        }
+
         border-radius: 10px;
         margin-top: 10px;
         padding: 5px;
       }
+    }
+  }
+
+  .btn-sidebar {
+    background-color: $gray-200;
+    &:hover {
+      background-color: $gray-400;
     }
   }
 }
