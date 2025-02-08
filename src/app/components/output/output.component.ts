@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 import {TaskStatus} from '../../enums/task-status.enum';
 import {ExecutionPerformanceResultInterface} from '../../interfaces/execution-performance-result.interface';
 import {ToastStore} from '../../stores/toast.store';
@@ -37,6 +37,8 @@ export class OutputComponent {
 
   @Output()
   abortExecutionFromCreate = new EventEmitter<void>();
+
+  showDownloadProgress: boolean = true;
 
   constructor(private readonly toastStore: ToastStore,) {
   }

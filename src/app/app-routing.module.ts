@@ -7,6 +7,7 @@ import {
   WritingAssistanceApisComponent
 } from './pages/browser-ai/writing-assistance-apis/writing-assistance-apis.component';
 import {PromptApiComponent} from './pages/browser-ai/prompt-api/prompt-api.component';
+import {LanguageDetectorComponent} from './pages/browser-ai/language-detector/language-detector.component';
 
 const routes: Routes = [
   {
@@ -31,6 +32,10 @@ const routes: Routes = [
           {
             path: "prompt-api",
             component: PromptApiComponent,
+          },
+          {
+            path: "language-detector-api",
+            component: LanguageDetectorComponent,
           }
         ]
       }

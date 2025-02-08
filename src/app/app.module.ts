@@ -33,6 +33,8 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
 import {PromptComponent} from './components/prompt/prompt.component';
 import {OutputComponent} from './components/output/output.component';
 import {CardComponent} from './components/card/card.component';
+import {LanguageDetectorComponent} from './pages/browser-ai/language-detector/language-detector.component';
+import {RequirementComponent} from './components/requirement/requirement.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +50,7 @@ import {CardComponent} from './components/card/card.component';
     SummarizerApiComponent,
     PromptComponent,
     OutputComponent,
+    RequirementComponent,
 
     CardComponent,
     // Pipes
@@ -63,6 +66,7 @@ import {CardComponent} from './components/card/card.component';
     StepTitleComponent,
 
     // Browser AI APIs
+    LanguageDetectorComponent,
     PromptApiComponent,
     TranslatorApiComponent,
     StepContainerVisualStatusDirective,
