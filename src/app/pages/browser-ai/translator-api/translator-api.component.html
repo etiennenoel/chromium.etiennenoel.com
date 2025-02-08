@@ -139,7 +139,7 @@
         <div class="col-12">
           <div class="card">
             <div class="card-body">
-              <pre><code>{{ this.apiExecutor.getStep0Code(this.sourceLanguage.value, this.targetLanguage.value) }}</code></pre>
+              <code-editor [code]="this.apiExecutor.getStep0Code(this.sourceLanguage.value, this.targetLanguage.value)" [readonly]="true" [height]="'100px'"></code-editor>
             </div>
           </div>
         </div>
@@ -218,7 +218,7 @@
         <div class="col-12">
           <div class="card">
             <div class="card-body">
-              <pre><code>{{ this.apiExecutor.getStep1Code(this.sourceLanguage.value, this.targetLanguage.value) }}</code></pre>
+              <code-editor [code]="this.apiExecutor.getStep1Code(this.sourceLanguage.value, this.targetLanguage.value)" [readonly]="true" [height]="'200px'"></code-editor>
             </div>
           </div>
         </div>
@@ -273,7 +273,7 @@
         <div class="col-12">
           <div class="card">
             <div class="card-body">
-              <pre><code>{{ this.apiExecutor.getStep2Code(this.sourceLanguage.value, this.targetLanguage.value, this.content.value) }}</code></pre>
+              <code-editor [code]="this.apiExecutor.getStep2Code(this.sourceLanguage.value, this.targetLanguage.value, this.content.value)" [readonly]="true" [height]="'50px'"></code-editor>
             </div>
           </div>
         </div>
