@@ -9,6 +9,7 @@ import {
 import {PromptApiComponent} from './pages/browser-ai/prompt-api/prompt-api.component';
 import {LanguageDetectorComponent} from './pages/browser-ai/language-detector/language-detector.component';
 import {BrowserAIIndexComponent} from './pages/browser-ai/index/browser-ai-index.component';
+import {ColdStartAvailabilityComponent} from './pages/cold-start-availability/cold-start-availability.component';
 
 const routes: Routes = [
   {
@@ -18,6 +19,10 @@ const routes: Routes = [
       {
         path: "",
         component: IndexComponent,
+      },
+      {
+        path: "cold-start-availability",
+        component: ColdStartAvailabilityComponent,
       },
       {
         path: "browser-ai",
