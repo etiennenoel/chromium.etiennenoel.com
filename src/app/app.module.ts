@@ -36,11 +36,13 @@ import {CardComponent} from './components/card/card.component';
 import {LanguageDetectorComponent} from './pages/browser-ai/language-detector/language-detector.component';
 import {RequirementComponent} from './components/requirement/requirement.component';
 import {BrowserAIIndexComponent} from './pages/browser-ai/index/browser-ai-index.component';
+import {ColdStartAvailabilityComponent} from './pages/cold-start-availability/cold-start-availability.component';
 
 @NgModule({
   declarations: [
     RootComponent,
     IndexComponent,
+    ColdStartAvailabilityComponent,
 
     CodeEditorComponent,
 

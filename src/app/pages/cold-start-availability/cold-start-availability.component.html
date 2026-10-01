@@ -1,0 +1,150 @@
+<main class="container py-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4 p-3 border rounded bg-light">
+    <div>
+      <div class="mb-2">
+        <a routerLink="/" class="btn btn-sm btn-outline-secondary">
+          <i class="bi bi-arrow-left"></i> Home
+        </a>
+      </div>
+      <h1 class="h4 mb-1">Built-In AI <code>availability()</code> Cold-Start Reproducer</h1>
+      <p class="text-muted mb-0 small">
+        Fires <strong>Wave 1</strong> immediately on page load (<code>t = 0ms</code>) and <strong>Wave 2</strong> after <code>4000ms</code>.
+        On unpatched Chrome 154 cold start, Wave 1 hangs in <code>ManifestBrokerState::init_callbacks_</code> while Wave 2 resolves immediately.
+      </p>
+    </div>
+    <div class="d-flex gap-2">
+      <button type="button" class="btn btn-primary btn-sm" (click)="fireWave2Manual()">
+        Fire Wave 2 Now
+      </button>
+      <button type="button" class="btn btn-outline-secondary btn-sm" (click)="fireExtraProbe()">
+        Fire Extra Probe
+      </button>
+    </div>
+  </div>
+
+  <div
+    class="alert d-flex justify-content-between align-items-center fw-semibold mb-4"
+    [ngClass]="{
+      'alert-info': verdictState === 'running',
+      'alert-success': verdictState === 'pass',
+      'alert-danger': verdictState === 'fail'
+    }"
+    role="status"
+    aria-live="polite"
+  >
+    <span>{{ verdictText }}</span>
+    <span class="font-monospace">{{ elapsedClockText }}</span>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <div class="col-12 col-lg-6">
+      <div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h2 class="h6 mb-0">Wave 1 — Immediate on Load (t = 0ms)</h2>
+          <span class="text-muted small font-monospace">{{ wave1SummaryText }}</span>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-sm align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th class="ps-3">API</th>
+                  <th>Status</th>
+                  <th>Result</th>
+                  <th class="pe-3">Latency</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (rec of wave1Records; track rec.api.id) {
+                  <tr>
+                    <td class="ps-3 font-monospace small fw-semibold">{{ rec.api.label }}</td>
+                    <td>
+                      <span
+                        class="badge font-monospace"
+                        [ngClass]="{
+                          'text-bg-warning': rec.status === 'PENDING' || rec.status === 'WAITING',
+                          'text-bg-success': rec.status === 'RESOLVED',
+                          'text-bg-danger': rec.status === 'HUNG' || rec.status === 'REJECTED',
+                          'text-bg-secondary': rec.status === 'UNEXPOSED'
+                        }"
+                      >
+                        {{ rec.status }}
+                      </span>
+                    </td>
+                    <td class="font-monospace small">{{ rec.result }}</td>
+                    <td class="pe-3 font-monospace small">{{ rec.latencyText }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+      <div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h2 class="h6 mb-0">Wave 2 — Delayed Call (t = +4000ms)</h2>
+          <span class="text-muted small font-monospace">{{ wave2SummaryText }}</span>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-sm align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th class="ps-3">API</th>
+                  <th>Status</th>
+                  <th>Result</th>
+                  <th class="pe-3">Latency</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (rec of wave2Records; track rec.api.id) {
+                  <tr>
+                    <td class="ps-3 font-monospace small fw-semibold">{{ rec.api.label }}</td>
+                    <td>
+                      <span
+                        class="badge font-monospace"
+                        [ngClass]="{
+                          'text-bg-warning': rec.status === 'PENDING' || rec.status === 'WAITING',
+                          'text-bg-success': rec.status === 'RESOLVED',
+                          'text-bg-danger': rec.status === 'HUNG' || rec.status === 'REJECTED',
+                          'text-bg-secondary': rec.status === 'UNEXPOSED'
+                        }"
+                      >
+                        {{ rec.status }}
+                      </span>
+                    </td>
+                    <td class="font-monospace small">{{ rec.result }}</td>
+                    <td class="pe-3 font-monospace small">{{ rec.latencyText }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h2 class="h6 mb-0">Event Timeline</h2>
+      <span class="text-muted small">Launch Chrome cold with this URL as the startup page to reproduce Scenario A</span>
+    </div>
+    <div class="card-body bg-dark text-light font-monospace small log-box">
+      @for (entry of logs; track $index) {
+        <div
+          [ngClass]="{
+            'text-secondary': entry.level === 'normal',
+            'text-white': entry.level === 'highlight',
+            'text-danger': entry.level === 'error'
+          }"
+        >
+          [+{{ entry.timestampMs }}ms] {{ entry.message }}
+        </div>
+      }
+    </div>
+  </div>
+</main>
